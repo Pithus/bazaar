@@ -1,8 +1,6 @@
 Bazaar
 ======
 
-APK yard
-
 .. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg
      :target: https://github.com/pydanny/cookiecutter-django/
      :alt: Built with Cookiecutter Django
@@ -10,7 +8,7 @@ APK yard
      :target: https://github.com/ambv/black
      :alt: Black code style
 
-## Build frontoffice's project.css
+Build frontoffice's project.css
 
 ```
 sassc bazaar/static/front/sass/project.scss backend/static/front/css/project.css
