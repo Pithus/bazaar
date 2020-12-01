@@ -1,0 +1,13 @@
+{% load get %}
+
+<table class="table table-condensed table-sm">
+  {%  for p in d.detailed_permissions %}
+  <tr>
+    <td class="">{% include "front/report/m_severity.html" with s=p.status %}</td>
+    <td class="">{{ p.info }}<br>
+      <span class="small">{{ p.description }}</span><br>
+      <span class="small text-muted"><samp>{{ p|get:"_name" }}</samp></span>
+    </td>
+  </tr>
+  {% endfor %}
+</table>

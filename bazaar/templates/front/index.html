@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="container">
+
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h3>Pithus, the opened pandora's box</h3>
+        <blockquote class="blockquote text-muted">
+          <p class="small">The Pandora myth is a kind of theodicy, addressing the question of why there is evil in the world. According to this, Pandora opened a jar (pithos) (commonly referred to as "Pandora's box") releasing all the evils of humanity.</p>
+          <footer class="blockquote-footer mt-0 small">Wikipedia</footer>
+        </blockquote>
+        <div class="alert alert-secondary">
+          <form class="form-horizontal text-center" method="get">
+            {{ form|crispy }}
+            <div class="control-group">
+              <div class="controls">
+                <button type="submit" class="btn btn-primary">Search</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        {% include "front/m_results.html" with results=results %}
+
+      </div>
+    </div>
+
+  </div>
+{% endblock content %}
+

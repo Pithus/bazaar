@@ -1,0 +1,9 @@
+{% if s == "dangerous" or s == "high" %}
+  <span class="badge badge-danger ">High</span>
+{% elif  s == "signature" or s == "warning" or s == "medium" %}
+  <span class="badge badge-warning ">Medium</span>
+{% elif  s == "normal" or s == "info" %}
+  <span class="badge badge-info ">Low</span>
+{% elif  s == "good" %}
+  <span class="badge badge-success ">Info</span>
+{% endif %}

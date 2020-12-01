@@ -1,0 +1,12 @@
+{% load get %}
+
+<table class="table table-condensed table-sm">
+  {%  for p in d.domains_analysis %}
+  <tr>
+    <td class="">Malicious: {{ p.bad }}</td>
+    <td class=""><samp>{{ p|get:"_name" }}</samp><br>
+      <span class="small text-muted">{{ p.geolocation.country_short }} IP: {{ p.geolocation.ip }}</span>
+    </td>
+  </tr>
+  {% endfor %}
+</table>

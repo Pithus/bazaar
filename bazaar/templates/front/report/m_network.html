@@ -1,0 +1,12 @@
+{% load get %}
+
+<table class="table table-condensed table-sm">
+  {%  for p in d.network_security %}
+  <tr>
+    <td class="">{% include "front/report/m_severity.html" with s=p.severity %}</td>
+    <td class="">{{ p.description|safe }}<br>
+      <span class="small text-muted">Scope: {{ p.scope }}</span>
+    </td>
+  </tr>
+  {% endfor %}
+</table>

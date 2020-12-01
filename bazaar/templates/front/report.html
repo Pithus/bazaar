@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="container">
+
+    <div class="row justify-content-center">
+      <div class="col-md-12">
+        <h1>{{ result.app_name }}</h1>
+
+        <div>
+          <h3>File details</h3>
+          {% include "front/report/m_file.html" with d=result %}
+        </div>
+      </div>
+
+      <div class="col-md-12 text-center">
+        <div>
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#apk_analysis"
+                  aria-expanded="false" aria-controls="apk_analysis">
+            <i class="fa fa-archive"></i> APK analysis
+          </button>
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#code_analysis"
+                  aria-expanded="false" aria-controls="code_analysis">
+            <i class="fa fa-bug"></i> Code analysis
+          </button>
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#behavior_analysis"
+                  aria-expanded="false" aria-controls="behavior_analysis">
+            <i class="fa fa-hand-spock"></i> Behavior analysis
+          </button>
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#network_analysis"
+                  aria-expanded="false" aria-controls="network_analysis">
+            <i class="fa fa-globe"></i> Network analysis
+          </button>
+          <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#privacy_analysis"
+                  aria-expanded="false" aria-controls="privacy_analysis">
+            <i class="fa fa-eye"></i> Privacy analysis
+          </button>
+        </div>
+      </div>
+
+      <div class="col-md-12 mt-5">
+        <div class="collapse" id="apk_analysis">
+          <div>
+            <h3>APK details</h3>
+            {% include "front/report/m_apk.html" with d=result %}
+          </div>
+
+          <div>
+            <h3>Certificate details</h3>
+            {% include "front/report/m_certificate.html" with d=result %}
+          </div>
+
+          <div>
+            <h3>Manifest analysis</h3>
+            {% include "front/report/m_manifest.html" with d=result %}
+          </div>
+        </div>
+
+        <div class="collapse" id="privacy_analysis">
+          <div>
+            <h3>Tracking analysis</h3>
+            {% include "front/report/m_trackers.html" with d=result %}
+          </div>
+        </div>
+
+        <div class="collapse" id="code_analysis">
+          <div>
+            <h3>NIAP analysis</h3>
+            {% include "front/report/m_niap.html" with d=result %}
+          </div>
+          <div>
+            <h3>Code analysis</h3>
+            {% include "front/report/m_code.html" with d=result %}
+          </div>
+        </div>
+
+        <div class="collapse" id="network_analysis">
+          <div>
+            <h3>Network analysis</h3>
+            {% include "front/report/m_network.html" with d=result %}
+          </div>
+
+          <div>
+            <h3>Domains analysis</h3>
+            {% include "front/report/m_domains.html" with d=result %}
+          </div>
+
+          <div>
+            <h3>URL analysis</h3>
+            {% include "front/report/m_url.html" with d=result %}
+          </div>
+        </div>
+
+        <div class="collapse" id="behavior_analysis">
+          <div>
+            <h3>Permissions analysis</h3>
+            {% include "front/report/m_permissions.html" with d=result %}
+          </div>
+          <div>
+            <h3>Behavior analysis</h3>
+            {% include "front/report/m_api.html" with d=result %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+{% endblock content %}
+

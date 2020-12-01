@@ -1,0 +1,30 @@
+{%  for c in d.certificates %}
+
+  <table class="table table-condensed table-sm">
+    <tr>
+      <td class="">MD5</td>
+      <td class=""><samp>{{ c.fingerprint_md5 }}</samp></td>
+    </tr>
+    <tr>
+      <td class="">SHA1</td>
+      <td class=""><samp>{{ c.fingerprint_sha1 }}</samp></td>
+    </tr>
+    <tr>
+      <td class="">SHA256</td>
+      <td class=""><samp>{{ c.fingerprint_sha256 }}</samp></td>
+    </tr>
+    <tr>
+      <td class="">Issuer</td>
+      <td class=""><samp>{{ c.issuer }}</samp></td>
+    </tr>
+    <tr>
+      <td class="">Not before</td>
+      <td class=""><samp>{{ c.not_before }}</samp></td>
+    </tr>
+    <tr>
+      <td class="">Not after</td>
+      <td class=""><samp>{{ c.not_after }}</samp></td>
+    </tr>
+  </table>
+
+{% endfor %}

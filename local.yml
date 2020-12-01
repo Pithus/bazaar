@@ -1,0 +1,117 @@
+version: '3'
+
+volumes:
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+  local_elasticsearch_data: {}
+  local_minio_data: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: bazaar_local_django
+    depends_on:
+      - postgres
+      - mailhog
+      - redis
+      - elasticsearch
+      - minio
+      - mobsf
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - "8001:8000"
+    command: /start
+
+  redis:
+    image: redis:5.0
+
+  worker:
+    <<: *django
+    image: backend_local_worker
+    depends_on:
+      - redis
+      - postgres
+      - elasticsearch
+      - minio
+    ports: []
+    command: /start-worker
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: bazaar_production_postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data:Z
+      - local_postgres_data_backups:/backups:z
+    env_file:
+      - ./.envs/.local/.postgres
+
+  docs:
+    image: bazaar_local_docs
+    build:
+      context: .
+      dockerfile: ./compose/local/docs/Dockerfile
+    env_file:
+      - ./.envs/.local/.django
+    volumes:
+      - ./docs:/docs:z
+      - ./config:/app/config:z
+      - ./bazaar:/app/bazaar:z
+    ports:
+      - "7000:7000"
+    command: /start-docs
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.0
+    ports:
+      - "8025:8025"
+
+  elasticsearch:
+    image: elasticsearch:7.7.0
+    hostname: elasticsearch
+    environment:
+      - "discovery.type=single-node"
+    volumes:
+      - local_elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+
+  mobsf:
+    image: opensecurity/mobile-security-framework-mobsf:latest
+    hostname: mobsf
+    environment:
+      - "MOBSF_API_ONLY=1"
+      - "MOBSF_API_KEY=515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9"
+
+  kibana:
+    image: kibana:7.7.0
+    hostname: kibana
+    ports:
+      - 5601:5601
+    links:
+      - elasticsearch:elasticsearch
+    depends_on:
+      - elasticsearch
+
+  minio:
+    image: minio/minio:RELEASE.2020-11-13T20-10-18Z
+    volumes:
+      - local_minio_data:/data
+#    expose:
+#      - "9000"
+    env_file:
+      - ./.envs/.local/.django
+    command: server /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3

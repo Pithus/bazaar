@@ -1,0 +1,13 @@
+{% load get %}
+
+<table class="table table-condensed table-sm">
+  {%  for p in d.code_analysis %}
+  <tr>
+    <td class="">{% include "front/report/m_severity.html" with s=p.metadata.severity %}<br>CVSS: {{ p.metadata.cvss }}</td>
+    <td class="">{{ p.metadata.description }}<br>
+      <span class="small text-muted">MASVS: {{ p.metadata.masvs }}</span><br>
+      <span class="small text-muted">CWE: {{ p.metadata.cwe }}</span>
+    </td>
+  </tr>
+  {% endfor %}
+</table>

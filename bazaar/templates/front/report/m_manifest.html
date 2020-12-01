@@ -1,0 +1,12 @@
+{% load get %}
+
+<table class="table table-condensed table-sm">
+  {%  for p in d.manifest_analysis %}
+  <tr>
+    <td class="">{% include "front/report/m_severity.html" with s=p.stat %}</td>
+    <td class="">{{ p.title|cut:"<br>"|safe }}<br>
+      <span class="small">{{ p.desc }}</span>
+    </td>
+  </tr>
+  {% endfor %}
+</table>

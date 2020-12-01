@@ -1,0 +1,11 @@
+{% load get %}
+
+<table class="table table-condensed table-sm">
+  {%  for p in d.trackers %}
+  <tr>
+    <td class="">{{ p.name }}</td>
+    <td class=""><samp>{{ p.website }}</samp>
+    </td>
+  </tr>
+  {% endfor %}
+</table>

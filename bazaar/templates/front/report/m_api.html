@@ -1,0 +1,21 @@
+{% load get %}
+
+<table class="table table-condensed table-sm">
+  {% for p in d.android_api_analysis|dictsort:"metadata.description" %}
+    <tr>
+      <td class="">
+        <a class="btn btn-sm btn-light btn-primary" data-toggle="collapse" href="#{{ p.metadata.id }}" role="button"
+           aria-expanded="false"
+           aria-controls="{{ p.metadata.id }}">
+          <i class="fa fa-eye"></i>
+        </a> {{ p.metadata.description|lower|capfirst }}
+        <div class="collapse" id="{{ p.metadata.id }}">
+          <div class="small">
+            <pre><code>{% for f in p.files %}       {{ f }}<br>{% endfor %}</code></pre>
+          </div>
+
+        </div>
+      </td>
+    </tr>
+  {% endfor %}
+</table>

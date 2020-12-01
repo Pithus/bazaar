@@ -1,0 +1,14 @@
+{% if result and result.apk_hash %}
+<tr>
+  <td>
+    <a href="{% url 'front:report'  result.apk_hash %}">
+    <code>{{ result.apk_hash|truncatechars:17 }}</code>
+    </a>
+    <br>
+    <span class="small text-muted">{{ result.size }}</span>
+  </td>
+  <td>{{ result.app_name|truncatechars:17 }}<br>
+    <span class="small text-muted"><samp>{{ result.handle }}</samp></span>
+  </td>
+</tr>
+{% endif %}

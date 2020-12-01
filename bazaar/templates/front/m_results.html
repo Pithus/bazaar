@@ -1,0 +1,16 @@
+{% if results %}
+  <table class="table table-sm table-borderless ">
+  <caption class="small text-right">{{ results|length }} results</caption>
+  <thead>
+    <tr>
+      <th>SHA256</th>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for result in results %}
+    {% include "front/m_result.html" with result=result %}
+  {% endfor %}
+  </tbody>
+  </table>
+{% endif %}

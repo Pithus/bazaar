@@ -1,0 +1,23 @@
+@import "./font-opensans";
+@import "./custom_bootstrap_vars";
+@import "../vendors/bootstrap-4.0.0/scss/bootstrap";
+@import "./controls";
+@import "./color_effects";
+
+html, body {
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+body, a {
+  position: relative;
+  min-height: 100%;
+  font-family: "Open Sans", sans-serif !important;
+}
+
+samp {
+  font-size: 0.8em;
+}

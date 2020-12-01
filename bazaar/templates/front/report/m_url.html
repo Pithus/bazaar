@@ -1,0 +1,13 @@
+{% load get %}
+
+<table class="table table-condensed table-sm">
+  {% for p in d.url_analysis %}
+    <tr>
+      <td class=""><samp>{{ p.path }}</samp><br>
+        {% for u in p.urls %}
+          <span class="small text-muted"><samp>{{ u }}</samp></span>
+        {% endfor %}
+      </td>
+    </tr>
+  {% endfor %}
+</table>
