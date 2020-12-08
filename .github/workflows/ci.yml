@@ -41,11 +41,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build the Pithus-core Docker image
-        run: docker build . --file production/django/Dockerfile --tag pithus-core:$(date +%s)
+        run: docker build . --file compose/production/django/Dockerfile --tag pithus-core:$(date +%s)
       - name: Build the Pithus-db Docker image
-        run: docker build . --file production/postgres/Dockerfile --tag pithus-db:$(date +%s)
+        run: docker build . --file compose/production/postgres/Dockerfile --tag pithus-db:$(date +%s)
       - name: Build the Pithus-web Docker image
-        run: docker build . --file production/traefik/Dockerfile --tag pithus-web:$(date +%s)
+        run: docker build . --file compose/production/traefik/Dockerfile --tag pithus-web:$(date +%s)
 
 # With no caching at all the entire ci process takes 4m 30s to complete!
 #  pytest:
