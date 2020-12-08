@@ -3,10 +3,11 @@
 <table class="table table-condensed table-sm">
   {% for p in d.url_analysis %}
     <tr>
-      <td class=""><samp>{{ p.path }}</samp><br>
+      <td class="">
         {% for u in p.urls %}
-          <span class="small text-muted"><samp>{{ u }}</samp></span>
+          <samp>{{ u }}</samp><br>
         {% endfor %}
+        <span class="small text-muted">Defined in <samp>{{ p.path }}</samp></span>
       </td>
     </tr>
   {% endfor %}

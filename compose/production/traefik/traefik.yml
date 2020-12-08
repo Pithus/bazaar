@@ -14,7 +14,7 @@ certificatesResolvers:
   letsencrypt:
     # https://docs.traefik.io/master/https/acme/#lets-encrypt
     acme:
-      email: "esther@example.com"
+      email: "pandora@pithus.org"
       storage: /etc/traefik/acme/acme.json
       # https://docs.traefik.io/master/https/acme/#httpchallenge
       httpChallenge:
@@ -23,8 +23,8 @@ certificatesResolvers:
 http:
   routers:
     web-router:
-      rule: "Host(`example.com`) || Host(`www.example.com`)"
-      
+      rule: "Host(`pithus.org`) || Host(`www.pithus.org`)"
+
       entryPoints:
         - web
       middlewares:
@@ -33,8 +33,8 @@ http:
       service: django
 
     web-secure-router:
-      rule: "Host(`example.com`) || Host(`www.example.com`)"
-      
+      rule: "Host(`pithus.org`) || Host(`www.pithus.org`)"
+
       entryPoints:
         - web-secure
       middlewares:

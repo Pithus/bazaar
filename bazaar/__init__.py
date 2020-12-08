@@ -45,11 +45,10 @@ index_mappings = {
 es = Elasticsearch([settings.ELASTICSEARCH_HOST])
 try:
     es.indices.create(index=settings.ELASTICSEARCH_APK_INDEX)
-except:
+except Exception:
     pass
 
 # es.indices.close(index=settings.ELASTICSEARCH_APK_INDEX)
 es.indices.put_settings(index_settings, index=settings.ELASTICSEARCH_APK_INDEX)
 # es.indices.open(index=settings.ELASTICSEARCH_APK_INDEX)
 # es.indices.refresh(index=settings.ELASTICSEARCH_APK_INDEX)
-

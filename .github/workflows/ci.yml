@@ -36,24 +36,35 @@ jobs:
       - name: Lint with flake8
         run: flake8
 
-# With no caching at all the entire ci process takes 4m 30s to complete!
-  pytest:
+  build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+      - name: Build the Pithus-core Docker image
+        run: docker build . --file production/django/Dockerfile --tag pithus-core:$(date +%s)
+      - name: Build the Pithus-db Docker image
+        run: docker build . --file production/postgres/Dockerfile --tag pithus-db:$(date +%s)
+      - name: Build the Pithus-web Docker image
+        run: docker build . --file production/traefik/Dockerfile --tag pithus-web:$(date +%s)
 
-      - name: Checkout Code Repository
-        uses: actions/checkout@v2
-      - name: Build the Stack
-        run:  docker-compose -f local.yml build
-
-      - name: Make DB Migrations
-        run:  docker-compose -f local.yml run --rm django python manage.py migrate
-
-      - name: Run the Stack
-        run:  docker-compose -f local.yml up -d
-
-      - name: Run Django Tests
-        run:  docker-compose -f local.yml exec -T django pytest
-
-      - name: Tear down the Stack
-        run:  docker-compose down
+# With no caching at all the entire ci process takes 4m 30s to complete!
+#  pytest:
+#    runs-on: ubuntu-latest
+#    steps:
+#
+#      - name: Checkout Code Repository
+#        uses: actions/checkout@v2
+#      - name: Build the Stack
+#        run:  docker-compose -f local.yml build
+#
+#      - name: Make DB Migrations
+#        run:  docker-compose -f local.yml run --rm django python manage.py migrate
+#
+#      - name: Run the Stack
+#        run:  docker-compose -f local.yml up -d
+#
+#      - name: Run Django Tests
+#        run:  docker-compose -f local.yml exec -T django pytest
+#
+#      - name: Tear down the Stack
+#        run:  docker-compose down

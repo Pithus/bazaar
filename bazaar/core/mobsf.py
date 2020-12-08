@@ -1,6 +1,6 @@
-import requests
-
 import logging
+
+import requests
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ class MobSF:
         """Upload an app."""
         logger.debug(f"Uploading {filename} to {self.__server}")
 
-        multipart_data ={'file': (filename, file, 'application/octet-stream')}
+        multipart_data = {'file': (filename, file, 'application/octet-stream')}
         headers = {'Authorization': self.__apikey}
 
         r = requests.post(f'{self.__server}/api/v1/upload', files=multipart_data, headers=headers)

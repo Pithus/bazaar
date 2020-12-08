@@ -1,27 +1,25 @@
-import logging
-
-from androguard.core import androconf
-from androguard.core.bytecodes.apk import APK
-
-androconf.show_logging(logging.ERROR)
-
 import base64
 import binascii
 import hashlib
+import logging
 import zipfile
 from hashlib import sha256, sha1
 from io import BytesIO
 from tempfile import NamedTemporaryFile
 
 from PIL import Image
+from androguard.core import androconf
+from androguard.core.bytecodes.apk import APK
 
 MAX_IMAGE_SIZE = 96, 96
+androconf.show_logging(logging.ERROR)
 
 
 class Certificate:
     """
     Helper class representing an X509 certificate
     """
+
     def __init__(self, cert):
         self.fingerprint = binascii.hexlify(cert.sha1).decode('ascii').lower()
         md5_digest = hashlib.md5(cert.dump()).digest()
@@ -143,7 +141,7 @@ def icon_to_base64(apk_path, icon_path):
                 img.save(buffer, format="PNG")
                 data = base64.b64encode(buffer.getvalue()).decode('ascii')
                 return data
-    except:
+    except Exception:
         return None
 
 
@@ -171,7 +169,7 @@ def base64_to_icon(base64_icon):
             buffer = BytesIO()
             img.save(buffer, format="PNG")
             return buffer.getvalue()
-    except:
+    except Exception:
         return None
 
 
@@ -185,7 +183,7 @@ def compute_dhash_from_base64(base64_img):
     try:
         img = _get_img_from_base64(base64_img)
         return '{:02X}'.format(dhash.dhash_int(img, size=8))
-    except:
+    except Exception:
         return None
 
 
@@ -199,7 +197,7 @@ def compute_dhash_from_file(img_path):
     try:
         img = Image.open(img_path).convert("RGBA")
         return '{:02X}'.format(dhash.dhash_int(img, size=8))
-    except:
+    except Exception:
         return None
 
 
@@ -267,7 +265,7 @@ class ApplicationSignature(object):
             try:
                 urllib.request.urlretrieve(url, apk.name)
                 return ApplicationSignature.compute_from_apk(apk.name)
-            except:
+            except Exception:
                 return None
 
     def to_dict(self):

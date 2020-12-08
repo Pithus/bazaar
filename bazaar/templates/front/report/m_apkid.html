@@ -1,0 +1,23 @@
+{% load get %}
+
+<table class="table table-condensed table-sm">
+  {% for p in d.apkid|dictsort:"filename" %}
+    <tr class="table-primary">
+      <td class=""><samp>{{ p.filename }}</samp></td>
+      <td class=""></td>
+    </tr>
+
+    {% for k, v in p.matches.items %}
+      <tr>
+        <td>{{ k }}</td>
+        <td>
+          <ul class="list-unstyled">
+            {% for c in v %}
+              <li><samp>{{ c }}</samp></li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+    {% endfor %}
+  {% endfor %}
+</table>

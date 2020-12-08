@@ -1,4 +1,6 @@
-import hashlib, os, re
+import hashlib
+import re
+
 from androguard.core.bytecodes import apk
 from django.utils.html import escape
 
@@ -10,11 +12,13 @@ def get_sha256_of_file_path(file_path):
             sha256_hash.update(byte_block)
         return sha256_hash.hexdigest()
 
+
 def get_sha256_of_file(f):
     sha256_hash = hashlib.sha256()
     for byte_block in iter(lambda: f.read(4096), b""):
         sha256_hash.update(byte_block)
     return sha256_hash.hexdigest()
+
 
 def is_secret(inp):
     inp = inp.lower()
@@ -76,7 +80,6 @@ def url_n_email_extract(dat, relative_path):
     return urllist, url_n_file, email_n_file
 
 
-
 def strings_from_apk(apk_file):
     """Extract the strings from an app."""
     try:
@@ -99,11 +102,11 @@ def strings_from_apk(apk_file):
         urls, urls_nf, emails_nf = url_n_email_extract(
             data_string, 'Android String Resource')
         return {
-                'urls_list': list(set(urls)),
-                'url_nf': urls_nf,
-                'emails_nf': emails_nf,
-                'secrets': secrets,
-                }
+            'urls_list': list(set(urls)),
+            'url_nf': urls_nf,
+            'emails_nf': emails_nf,
+            'secrets': secrets,
+        }
     except Exception:
         print('Extracting Strings from APK')
         return {}

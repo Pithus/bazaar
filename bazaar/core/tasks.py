@@ -2,10 +2,11 @@ import gc
 import glob
 import logging
 import re
-import requests
 import zipfile
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 
+import dexofuzzy
+import requests
 import ssdeep
 from androguard.core.bytecodes.apk import APK
 from androguard.misc import AnalyzeAPK
@@ -56,7 +57,6 @@ def extract_attributes(sha256):
 
         if not es.exists(settings.ELASTICSEARCH_APK_INDEX, id=sha256):
             es.index(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body=sign)
-            # es.indices.refresh(index=settings.ELASTICSEARCH_APK_INDEX)
         else:
             es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': sign})
     del a, sign, f
@@ -152,6 +152,10 @@ def ssdeep_analysis(sha256):
                 'manifest': '',
                 'resources': '',
                 'dex': []
+            },
+            'dexofuzzy': {
+                'apk': dexofuzzy.hash_from_file(f.name),
+                'dex': []
             }
         }
 
@@ -166,6 +170,10 @@ def ssdeep_analysis(sha256):
                 doc['ssdeep']['dex'].append({
                     'file': file.replace(f'{tmp_dir}/', ''),
                     'hash': ssdeep.hash_from_file(file)
+                })
+                doc['dexofuzzy']['dex'].append({
+                    'file': file.replace(f'{tmp_dir}/', ''),
+                    'hash': dexofuzzy.hash_from_file(file)
                 })
 
         es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': doc})
@@ -195,7 +203,7 @@ def mobsf_analysis(sha256):
         if response:
             mobsf.scan(response)
             report = mobsf.report_json(response)
-            # mobsf.delete_scan(response)
+            mobsf.delete_scan(response)
 
             to_store = {
                 'analysis_date': report['timestamp'],
@@ -274,11 +282,11 @@ def get_google_play_info(package):
         )
         if details:
             es.index(index=settings.ELASTICSEARCH_GP_INDEX, id=package, body=details)
+            del details
             return {'status': 'success', 'info': ''}
     except Exception as e:
         raise e
     finally:
-        del details
         gc.collect()
 
     return {'status': 'error', 'info': f'Unable to retrieve Google Play details of {package}'}

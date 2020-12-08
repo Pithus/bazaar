@@ -7,6 +7,7 @@
 html, body {
   height: 100%;
 }
+
 body {
   display: flex;
   flex-direction: column;
@@ -16,8 +17,9 @@ body, a {
   position: relative;
   min-height: 100%;
   font-family: "Open Sans", sans-serif !important;
+  font-size: 14px;
 }
 
 samp {
-  font-size: 0.8em;
+  font-size: 0.9em;
 }

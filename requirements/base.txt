@@ -34,4 +34,4 @@ ssdeep
 google-play-scraper
 gpapi
 requests
-
+dexofuzzy

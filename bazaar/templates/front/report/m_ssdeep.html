@@ -1,0 +1,18 @@
+{% load get %}
+
+<table class="table table-condensed table-sm">
+  <tr>
+    <td class=""><span class="">APK file</span></td>
+    <td class=""><samp>{{ d.ssdeep.apk }}</samp></td>
+  </tr>
+  <tr>
+    <td class=""><span class="">Manifest</span></td>
+    <td class=""><samp>{{ d.ssdeep.manifest }}</samp></td>
+  </tr>
+  {% for p in d.ssdeep.dex|dictsort:"file" %}
+    <tr>
+      <td class=""><span class=""><samp>{{ p.file }}</samp></span></td>
+      <td class=""><samp>{{ p.hash }}</samp></td>
+    </tr>
+  {% endfor %}
+</table>

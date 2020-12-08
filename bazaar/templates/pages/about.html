@@ -1,1 +1,45 @@
 {% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <h3>Pithus, the opened pandora's box</h3>
+        <blockquote class="blockquote text-muted">
+          <p class="small">The Pandora myth is a kind of theodicy, addressing the question of why there is evil in the
+            world. According to this, Pandora opened a jar (pithos) (commonly referred to as "Pandora's box") releasing
+            all the evils of humanity.</p>
+          <footer class="blockquote-footer mt-0 small">Wikipedia</footer>
+        </blockquote>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <h3>How Pithus works</h3>
+        <p>
+          Pithus analyses, which we want to be as comprehensive as possible, rely on multiple well-known tools such as:
+        <ul>
+          <li><a target="_blank" href="https://github.com/rednaga/APKiD">APKiD</a></li>
+          <li><a target="_blank" href="https://github.com/DinoTools/python-ssdeep">ssdeep</a></li>
+          <li><a target="_blank" href="https://github.com/ESTsecurity/Dexofuzzy">Dexofuzzy</a></li>
+          <li><a target="_blank" href="https://github.com/androguard/androguard">AndroGuard</a></li>
+          <li><a target="_blank" href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a></li>
+          <li><a target="_blank" href="https://github.com/Exodus-Privacy/exodus-core">Exodus-core</a></li>
+        </ul>
+        </p>
+        <p>
+          Under the hood, Pithus is based on:
+          <ul>
+            <li><a href="https://www.djangoproject.com/" target="_blank">Django</a> </li>
+            <li><a href=https://www.django-rest-framework.org/" target="_blank">Django Rest Framework</a> </li>
+            <li><a href="https://django-q.readthedocs.io/en/latest/" target="_blank">Django Q</a> </li>
+            <li><a href="https://redis.io/" target="_blank">Redis</a> </li>
+            <li><a href="https://www.elastic.co/" target="_blank">Elasticsearch</a> </li>
+            <li><a href="https://min.io/" target="_blank">Minio</a> </li>
+          </ul>
+        </p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

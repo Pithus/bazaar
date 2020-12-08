@@ -22,5 +22,9 @@ class BasicSearchForm(forms.Form):
         try:
             results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
             return transform_results(results)
-        except:
+        except Exception:
             return []
+
+
+class BasicUploadForm(forms.Form):
+    apk = forms.FileField()
