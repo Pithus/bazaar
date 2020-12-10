@@ -5,9 +5,10 @@
 {% block content %}
   <div class="container">
 
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mt-5">
       <div class="col-md-12 text-center">
         <h3> Android security & privacy analysis for the masses </h3>
+        <img src="{% static 'images/logo.png' %}" width="200px">
       </div>
     </div>
 
@@ -31,7 +32,7 @@
         <form class="form-horizontal text-center" method="post" action="{% url "front:basic_upload" %}"
               enctype="multipart/form-data">{% csrf_token %}
 
-          <div class="custom-file">
+          <div class="custom-file ">
             <input type="file" class="custom-file-input" id="customFile" name="apk">
             <label class="custom-file-label" for="customFile">Choose file</label>
           </div>
@@ -43,14 +44,23 @@
         </form>
       </div>
     </div>
-
-    <div class="row justify-content-center mt-5">
-      <div class="col-md-12">
-        <h2>Results</h2>
-        {% include "front/m_results.html" with results=results %}
+    <div class="row justify-content-center">
+      <div class="col text-center text-muted">
+        See an <a href="{% url 'front:report'  report_example.apk_hash %}">example of report</a>.
       </div>
     </div>
-
+    {% if list_results %}
+      <div class="row justify-content-center mt-5">
+        <div class="col-md-12">
+          {% if results %}
+            <h2>Results</h2>
+            {% include "front/m_results.html" with results=results %}
+          {% else %}
+            <h2>No results</h2>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
   </div>
 {% endblock content %}
 

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="26.883554mm"
+   height="26.883554mm"
+   viewBox="0 0 26.883554 26.883554"
+   version="1.1"
+   id="svg1297"
+   inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
+   sodipodi:docname="favicon.svg"
+   inkscape:export-filename="/home/esther/Make/Esther/bazaar/bazaar/static/images/favicon.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
+  <defs
+     id="defs1291" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="5.6"
+     inkscape:cx="65.661268"
+     inkscape:cy="37.723047"
+     inkscape:document-units="mm"
+     inkscape:current-layer="g1312"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1712"
+     inkscape:window-height="1409"
+     inkscape:window-x="1720"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata1294">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:none"
+     transform="translate(-40.01823,-110.27975)">
+    <g
+       aria-label="Po"
+       style="font-style:normal;font-weight:normal;font-size:22.57777786px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#800000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       id="text1301">
+      <path
+         d="m 43.75232,114.54932 v 6.18464 h 2.800173 q 1.554427,0 2.403299,-0.80478 0.848871,-0.80477 0.848871,-2.29305 0,-1.47726 -0.848871,-2.28204 -0.848872,-0.80477 -2.403299,-0.80477 z m -2.22691,-1.83003 h 5.027083 q 2.767101,0 4.178212,1.25677 1.422136,1.24574 1.422136,3.66007 0,2.43637 -1.422136,3.68211 -1.411111,1.24575 -4.178212,1.24575 H 43.75232 v 6.61458 h -2.22691 z"
+         style="fill:#800000;stroke-width:0.26458332"
+         id="path1303"
+         inkscape:connector-curvature="0" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer7"
+     inkscape:label="Fond"
+     style="display:inline"
+     transform="translate(-40.01823,-110.27975)">
+    <rect
+       style="fill:#593196;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       id="rect1323"
+       width="26.883554"
+       height="26.883554"
+       x="40.01823"
+       y="110.27975" />
+  </g>
+  <g
+     id="g1314"
+     inkscape:groupmode="layer"
+     inkscape:label="Copie de Calque 1"
+     transform="translate(-40.01823,-110.27975)">
+    <g
+       id="g1330"
+       style="fill:#ffffff"
+       transform="translate(0.34805267,2.6127392)">
+      <path
+         sodipodi:nodetypes="cscscsccscssscc"
+         inkscape:connector-curvature="0"
+         id="path1305"
+         style="font-style:normal;font-weight:normal;font-size:22.57777786px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;display:inline;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.72557622;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 62.779803,118.45972 c 0.954998,1.08745 1.321592,2.46639 1.321592,4.39033 0,1.91696 -0.477498,3.42265 -1.432496,4.51706 -0.954998,1.08745 -2.26899,1.63116 -3.941978,1.63116 -1.679959,0 -2.997437,-0.54371 -3.952435,-1.63116 -0.948026,-1.09441 -1.422039,-2.6001 -1.422039,-4.51706 0,-1.92394 0.474013,-3.42963 1.422039,-4.51707 l 1.394785,1.37928 c -0.599487,0.80163 -0.788326,1.73665 -0.788326,3.13779 0,1.40112 0.296258,2.50598 0.888775,3.3146 0.599487,0.80164 1.418554,1.20246 2.457201,1.20246 1.024705,0 1.836801,-0.4043 2.436289,-1.21291 0.599487,-0.80862 0.89923,-1.91 0.89923,-3.30415 0,-1.38719 -0.299743,-2.48509 -0.89923,-3.2937 z" />
+      <g
+         aria-label="Po"
+         style="font-style:normal;font-weight:normal;font-size:22.57777786px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+         id="g1312">
+        <path
+           d="m 44.234663,114.8197 v 5.86592 h 2.655868 q 1.47432,0 2.279446,-0.76331 0.805125,-0.76329 0.805125,-2.17488 0,-1.40113 -0.805125,-2.16443 -0.805126,-0.7633 -2.279446,-0.7633 z m -2.112148,-1.73572 h 4.768016 q 2.6245,0 3.96289,1.192 1.348847,1.18154 1.348847,3.47145 0,2.31082 -1.348847,3.49236 -1.33839,1.18155 -3.96289,1.18155 h -2.655868 v 6.2737 h -2.112148 z"
+           style="fill:#ffffff;stroke:#ffffff;stroke-width:0.72557622;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="path1308"
+           inkscape:connector-curvature="0" />
+        <path
+           d="m 62.032632,114.54529 c -0.22759,-0.98627 -0.769616,-1.50016 -1.710584,-1.90587 -0.947371,-0.40845 -1.856386,-0.36006 -2.727031,0.14508 l -0.707749,-1.78129 c 1.307506,-0.62048 2.537925,-0.52679 4.0806,0.13835 1.536275,0.66239 2.527618,1.68191 2.974026,3.0586 z"
+           style="fill:#ffffff;stroke:#ffffff;stroke-width:0.72557622;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+           id="path1310"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="csccscc" />
+      </g>
+    </g>
+  </g>
+</svg>

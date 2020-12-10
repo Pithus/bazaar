@@ -301,7 +301,17 @@ CORS_URLS_REGEX = r"^/api/.*$"
 # Your stuff...
 # ------------------------------------------------------------------------------
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 262144000
+DATA_UPLOAD_MAX_MEMORY_SIZE = 214958080
+
+# 2.5MB - 2621440
+# 5MB - 5242880
+# 10MB - 10485760
+# 20MB - 20971520
+# 50MB - 5242880
+# 100MB 104857600
+# 250MB - 214958080
+# 500MB - 429916160
+MAX_APK_UPLOAD_SIZE = 20971520
 
 ELASTICSEARCH_HOST = 'elasticsearch'
 ELASTICSEARCH_APK_INDEX = 'apk_analysis'

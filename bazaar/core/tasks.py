@@ -284,8 +284,8 @@ def get_google_play_info(package):
             es.index(index=settings.ELASTICSEARCH_GP_INDEX, id=package, body=details)
             del details
             return {'status': 'success', 'info': ''}
-    except Exception as e:
-        raise e
+    except Exception:
+        pass
     finally:
         gc.collect()
 
@@ -298,7 +298,8 @@ def analyze(sha256):
         logging.error(reason)
         return {'status': 'error', 'info': reason}
 
-    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+    if es.exists(settings.ELASTICSEARCH_APK_INDEX, id=sha256):
+        return {'status': 'success', 'info': ''}
 
     # Schedule all other tasks
     package = extract_attributes(sha256)
