@@ -20,7 +20,6 @@ services:
       - elasticsearch
       - minio
       - mobsf
-      - clamav
     volumes:
       - .:/app:z
     env_file:

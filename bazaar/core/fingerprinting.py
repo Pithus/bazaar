@@ -246,7 +246,7 @@ class ApplicationSignature(object):
         sign.apk_hash = get_sha256_of_file(apk_path)
         hashes = get_check_sums_of_file_as_dict(apk_path)
         sign.md5 = hashes['md5']
-        sign.sha1 = hashes['sha256']
+        sign.sha1 = hashes['sha1']
         sign.sha256 = hashes['sha256']
         sign.icon_base64 = icon_to_base64(apk_path, apk.get_app_icon())
         sign.icon_hash = compute_dhash_from_base64(sign.icon_base64)
@@ -283,6 +283,8 @@ class ApplicationSignature(object):
             'icon_hash': self.icon_hash,
             'apk_hash': self.apk_hash,
             'icon_base64': self.icon_base64,
+            'sha1': self.sha1,
+            'md5': self.md5,
             'certificates': [c.__dict__ for c in self.certificates]
         }
 

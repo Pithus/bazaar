@@ -1,0 +1,112 @@
+<div class="row justify-content-center">
+  <div class="col-md-6 text-center">
+    <div id="similarity_dataviz"></div>
+  </div>
+</div>
+
+{{ matrix|json_script:"results-data" }}
+<script>
+  const data = JSON.parse(document.getElementById('results-data').textContent);
+
+  // set the dimensions and margins of the graph
+  var margin = {top: 30, right: 30, bottom: 150, left: 150},
+          width = 650 - margin.left - margin.right,
+          height = 650 - margin.top - margin.bottom;
+
+  // append the svg object to the body of the page
+  var svg = d3.select("#similarity_dataviz")
+          .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  // Labels of row and columns
+  var sums = []
+  for (let dataKey in data) {
+    let d = data[dataKey]
+    sums.push(d.a.substr(0, 16))
+  }
+
+  // Build X scales and axis:
+  var x = d3.scaleBand()
+          .range([0, width])
+          .domain(sums)
+          .padding(0.01);
+  svg.append("g")
+          .attr("transform", "translate(0," + (height) + ")")
+          .attr("font-family", "Open Sans")
+          .call(d3.axisBottom(x))
+          .selectAll("text")
+          .attr("y", 0)
+          .attr("x", -9)
+          .attr("dy", ".35em")
+          .attr("transform", "rotate(-90)")
+          .style("text-anchor", "end");
+
+  // Build Y scales and axis:
+  var y = d3.scaleBand()
+          .range([height, 0])
+          .domain(sums)
+          .padding(0.01)
+  svg.append("g")
+          .call(d3.axisLeft(y));
+
+  // Build color scale
+  var myColor = d3.scaleLinear()
+          .range(["white", "#593196"])
+          .domain([0, 100])
+
+  // create a tooltip
+  var tooltip = d3.select("#similarity_dataviz")
+          .append("div")
+          .style("opacity", 0)
+          .attr("class", "tooltip")
+          .style("background-color", "white")
+          .style("border", "solid")
+          .style("border-width", "2px")
+          .style("border-radius", "5px")
+          .style("padding", "5px")
+
+  // Three function that change the tooltip when user hover / move / leave a cell
+  var mouseover = function (d) {
+    console.log("mouseover")
+    tooltip.style("opacity", 1)
+    return
+  }
+  var mousemove = function (d) {
+    console.log("mousemove")
+    tooltip
+            .html(d.score + "%")
+            .style("left", (d3.mouse(this)[0] + 90) + "px")
+            .style("top", (d3.mouse(this)[1]) + "px")
+    return
+  }
+  var mouseleave = function (d) {
+    console.log("mouseleave")
+    tooltip.style("opacity", 0)
+    return
+  }
+  // add the squares
+  svg.selectAll()
+          .data(data, function (d) {
+            return d.a.substr(0, 16) + ':' + d.b.substr(0, 16);
+          })
+          .enter()
+          .append("rect")
+          .attr("x", function (d) {
+            return x(d.a.substr(0, 16))
+          })
+          .attr("y", function (d) {
+            return y(d.b.substr(0, 16))
+          })
+          .attr("width", x.bandwidth())
+          .attr("height", y.bandwidth())
+          .style("fill", function (d) {
+            return myColor(d.score)
+          })
+          .on("mouseover", mouseover)
+          .on("mousemove", mousemove)
+          .on("mouseleave", mouseleave)
+
+</script>

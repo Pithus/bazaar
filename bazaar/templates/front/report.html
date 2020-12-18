@@ -16,7 +16,7 @@
       <div class="col mb-4">
         <div class="card text-white bg-secondary">
           <div class="card-body text-center">
-            <h3 class="text-white">{{ result.average_cvss }}</h3>
+            <h3 class="text-white">{{ result.average_cvss|default:"NC" }}</h3>
             <h6>CVSS</h6>
           </div>
         </div>

@@ -1,0 +1,55 @@
+<div class="row justify-content-center">
+  <div class="col-md-6 text-center">
+    <div id="{{ graphname }}_dataviz"></div>
+  </div>
+</div>
+
+<script>
+  {
+    let data = JSON.parse(document.getElementById('aggregations-data').textContent)['{{ graphname }}'];
+
+    let buckets = data.buckets;
+
+    // set the dimensions and margins of the graph
+    var margin = {top: 30, right: 30, bottom: 30, left: 250},
+            width = 650 - margin.left - margin.right,
+            height = 300 - margin.top - margin.bottom;
+
+    // append the svg object to the body of the page
+    var svg = d3.select("#{{ graphname }}_dataviz")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var x = d3.scaleLinear()
+    .domain([0, 100])
+    .range([ 0, width]);
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x))
+    .selectAll("text")
+      .attr("transform", "translate(-10,0)rotate(-45)")
+      .style("text-anchor", "end");
+
+  // Y axis
+  var y = d3.scaleBand()
+    .range([ 0, height ])
+    .domain(buckets.map(function(d) { return d.key; }))
+    .padding(.1);
+  svg.append("g")
+    .call(d3.axisLeft(y))
+
+  //Bars
+  svg.selectAll("{{graphname}}Rect")
+    .data(buckets)
+    .enter()
+    .append("rect")
+    .attr("x", x(0) )
+    .attr("y", function(d) { return y(d.key); })
+    .attr("width", function(d) { return x(d.doc_count); })
+    .attr("height", y.bandwidth() )
+    .attr("fill", "#cabddd")
+  }
+</script>

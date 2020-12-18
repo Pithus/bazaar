@@ -1,14 +1,34 @@
-{% if result and result.apk_hash %}
-<tr>
-  <td>
-    <a href="{% url 'front:report'  result.apk_hash %}">
-    <code>{{ result.apk_hash|truncatechars:17 }}</code>
-    </a>
-    <br>
-    <span class="small text-muted">{{ result.size }}</span>
-  </td>
-  <td>{{ result.app_name|truncatechars:17 }}<br>
-    <span class="small text-muted"><samp>{{ result.handle }}</samp></span>
-  </td>
-</tr>
+{% if result and result.source %}
+  <tr>
+    <td>
+      <a href="{% url 'front:report'  result.source.apk_hash %}">
+        <code>{{ result.source.apk_hash|truncatechars:17 }}</code>
+      </a>
+      <br>
+      {{ result.source.app_name|truncatechars:17 }}<br>
+      <span class="small text-muted"><samp>{{ result.source.handle }}</samp></span>
+    </td>
+    <td>
+      {% for k,v in result.highlight.items %}
+        <span class="text-muted">Attribute: <samp>{{ k }}</samp></span>
+        <p class="small code-samples">
+          {% for l in v %}
+            <samp>{{ l|safe }}</samp><br>
+          {% endfor %}
+        </p>
+      {% endfor %}
+    </td>
+    <td>
+      {% for s in result.sim %}
+        <div class="progress mt-1">
+          <div class="progress-bar" role="progressbar" style="width: {{ s.score }}%;" aria-valuenow="{{ s.score }}"
+               aria-valuemin="0"
+               aria-valuemax="100">{{ s.score }}%
+          </div>
+        </div>
+        <span class="small text-muted"><samp>{{ s.handle|truncatechars:17 }}</samp></span>
+        <a class="small" href="{% url 'front:report' s.sha256 %}"><i class="fa fa-eye"></i></a>
+      {% endfor %}
+    </td>
+  </tr>
 {% endif %}

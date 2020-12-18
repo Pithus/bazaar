@@ -3,6 +3,7 @@ import glob
 import logging
 import re
 import zipfile
+from datetime import datetime
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 import dexofuzzy
@@ -36,6 +37,8 @@ def extract_attributes(sha256):
         sign = sign.to_dict()
 
         a = APK(f.name)
+        sign['uploaded_at'] = datetime.now()
+        sign['sha256'] = sha256
         sign['activities'] = a.get_activities()
         sign['features'] = a.get_features()
         sign['libraries'] = a.get_libraries()
@@ -117,6 +120,11 @@ def exodus_analysis(classes):
 
 
 def extract_classes(sha256):
+    def _lcheck(name):
+        count = name.count('/') + 1
+        length = len(name)
+        return length / count >= 2
+
     with NamedTemporaryFile() as f:
         f.write(default_storage.open(sha256).read())
         f.seek(0)
@@ -125,14 +133,20 @@ def extract_classes(sha256):
         class_names = []
         for c in dx.get_classes():
             class_name = c.name
-            if "$" not in class_name and class_name not in class_names:
+            if not class_name.startswith('Lkotlin/') and not class_name.startswith(
+                'Landroid/') and not class_name.startswith('Landroidx/') and not class_name.startswith(
+                'Ljavax/') and not class_name.startswith('Lkotlinx/') and not class_name.startswith(
+                'Ljava/') and _lcheck(class_name) and class_name not in class_names:
                 class_names.append(class_name)
 
         doc = {
-            'external_classes': [c.name for c in dx.get_external_classes()],
+            'java_classes': ', '.join(class_names)
+        }
+        es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': doc})
+
+        doc = {
             'trackers': exodus_analysis(class_names)
         }
-
         es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': doc})
 
     del a, d, dx, doc, f
@@ -217,7 +231,7 @@ def mobsf_analysis(sha256):
                 'manifest_analysis': report['manifest_analysis'],
                 'network_security': report['network_security'],
                 'file_analysis': report['file_analysis'],
-                'binary_analysis': report['binary_analysis'],
+                # 'binary_analysis': report['binary_analysis'],
                 'url_analysis': report['urls'],
                 'email_analysis': report['emails'],
                 'secrets': report['secrets'],

@@ -1,0 +1,105 @@
+<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#helpModal">
+  Help
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="helpModalLabel">Search terms</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-left">
+        <p>
+          You can use <kbd>*</kbd> as wildcard, <kbd>(</kbd> and <kbd>)</kbd> to group conditions, <kbd>AND</kbd> and <kbd>OR</kbd> as operators.
+        </p>
+        <p>
+          Example of query:<br>
+          <code>permissions: *INTERNET AND java_classes: amazon</code>
+        </p>
+        <p>
+          Attributes you can filter:
+        </p>
+        <table class="table table-sm">
+          <tr>
+            <td><kbd>md5</kbd></td>
+            <td>Sample MD5 <br>
+              <code>md5: 3acab2...</code></td>
+          </tr>
+          <tr>
+            <td><kbd>sha1</kbd></td>
+            <td>Sample SHA1 <br>
+              <code>sha1: 3acab2...</code></td>
+          </tr>
+          <tr>
+            <td><kbd>sha256</kbd></td>
+            <td>Sample SHA256 <br>
+              <code>sha256: 3acab2...</code></td>
+          </tr>
+          <tr>
+            <td><kbd>uaid</kbd></td>
+            <td>Sample UAID <br>
+              <code>uaid: 3acab2...</code></td>
+          </tr>
+          <tr>
+            <td><kbd>permissions</kbd></td>
+            <td>Requested Android permission <br>
+              <code>permissions: *.internet</code></td>
+          </tr>
+          <tr>
+            <td><kbd>java_classes</kbd></td>
+            <td>Defined Java class <br>
+              <code>java_classes: "Lcom/amazon/device"</code></td>
+          </tr>
+          <tr>
+            <td><kbd>features</kbd></td>
+            <td>Requested Android feature <br>
+              <code>features: *camera</code></td>
+          </tr>
+          <tr>
+            <td><kbd>handle</kbd></td>
+            <td>Application package name <br>
+              <code>handle: fr.meteo</code></td>
+          </tr>
+          <tr>
+            <td><kbd>app_name</kbd></td>
+            <td>Application name <br>
+              <code>app_name: Google</code></td>
+          </tr>
+          <tr>
+            <td><kbd>domains</kbd></td>
+            <td>Found domain <br>
+              <code>domains: *google*</code></td>
+          </tr>
+
+          <tr>
+            <td><kbd>cert_md5</kbd></td>
+            <td>Certificate MD5 fingerprint <br>
+              <code>cert_md5: 3acab2...</code></td>
+          </tr>
+          <tr>
+            <td><kbd>cert_sha1</kbd></td>
+            <td>Certificate SHA1 fingerprint <br>
+              <code>cert_sha1: 3acab2...</code></td>
+          </tr>
+          <tr>
+            <td><kbd>cert_sha256</kbd></td>
+            <td>Certificate SHA256 fingerprint <br>
+              <code>cert_sha256: 3acab2...</code></td>
+          </tr>
+          <tr>
+            <td><kbd>cert_issuer</kbd></td>
+            <td>Certificate issuer <br>
+              <code>cert_issuer: *google*</code></td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

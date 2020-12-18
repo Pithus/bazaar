@@ -34,6 +34,7 @@ $dropdown-link-hover-bg: $primary;
 $navbar-dark-hover-color: rgba($white, .9);
 
 $code-color: $purple !default;
+$mark-bg: #ece5f6;
 //$code-font-size: 0.55em;
 
 
@@ -57,9 +58,4 @@ $border-radius: 0.6rem;
 $enable-responsive-font-sizes: true;
 $font-size-base: 1rem;
 
-@mixin linear-gradient($direction, $color-stops...) {
-  background: nth(nth($color-stops, 1), 1);
-  background: -webkit-linear-gradient(legacy-direction($direction), $color-stops);
-  background: linear-gradient($direction, $color-stops);
-}
 

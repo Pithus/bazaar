@@ -3,6 +3,7 @@ from tempfile import NamedTemporaryFile
 from androguard.core.androconf import is_android
 from django.conf import settings
 from django.contrib import messages
+from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
@@ -13,23 +14,15 @@ from rest_framework.reverse import reverse_lazy
 
 from bazaar.core.tasks import analyze
 from bazaar.core.utils import get_sha256_of_file
-from bazaar.front.forms import BasicSearchForm, BasicUploadForm
-from bazaar.front.utils import transform_results
-
-from django.core.cache import cache
+from bazaar.front.forms import SearchForm, BasicUploadForm
+from bazaar.front.utils import transform_results, get_similarity_matrix
 
 
 @method_decorator(csrf_exempt, name='dispatch')
 class HomeView(View):
 
     def get(self, request, *args, **kwargs):
-        # query = {
-        #     "query": {
-        #         "match_all": {}
-        #     },
-        #     "_source": ["handle", "apk_hash", "size", "app_name"]
-        # }
-
+        # Gets the latest complete report as an example
         es = Elasticsearch([settings.ELASTICSEARCH_HOST])
         q = {
             "size": 1,
@@ -39,7 +32,6 @@ class HomeView(View):
             },
             "_source": ["handle", "apk_hash"]
         }
-
         report_example = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=q)
         tmp = transform_results(report_example)
         if tmp:
@@ -47,20 +39,34 @@ class HomeView(View):
         else:
             report_example = tmp
 
-        f = BasicSearchForm(request.GET)
+        q = None
+        matrix = None
+        results = None
+        list_results = False
+        aggregations = []
+
+        f = SearchForm(request.GET)
         form_to_show = f
         if not request.GET:
-            form_to_show = BasicSearchForm()
+            form_to_show = SearchForm()
         if f.is_valid():
-            results = f.do_search()
+            results, aggregations = f.do_search()
             list_results = True
-        else:
-            results = None
-            list_results = False
+            q = f.cleaned_data['q']
+            matrix = get_similarity_matrix(results)
 
-        return render(request, 'front/index.html',
-                      {'form': form_to_show, 'results': results, 'upload_form': BasicUploadForm(),
-                       'list_results': list_results, 'report_example': report_example})
+        return render(request,
+                      'front/index.html',
+                      {
+                          'form': form_to_show,
+                          'results': results,
+                          'aggregations': aggregations,
+                          'upload_form': BasicUploadForm(),
+                          'list_results': list_results,
+                          'report_example': report_example,
+                          'q': q, 'matrix': matrix,
+                          'max_size': settings.MAX_APK_UPLOAD_SIZE
+                      })
 
 
 class ReportView(View):
@@ -107,7 +113,7 @@ def basic_upload_view(request):
                     tmp.write(chunk)
                 tmp.seek(0)
 
-                if is_android(tmp.name) is not 'APK':
+                if is_android(tmp.name) != 'APK':
                     messages.warning(request, 'Submitted file is not a valid APK.')
                     return redirect(reverse_lazy('front:home'))
 

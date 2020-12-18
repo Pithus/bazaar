@@ -2,58 +2,94 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-{% block content %}
-  <div class="container">
+{% block whole_content %}
+  {{ aggregations|json_script:"aggregations-data" }}
+  <div class="bg-secondary pb-2">
+    <div class="container-fluid">
+      {# Header #}
+      <div class="row justify-content-center mt-2">
+        <div class="col-md-12 text-center">
+          <h3 class=" text-white"> Android security & privacy analysis for the masses </h3>
+          <img src="{% static 'images/logo.png' %}" width="140px">
+        </div>
+      </div>
 
-    <div class="row justify-content-center mt-5">
-      <div class="col-md-12 text-center">
-        <h3> Android security & privacy analysis for the masses </h3>
-        <img src="{% static 'images/logo.png' %}" width="200px">
+      {# Search form #}
+      <div class="row justify-content-center mt-2">
+        <div class="col-md-6 mt-2 mb-2">
+          <form class="form-horizontal text-center" method="get">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><i class="fa fa-search"></i></span>
+              </div>
+              {% if q %}
+                <input type="text" name="q" class="form-control rounded-right" required value="{{ q }}">
+              {% else %}
+                <input type="text" name="q" class="form-control rounded-right" required placeholder="Your query">
+              {% endif %}
+            </div>
+            <div class="control-group mt-1">
+              <div class="controls">
+                {% include "front/m_search_help.html" %}
+                <button type="submit" class="btn btn-primary">Search</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-md-6 mt-2 mb-2">
+          <form class="form-horizontal text-center" method="post" action="{% url "front:basic_upload" %}"
+                enctype="multipart/form-data">{% csrf_token %}
+            <div class="custom-file ">
+              <input type="file" class="custom-file-input" id="customFile" name="apk">
+              <label class="custom-file-label" for="customFile">APK to be analyzed ({{ max_size|filesizeformat }}
+                max.)</label>
+            </div>
+            <div class="control-group mt-1">
+              <div class="controls">
+                <button type="submit" class="btn btn-primary">Upload</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {# Example of report #}
+      <div class="row justify-content-center">
+        <div class="col text-center">
+          See an <a href="{% url 'front:report'  report_example.apk_hash %}">example of report</a>.
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="row justify-content-center mt-5">
-      <div class="col-md-6 mt-2 mb-2">
-        <form class="form-horizontal text-center" method="get">
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><i class="fa fa-fingerprint"></i></span>
-            </div>
-            <input type="text" name="q" class="form-control rounded-right" required placeholder="SHA256">
-          </div>
-          <div class="control-group mt-1">
-            <div class="controls">
-              <button type="submit" class="btn btn-primary">Search</button>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="col-md-6 mt-2 mb-2">
-        <form class="form-horizontal text-center" method="post" action="{% url "front:basic_upload" %}"
-              enctype="multipart/form-data">{% csrf_token %}
-
-          <div class="custom-file ">
-            <input type="file" class="custom-file-input" id="customFile" name="apk">
-            <label class="custom-file-label" for="customFile">Choose file</label>
-          </div>
-          <div class="control-group mt-1">
-            <div class="controls">
-              <button type="submit" class="btn btn-primary">Upload</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-    <div class="row justify-content-center">
-      <div class="col text-center text-muted">
-        See an <a href="{% url 'front:report'  report_example.apk_hash %}">example of report</a>.
-      </div>
-    </div>
+  <div class="container-fluid">
     {% if list_results %}
-      <div class="row justify-content-center mt-5">
+      <div class="row justify-content-center mt-2">
         <div class="col-md-12">
           {% if results %}
             <h2>Results</h2>
+
+            <div class="col-md-12 mb-2">
+              <ul class="nav nav-pills justify-content-center" id="overviewTab" role="tablist">
+                {% for key, agg in aggregations.items %}
+                  <li class="nav-item">
+                    <a class="nav-link {% if forloop.first %}active{% endif %}" id="{{ key }}-tab" data-toggle="tab"
+                       href="#{{ key }}" role="tab"
+                       aria-controls="{{ key }}"
+                       aria-selected="true">{{ agg.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+
+              <div class="tab-content" id="overviewTabContent">
+                {% for key, agg in aggregations.items %}
+                  <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="{{ key }}" role="tabpanel"
+                       aria-labelledby="{{ key }}-tab">
+                    {% include "front/m_bar_graph.html" with graphname=key %}
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
             {% include "front/m_results.html" with results=results %}
           {% else %}
             <h2>No results</h2>
@@ -62,5 +98,5 @@
       </div>
     {% endif %}
   </div>
-{% endblock content %}
+{% endblock whole_content %}
 
