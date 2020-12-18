@@ -55,9 +55,9 @@ try:
 except Exception:
     pass
 
-es.indices.close(index=settings.ELASTICSEARCH_APK_INDEX)
-es.indices.put_settings(body=index_settings, index=settings.ELASTICSEARCH_APK_INDEX)
-# es.indices.put_mapping(body=index_mappings, index=settings.ELASTICSEARCH_APK_INDEX,
-# doc_type='_doc', include_type_name=True)
-es.indices.open(index=settings.ELASTICSEARCH_APK_INDEX)
-es.indices.refresh(index=settings.ELASTICSEARCH_APK_INDEX)
+# es.indices.close(index=settings.ELASTICSEARCH_APK_INDEX)
+# es.indices.put_settings(body=index_settings, index=settings.ELASTICSEARCH_APK_INDEX)
+# # es.indices.put_mapping(body=index_mappings, index=settings.ELASTICSEARCH_APK_INDEX,
+# # doc_type='_doc', include_type_name=True)
+# es.indices.open(index=settings.ELASTICSEARCH_APK_INDEX)
+# es.indices.refresh(index=settings.ELASTICSEARCH_APK_INDEX)
