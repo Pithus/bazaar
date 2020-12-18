@@ -54,12 +54,14 @@
       </div>
 
       {# Example of report #}
-      <div class="row justify-content-center">
-        <div class="col text-center">
-          See an <a href="{% url 'front:report'  report_example.apk_hash %}">example of report</a>.
+      {% if report_example %}
+        <div class="row justify-content-center">
+          <div class="col text-center">
+            See an <a href="{% url 'front:report'  report_example.apk_hash %}">example of report</a>.
+          </div>
         </div>
-      </div>
-    </div>
+        </div>
+      {% endif %}
   </div>
 
   <div class="container-fluid">

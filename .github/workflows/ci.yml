@@ -36,19 +36,19 @@ jobs:
       - name: Lint with flake8
         run: flake8
 
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build the Pithus-core Docker image
-        run: docker build . --file compose/production/django/Dockerfile
-      - name: Build the Pithus-db Docker image
-        run: docker build . --file compose/production/postgres/Dockerfile
-      - name: Build the Pithus-web Docker image
-        run: docker build . --file compose/production/traefik/Dockerfile
+#  build:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Build the Pithus-core Docker image
+#        run: docker build . --file compose/production/django/Dockerfile
+#      - name: Build the Pithus-db Docker image
+#        run: docker build . --file compose/production/postgres/Dockerfile
+#      - name: Build the Pithus-web Docker image
+#        run: docker build . --file compose/production/traefik/Dockerfile
 
   push-core:
-    needs: build
+#    needs: build
     env:
       IMAGE_NAME: pithus-core
     runs-on: ubuntu-latest
@@ -80,7 +80,7 @@ jobs:
           docker push $IMAGE_ID:$VERSION
 
   push-db:
-    needs: build
+#    needs: build
     env:
       IMAGE_NAME: pithus-db
     runs-on: ubuntu-latest
@@ -112,7 +112,7 @@ jobs:
           docker push $IMAGE_ID:$VERSION
 
   push-web:
-    needs: build
+#    needs: build
     env:
       IMAGE_NAME: pithus-web
     runs-on: ubuntu-latest
