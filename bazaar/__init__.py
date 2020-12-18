@@ -41,12 +41,12 @@ index_settings = {
 }
 
 index_mappings = {
-        "properties": {
-            "java_classes": {
-                "type": "keyword",
-                "term_vector": "with_positions_offsets"
-            }
+    "properties": {
+        "java_classes": {
+            "type": "keyword",
+            "term_vector": "with_positions_offsets"
         }
+    }
 }
 
 es = Elasticsearch([settings.ELASTICSEARCH_HOST])

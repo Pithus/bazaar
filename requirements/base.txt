@@ -6,8 +6,7 @@ argon2-cffi==20.1.0  # https://github.com/hynek/argon2_cffi
 whitenoise==5.2.0  # https://github.com/evansd/whitenoise
 redis==3.5.3  # https://github.com/andymccurdy/redis-py
 hiredis==1.1.0  # https://github.com/redis/hiredis-py
-uvicorn==0.12.2  # https://github.com/encode/uvicorn
-wsproto==0.15.0  # https://github.com/python-hyper/wsproto/
+uvicorn[standard]==0.12.2  # https://github.com/encode/uvicorn
 
 # Django
 # ------------------------------------------------------------------------------

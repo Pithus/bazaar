@@ -169,7 +169,6 @@ MINIO_STORAGE_USE_HTTPS = False
 MINIO_STORAGE_MEDIA_BUCKET_NAME = 'local-media'
 MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = True
 
-
 # TEMPLATES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#templates
@@ -253,7 +252,7 @@ LOGGING = {
     "formatters": {
         "verbose": {
             "format": "%(levelname)s %(asctime)s %(module)s "
-            "%(process)d %(thread)d %(message)s"
+                      "%(process)d %(thread)d %(message)s"
         }
     },
     "handlers": {
@@ -265,7 +264,6 @@ LOGGING = {
     },
     "root": {"level": "INFO", "handlers": ["console"]},
 }
-
 
 # django-allauth
 # ------------------------------------------------------------------------------
@@ -313,7 +311,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 214958080
 # 500MB - 429916160
 MAX_APK_UPLOAD_SIZE = 20971520
 
-ELASTICSEARCH_HOST = 'elasticsearch'
+ELASTICSEARCH_HOST = env("ELASTICSEARCH_HOST", default="elasticsearch")
 ELASTICSEARCH_APK_INDEX = 'apk_analysis'
 ELASTICSEARCH_GP_INDEX = 'google_play_details'
 
@@ -325,7 +323,7 @@ Q_CLUSTER = {
     'timeout': None,
     'compress': True,
     'save_limit': 25,
-    'max_rss': 1024*1024,
+    'max_rss': 1024 * 1024,
     'queue_limit': 50,
     'cpu_affinity': 4,
     'label': 'Django Q',

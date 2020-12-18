@@ -1,0 +1,92 @@
+version: '3'
+
+volumes:
+  pithus_production_postgres_data: {}
+  pithus_production_postgres_data_backups: {}
+  pithus_production_elasticsearch_data: {}
+  pithus_production_minio_data: {}
+
+services:
+  pithus_django: &pithus_django
+    image: docker.pkg.github.com/pithus/bazaar/pithus-core:latest
+    container_name: pithus_django
+    depends_on:
+      - pithus_postgres
+      - pithus_redis
+      - pithus_elasticsearch
+      - pithus_minio
+      - pithus_mobsf
+      - traefik
+    env_file:
+      - ./pithus/.envs/.production/.django
+      - ./pithus/.envs/.production/.postgres
+    command: /start
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.pithus.loadbalancer.server.port=5000"
+      - "traefik.http.middlewares.pithus-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.pithus-http.entrypoints=web"
+      - "traefik.http.routers.pithus-http.rule=Host(`pithus.org`)"
+      - "traefik.http.routers.pithus-http.middlewares=pithus-https@docker"
+      - "traefik.http.routers.pithus.entrypoints=web-secure"
+      - "traefik.http.routers.pithus.rule=Host(`pithus.org`)"
+      - "traefik.http.routers.pithus.tls=true"
+      - "traefik.http.routers.pithus.tls.certresolver=default"
+
+
+  pithus_worker:
+    <<: *pithus_django
+    image: docker.pkg.github.com/pithus/bazaar/pithus-core:latest
+    container_name: pithus_worker
+    depends_on:
+      - pithus_redis
+      - pithus_postgres
+      - pithus_elasticsearch
+      - pithus_minio
+    ports: []
+    command: /start-worker
+
+  pithus_postgres:
+    image: docker.pkg.github.com/pithus/bazaar/pithus-db:latest
+    container_name: pithus_db
+    volumes:
+      - pithus_production_postgres_data:/var/lib/postgresql/data:Z
+      - pithus_production_postgres_data_backups:/backups:z
+    env_file:
+      - ./pithus/.envs/.production/.postgres
+
+  pithus_redis:
+    image: redis:5.0
+    container_name: pithus_redis
+
+  pithus_elasticsearch:
+    image: elasticsearch:7.7.0
+    hostname: elasticsearch
+    container_name: pithus_els
+    environment:
+      - "discovery.type=single-node"
+    volumes:
+      - pithus_production_elasticsearch_data:/usr/share/elasticsearch/data
+
+  pithus_mobsf:
+    image: opensecurity/mobile-security-framework-mobsf:latest
+    hostname: mobsf
+    container_name: pithus_mobsf
+    environment:
+      - "MOBSF_API_ONLY=1"
+      - "MOBSF_API_KEY=515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9"
+
+  pithus_minio:
+    image: minio/minio:RELEASE.2020-11-13T20-10-18Z
+    volumes:
+      - pithus_production_minio_data:/data
+    env_file:
+      - ./pithus/.envs/.production/.django
+    command: server /data
+    container_name: pithus_minio
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
