@@ -3,5 +3,4 @@
 set -o errexit
 set -o nounset
 
-
 python manage.py qcluster

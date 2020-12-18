@@ -25,6 +25,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.services.pithus.loadbalancer.server.port=5000"
       - "traefik.http.middlewares.pithus-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.pithus-header.headers.hostsProxyHeaders=X-CSRFToken"
       - "traefik.http.routers.pithus-http.entrypoints=web"
       - "traefik.http.routers.pithus-http.rule=Host(`pithus.org`)"
       - "traefik.http.routers.pithus-http.middlewares=pithus-https@docker"
