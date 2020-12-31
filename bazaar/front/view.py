@@ -30,7 +30,7 @@ class HomeView(View):
             "query": {
                 "match_all": {}
             },
-            "_source": ["handle", "apk_hash"]
+            "_source": ["handle", "apk_hash", "quark"]
         }
         report_example = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=q)
         tmp = transform_results(report_example)
@@ -105,7 +105,7 @@ def basic_upload_view(request):
         if form.is_valid():
             apk = request.FILES['apk']
             if apk.size > settings.MAX_APK_UPLOAD_SIZE:
-                messages.warning(request, 'Submitted file is to large.')
+                messages.warning(request, 'Submitted file is too large.')
                 return redirect(reverse_lazy('front:home'))
 
             with NamedTemporaryFile() as tmp:
@@ -119,6 +119,7 @@ def basic_upload_view(request):
 
                 sha256 = get_sha256_of_file(tmp)
                 if default_storage.exists(sha256):
+                    # analyze(sha256, force=True)
                     return redirect(reverse_lazy('front:report', [sha256]))
                 else:
                     default_storage.save(sha256, tmp)

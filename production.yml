@@ -46,18 +46,18 @@ services:
     env_file:
       - ./.envs/.production/.postgres
 
-#  traefik:
-#    build:
-#      context: .
-#      dockerfile: ./compose/production/traefik/Dockerfile
-#    image: bazaar_production_traefik
-#    depends_on:
-#      - django
-#    volumes:
-#      - production_traefik:/etc/traefik/acme:z
-#    ports:
-#      - "0.0.0.0:80:80"
-#      - "0.0.0.0:443:443"
+  traefik:
+    build:
+      context: .
+      dockerfile: ./compose/production/traefik/Dockerfile
+    image: bazaar_production_traefik
+    depends_on:
+      - django
+    volumes:
+      - production_traefik:/etc/traefik/acme:z
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
 
   redis:
     image: redis:5.0

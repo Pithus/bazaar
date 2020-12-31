@@ -1,0 +1,18 @@
+{
+  "crime": "Query the local IP address",
+  "x1_permission": [],
+  "x2n3n4_comb": [
+    {
+      "class": "Ljava/net/Socket;",
+      "method": "getLocalAddress",
+      "descriptor": "()Ljava/net/InetAddress;"
+    },
+    {
+      "class": "Ljava/net/InetAddress;",
+      "method": "getHostAddress",
+      "descriptor": "()Ljava/lang/String;"
+    }
+  ],
+  "yscore": 1,
+  "label": ["network", "collection"]
+}

@@ -1,0 +1,18 @@
+{
+    "crime": "Initialize bitmap object and compress data (e.g. JPEG) into bitmap object",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/graphics/BitmapFactory;",
+            "method": "decodeByteArray",
+            "descriptor": "([B I I)Landroid/graphics/Bitmap;"
+        },
+        {
+            "class": "Landroid/graphics/Bitmap;",
+            "method": "compress",
+            "descriptor": "(Landroid/graphics/Bitmap$CompressFormat; I Ljava/io/OutputStream;)Z"
+        }
+    ],
+    "yscore": 1, 
+    "label": ["camera"]
+}

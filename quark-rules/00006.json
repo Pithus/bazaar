@@ -1,0 +1,18 @@
+{
+    "crime": "Scheduling recording task",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "<init>",
+            "descriptor": "()V"
+        },
+        {
+            "class": "Ljava/util/Timer;",
+            "method": "<init>",
+            "descriptor": "()V"
+        }
+    ],
+    "yscore": 1,
+    "label": ["record"]
+}

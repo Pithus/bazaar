@@ -1,0 +1,21 @@
+{% load get %}
+
+<table class="table table-condensed table-sm">
+  {% for p in d.quark.crimes|dictsortreversed:"weight" %}
+    {% if p.weight >= 0.5 %}
+      <tr>
+        <td class="">Confidence:
+          <div class="progress mt-1">
+            <div class="progress-bar progress-bar-striped bg-secondary" role="progressbar"
+                 style="width: {{ p.confidence|cut:"%" }}%;" aria-valuenow="{{ p.confidence|cut:"%" }}"
+                 aria-valuemin="0"
+                 aria-valuemax="100">{{ p.confidence|cut:"%" }}%
+            </div>
+          </div>
+        </td>
+        <td class="">{{ p.crime }}
+        </td>
+      </tr>
+    {% endif %}
+  {% endfor %}
+</table>

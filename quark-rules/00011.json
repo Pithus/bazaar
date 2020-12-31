@@ -1,0 +1,18 @@
+{
+    "crime": "Query data from URI (SMS, CALLLOGS)",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/net/Uri;",
+            "method": "parse",
+            "descriptor": "(Ljava/lang/String;)Landroid/net/Uri;"
+        },
+        {
+            "class": "Landroid/content/ContentResolver;",
+            "method": "query",
+            "descriptor": "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;"
+        }
+    ],
+    "yscore": 1,
+    "label": ["sms", "calllog", "collection"]
+}

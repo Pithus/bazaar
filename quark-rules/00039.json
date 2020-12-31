@@ -1,0 +1,18 @@
+{
+  "crime": "Start a web server",
+  "x1_permission": [],
+  "x2n3n4_comb": [
+    {
+      "class": "Ljava/net/ServerSocket;",
+      "method": "accept",
+      "descriptor": "()Ljava/net/Socket;"
+    },
+    {
+      "class": "Ljava/net/Socket;",
+      "method": "getInetAddress",
+      "descriptor": "()Ljava/net/InetAddress;"
+    }
+  ],
+  "yscore": 1,
+  "label": ["control", "network"]
+}

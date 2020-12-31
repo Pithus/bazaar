@@ -73,7 +73,7 @@ class SearchForm(forms.Form):
                     "terms": {"field": "features.keyword"}
                 }
             },
-            "_source": ["apk_hash", "sha256", "handle", "app_name", "dexofuzzy.apk"],
+            "_source": ["apk_hash", "sha256", "handle", "app_name", "dexofuzzy.apk", "quark"],
             "size": 50,
         }
         es = Elasticsearch([settings.ELASTICSEARCH_HOST])

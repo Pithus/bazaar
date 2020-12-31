@@ -1,0 +1,18 @@
+{
+  "crime": "Load external class",
+  "x1_permission": [],
+  "x2n3n4_comb": [
+    {
+      "class": "Ljava/lang/Class;",
+      "method": "getClassLoader",
+      "descriptor": "()Ljava/lang/ClassLoader;"
+    },
+    {
+      "class": "Ljava/lang/ClassLoader;",
+      "method": "loadClass",
+      "descriptor": "(Ljava/lang/String;)Ljava/lang/Class;"
+    }
+  ],
+  "yscore": 1,
+  "label": ["reflection"]
+}

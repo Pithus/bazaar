@@ -5,7 +5,6 @@ volumes:
   local_postgres_data_backups: {}
   local_elasticsearch_data: {}
   local_minio_data: {}
-  clamav_data: {}
 
 services:
   django: &django
@@ -54,21 +53,6 @@ services:
     env_file:
       - ./.envs/.local/.postgres
 
-  docs:
-    image: bazaar_local_docs
-    build:
-      context: .
-      dockerfile: ./compose/local/docs/Dockerfile
-    env_file:
-      - ./.envs/.local/.django
-    volumes:
-      - ./docs:/docs:z
-      - ./config:/app/config:z
-      - ./bazaar:/app/bazaar:z
-    ports:
-      - "7000:7000"
-    command: /start-docs
-
   mailhog:
     image: mailhog/mailhog:v1.0.0
     ports:
@@ -114,9 +98,3 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
-
-  clamav:
-    image: mkodockx/docker-clamav:alpine
-    restart: unless-stopped
-    volumes:
-      - clamav_data:/var/lib/clamav

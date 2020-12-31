@@ -313,6 +313,7 @@ MAX_APK_UPLOAD_SIZE = 20971520
 
 ELASTICSEARCH_HOST = env("ELASTICSEARCH_HOST", default="elasticsearch")
 ELASTICSEARCH_APK_INDEX = 'apk_analysis'
+ELASTICSEARCH_TASKS_INDEX = 'analysis_tasks'
 ELASTICSEARCH_GP_INDEX = 'google_play_details'
 
 # Django Q

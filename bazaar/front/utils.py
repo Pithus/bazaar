@@ -1,5 +1,7 @@
 import dexofuzzy
 
+from django.conf import settings
+from elasticsearch import Elasticsearch
 
 def transform_results(results):
     return [doc['_source'] for doc in results['hits']['hits']]
@@ -80,3 +82,53 @@ def get_aggregations(results):
         }
 
     return aggregations
+
+
+def init_es():
+
+    index_settings = {
+        'settings': {
+            'index': {
+                'mapping': {
+                    'total_fields': {
+                        'limit': '65635'
+                    }
+                },
+                'highlight': {
+                    'max_analyzed_offset': '60000000'
+                }
+            }
+        },
+        "mappings": {
+            "properties": {
+                "java_classes": {
+                    "type": "text",
+                    "term_vector": "with_positions_offsets"
+                },
+                "analysis_date": {
+                    "type": "date"
+                }
+            }
+        }
+    }
+
+    index_mappings = {
+        "properties": {
+            "java_classes": {
+                "type": "keyword",
+                "term_vector": "with_positions_offsets"
+            },
+            "analysis_date": {
+                "type": "date"
+            }
+        }
+    }
+
+    es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+    try:
+        es.indices.create(index=settings.ELASTICSEARCH_GP_INDEX)
+        es.indices.create(index=settings.ELASTICSEARCH_TASKS_INDEX)
+        es.indices.create(index=settings.ELASTICSEARCH_APK_INDEX, body=index_settings)
+    except Exception as e:
+        print(e)
+        pass

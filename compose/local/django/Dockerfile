@@ -18,6 +18,7 @@ RUN apt-get update \
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
+RUN pip install --upgrade pip
 RUN pip install -r /requirements/local.txt
 
 # Install APKid

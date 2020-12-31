@@ -1,6 +1,9 @@
 {% if result and result.source %}
   <tr>
     <td>
+      {% include "front/report/m_severity.html" with s=result.source.quark.threat_level %}
+    </td>
+    <td>
       <a href="{% url 'front:report'  result.source.apk_hash %}">
         <code>{{ result.source.apk_hash|truncatechars:17 }}</code>
       </a>
@@ -21,7 +24,7 @@
     <td>
       {% for s in result.sim %}
         <div class="progress mt-1">
-          <div class="progress-bar" role="progressbar" style="width: {{ s.score }}%;" aria-valuenow="{{ s.score }}"
+          <div class="progress-bar progress-bar-striped bg-secondary" role="progressbar" style="width: {{ s.score }}%;" aria-valuenow="{{ s.score }}"
                aria-valuemin="0"
                aria-valuemax="100">{{ s.score }}%
           </div>

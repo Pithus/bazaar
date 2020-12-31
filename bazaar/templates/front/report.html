@@ -6,7 +6,25 @@
   <div class="container">
 
     <div class="row justify-content-center">
-      <div class="col-md-12">
+      <div class="col-md-4">
+        <div class="card border-0">
+          {% if result.quark %}
+            <div class="card-body text-center">
+              <h6 class="">Threat level <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top" title="Computed with Quark-Engine"></i> </h6>
+              <h3 class="
+              {% if "Low" in result.quark.threat_level %}
+              text-info
+              {% elif "Moderate" in result.quark.threat_level %}
+              text-warning
+              {% else %}
+              text-danger
+              {% endif %}
+              ">{{ result.quark.threat_level }}</h3>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-md-8">
         <h1>{{ result.handle }}</h1>
         <p class="text-muted">Analyzed on {{ result.analysis_date }}</p>
       </div>
@@ -132,21 +150,21 @@
           <div class="col-md-12">
             <h3>APKiD</h3>
             <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                      href="https://github.com/rednaga/APKiD">APKiD</a>.
+                                                                     href="https://github.com/rednaga/APKiD">APKiD</a>.
             </p>
             {% include "front/report/m_apkid.html" with d=result %}
           </div>
           <div class="col-md-12">
             <h3>SSdeep</h3>
             <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                      href="https://github.com/DinoTools/python-ssdeep">ssdeep</a>.
+                                                                     href="https://github.com/DinoTools/python-ssdeep">ssdeep</a>.
             </p>
             {% include "front/report/m_ssdeep.html" with d=result %}
           </div>
           <div class="col-md-12">
             <h3>Dexofuzzy</h3>
             <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                      href="https://github.com/ESTsecurity/Dexofuzzy">Dexofuzzy</a>.
+                                                                     href="https://github.com/ESTsecurity/Dexofuzzy">Dexofuzzy</a>.
             </p>
             {% include "front/report/m_dexofuzzy.html" with d=result %}
           </div>
@@ -156,7 +174,7 @@
           <div>
             <h3>APK details</h3>
             <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                      href="https://github.com/androguard/androguard">AndroGuard</a>.
+                                                                     href="https://github.com/androguard/androguard">AndroGuard</a>.
             </p>
             {% include "front/report/m_apk.html" with d=result %}
           </div>
@@ -164,7 +182,7 @@
           <div>
             <h3>Certificate details</h3>
             <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                      href="https://github.com/androguard/androguard">AndroGuard</a>.
+                                                                     href="https://github.com/androguard/androguard">AndroGuard</a>.
             </p>
             {% include "front/report/m_certificate.html" with d=result %}
           </div>
@@ -173,30 +191,31 @@
             <div>
               <h3>Manifest analysis</h3>
               <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                        href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+                                                                       href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
               </p>
               {% include "front/report/m_manifest.html" with d=result %}
             </div>
           {% endif %}
-
         </div>
+
         <div class="tab-pane" role="tabpanel" aria-labelledby="privacy_analysis-tab" id="privacy_analysis">
           {% if result.trackers %}
             <div>
               <h3>Tracking analysis</h3>
               <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                        href="https://github.com/Exodus-Privacy/exodus-core">Exodus-core</a>.
+                                                                       href="https://github.com/Exodus-Privacy/exodus-core">Exodus-core</a>.
               </p>
               {% include "front/report/m_trackers.html" with d=result %}
             </div>
           {% endif %}
         </div>
+
         <div class="tab-pane" role="tabpanel" aria-labelledby="code_analysis-tab" id="code_analysis">
           {% if result.niap_analysis %}
             <div>
               <h3>NIAP analysis</h3>
               <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                        href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+                                                                       href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
               </p>
               {% include "front/report/m_niap.html" with d=result %}
             </div>
@@ -206,18 +225,19 @@
             <div>
               <h3>Code analysis</h3>
               <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                        href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+                                                                       href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
               </p>
               {% include "front/report/m_code.html" with d=result %}
             </div>
           {% endif %}
         </div>
+
         <div class="tab-pane" role="tabpanel" aria-labelledby="network_analysis-tab" id="network_analysis">
           {% if result.network_security %}
             <div>
               <h3>Network analysis</h3>
               <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                        href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+                                                                       href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
               </p>
               {% include "front/report/m_network.html" with d=result %}
             </div>
@@ -227,7 +247,7 @@
             <div>
               <h3>Domains analysis</h3>
               <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                        href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+                                                                       href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
               </p>
               {% include "front/report/m_domains.html" with d=result %}
             </div>
@@ -237,20 +257,31 @@
             <div>
               <h3>URL analysis</h3>
               <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                        href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+                                                                       href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
               </p>
               {% include "front/report/m_url.html" with d=result %}
             </div>
           {% endif %}
         </div>
+
         <div class="tab-pane" role="tabpanel" aria-labelledby="behavior_analysis-tab" id="behavior_analysis">
           {% if result.detailed_permissions %}
             <div>
               <h3>Permissions analysis</h3>
               <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                        href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+                                                                       href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
               </p>
               {% include "front/report/m_permissions.html" with d=result %}
+            </div>
+          {% endif %}
+
+          {% if result.quark.crimes %}
+            <div>
+              <h3>Threat analysis</h3>
+              <p class="text-muted small">Information computed with <a class="" target="_blank"
+                                                                       href="https://github.com/quark-engine/quark-engine">Quark-Engine</a>.
+              </p>
+              {% include "front/report/m_quark.html" with d=result %}
             </div>
           {% endif %}
 
@@ -258,7 +289,7 @@
             <div>
               <h3>Behavior analysis</h3>
               <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                        href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+                                                                       href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
               </p>
               {% include "front/report/m_api.html" with d=result %}
             </div>
@@ -266,6 +297,5 @@
         </div>
       </div>
     </div>
-
   </div>
 {% endblock content %}

@@ -1,0 +1,18 @@
+{
+  "crime": "Query the list of the installed packages",
+  "x1_permission": [],
+  "x2n3n4_comb": [
+    {
+      "class": "Landroid/content/Context;",
+      "method": "getPackageManager",
+      "descriptor": "()Landroid/content/pm/PackageManager;"
+    },
+    {
+      "class": "Landroid/content/pm/PackageManager;",
+      "method": "getInstalledPackages",
+      "descriptor": "(I)Ljava/util/List;"
+    }
+  ],
+  "yscore": 1,
+  "label": ["reflection"]
+}
