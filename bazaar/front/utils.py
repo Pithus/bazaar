@@ -40,7 +40,7 @@ def append_dexofuzzy_similarity(results, key, top_n=5):
                         matches.append(
                             {'score': sim, 'sha256': sample['source']['sha256'], 'handle': sample['source']['handle']})
             except Exception as e:
-                raise e
+                pass
 
         matches = sorted(matches, key=lambda ele: ele['score'], reverse=True)
         limit = min(len(matches), top_n)

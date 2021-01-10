@@ -210,14 +210,21 @@ def ssdeep_analysis(sha256):
             doc['ssdeep']['resources'] = ssdeep.hash_from_file(f'{tmp_dir}/resources.arsc')
 
             for file in glob.glob(f'{tmp_dir}/*.dex'):
-                doc['ssdeep']['dex'].append({
-                    'file': file.replace(f'{tmp_dir}/', ''),
-                    'hash': ssdeep.hash_from_file(file)
-                })
-                doc['dexofuzzy']['dex'].append({
-                    'file': file.replace(f'{tmp_dir}/', ''),
-                    'hash': dexofuzzy.hash_from_file(file)
-                })
+                try:
+                    doc['ssdeep']['dex'].append({
+                        'file': file.replace(f'{tmp_dir}/', ''),
+                        'hash': ssdeep.hash_from_file(file)
+                    })
+                except Exception:
+                    pass
+
+                try:
+                    doc['dexofuzzy']['dex'].append({
+                        'file': file.replace(f'{tmp_dir}/', ''),
+                        'hash': dexofuzzy.hash_from_file(file)
+                    })
+                except Exception:
+                    pass
 
         es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': doc}, retry_on_conflict=5)
 
