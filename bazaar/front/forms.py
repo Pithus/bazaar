@@ -73,7 +73,7 @@ class SearchForm(forms.Form):
                     "terms": {"field": "features.keyword"}
                 }
             },
-            "_source": ["apk_hash", "sha256", "handle", "app_name", "dexofuzzy.apk", "quark"],
+            "_source": ["apk_hash", "sha256", "handle", "app_name", "dexofuzzy.apk", "quark", "vt", "malware_bazaar"],
             "size": 50,
         }
         es = Elasticsearch([settings.ELASTICSEARCH_HOST])
@@ -83,7 +83,6 @@ class SearchForm(forms.Form):
             results = append_dexofuzzy_similarity(results, 'sim', 30)
             return results, get_aggregations(raw_results)
         except Exception as e:
-            raise e
             return [], []
 
 

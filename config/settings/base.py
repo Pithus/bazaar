@@ -330,3 +330,6 @@ Q_CLUSTER = {
     'label': 'Django Q',
     'redis': env("REDIS_URL")
 }
+
+
+VT_API_KEY = env("VT_API_KEY", default="None")

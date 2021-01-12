@@ -1,7 +1,7 @@
 {% if result and result.source %}
   <tr>
-    <td>
-      {% include "front/report/m_severity.html" with s=result.source.quark.threat_level %}
+    <td class="text-center">
+      {% include "front/report/m_short_threat_level.html" with d=result.source %}
     </td>
     <td>
       <a href="{% url 'front:report'  result.source.apk_hash %}">

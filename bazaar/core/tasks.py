@@ -3,6 +3,7 @@ import glob
 import logging
 import os
 import re
+import vt
 import zipfile
 from datetime import datetime
 from tempfile import NamedTemporaryFile, TemporaryDirectory
@@ -422,7 +423,6 @@ def malware_bazaar_analysis(sha256):
         return
 
     if 'data' in json_response:
-        print(json_response)
         for d in json_response['data']:
             if d['sha256_hash'] == sha256:
                 es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'malware_bazaar': d}},
@@ -435,6 +435,25 @@ def malware_bazaar_analysis(sha256):
                   retry_on_conflict=5)
     return
 
+
+def vt_analysis(sha256):
+    try:
+        es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'vt_analysis': 1}},
+                  retry_on_conflict=5)
+        client = vt.Client(settings.VT_API_KEY)
+        file = client.get_object(f'/files/{sha256}')
+        if file.last_analysis_stats:
+            d = file.last_analysis_stats
+            total = d['undetected'] + d['malicious']
+            d['total'] = total
+            es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'vt': d}},
+                      retry_on_conflict=5)
+        es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'vt_analysis': 2}},
+                  retry_on_conflict=5)
+    except Exception:
+        es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'vt_analysis': -1}},
+                  retry_on_conflict=5)
+        return
 
 def analyze(sha256, force=False):
     if not default_storage.exists(sha256):
@@ -451,6 +470,7 @@ def analyze(sha256, force=False):
         _prepare(sha256)
         async_task(mobsf_analysis, sha256)
         async_task(malware_bazaar_analysis, sha256)
+        async_task(vt_analysis, sha256)
         async_task(apkid_analysis, sha256)
         async_task(ssdeep_analysis, sha256)
         async_task(extract_classes, sha256)
