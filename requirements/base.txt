@@ -35,3 +35,4 @@ google-play-scraper
 gpapi
 requests
 dexofuzzy
+vt-py

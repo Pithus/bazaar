@@ -1,0 +1,20 @@
+{% load get %}
+{% if result.malware_bazaar.vendor_intel.ReversingLabs.threat_name %}
+  <p class="small text-muted">Threat <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
+                                        title="Provided by MalwareBazaar"></i></p>
+  <h5>
+    <span class="text-danger">{{ result.malware_bazaar.vendor_intel.ReversingLabs.threat_name }}</span>
+  </h5>
+{% elif result.quark %}
+  <h6 class="">Threat level <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
+                               title="Computed with Quark-Engine"></i></h6>
+  <h3 class="
+              {% if "Low" in result.quark.threat_level %}
+              text-info
+              {% elif "Moderate" in result.quark.threat_level %}
+              text-warning
+              {% else %}
+              text-danger
+              {% endif %}
+              ">{{ result.quark.threat_level }}</h3>
+{% endif %}

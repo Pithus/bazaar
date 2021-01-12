@@ -1,16 +1,11 @@
 import gc
 import glob
 import logging
+import os
 import re
 import zipfile
 from datetime import datetime
 from tempfile import NamedTemporaryFile, TemporaryDirectory
-import os
-
-from tqdm import tqdm
-
-from quark.Objects.quark import Quark
-from quark.Objects.quarkrule import QuarkRule
 
 import dexofuzzy
 import requests
@@ -22,10 +17,14 @@ from apkid.output import OutputFormatter
 from apkid.rules import RulesManager
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.utils import timezone
 from django_q.tasks import async_task
 from elasticsearch import Elasticsearch
 from google_play_scraper import app
-from django.utils import timezone
+from quark.Objects.quark import Quark
+from quark.Objects.quarkrule import QuarkRule
+from tqdm import tqdm
+
 from bazaar.core.fingerprinting import ApplicationSignature
 from bazaar.core.mobsf import MobSF
 from bazaar.core.utils import strings_from_apk
@@ -141,7 +140,8 @@ def exodus_analysis(classes):
 
 
 def extract_classes(sha256):
-    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_classes': 1}}, retry_on_conflict=5)
+    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_classes': 1}},
+              retry_on_conflict=5)
 
     def _lcheck(name):
         name = str(name)
@@ -164,7 +164,8 @@ def extract_classes(sha256):
                     'Ljava/') and _lcheck(class_name) and class_name not in class_names:
                     class_names.append(str(class_name))
         except Exception as e:
-            es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_classes': -1}}, retry_on_conflict=5)
+            es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_classes': -1}},
+                      retry_on_conflict=5)
             return {'status': 'failed', 'info': str(e)}
 
         doc = {
@@ -179,12 +180,14 @@ def extract_classes(sha256):
 
     del a, d, dx, doc, f
     gc.collect()
-    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_classes': 2}}, retry_on_conflict=5)
+    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_classes': 2}},
+              retry_on_conflict=5)
     return {'status': 'success', 'info': ''}
 
 
 def ssdeep_analysis(sha256):
-    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'ssdeep_analysis': 1}}, retry_on_conflict=5)
+    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'ssdeep_analysis': 1}},
+              retry_on_conflict=5)
     with NamedTemporaryFile() as f:
         f.write(default_storage.open(sha256).read())
         f.seek(0)
@@ -231,7 +234,8 @@ def ssdeep_analysis(sha256):
     del apk, f, doc
     gc.collect()
 
-    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'ssdeep_analysis': 2}}, retry_on_conflict=5)
+    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'ssdeep_analysis': 2}},
+              retry_on_conflict=5)
 
     return {'status': 'success', 'info': ''}
 
@@ -245,7 +249,8 @@ def _dict_to_list(d):
 
 
 def mobsf_analysis(sha256):
-    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': 1}}, retry_on_conflict=5)
+    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': 1}},
+              retry_on_conflict=5)
     server = 'http://mobsf:8000'
     token = '515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9'
     mobsf = MobSF(token, server)
@@ -286,11 +291,14 @@ def mobsf_analysis(sha256):
                     'domains_analysis': _dict_to_list(report['domains']),
                 }
 
-                es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': to_store}, retry_on_conflict=5)
+                es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': to_store},
+                          retry_on_conflict=5)
 
-        es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': 2}}, retry_on_conflict=5)
+        es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': 2}},
+                  retry_on_conflict=5)
     except Exception:
-        es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': -1}}, retry_on_conflict=5)
+        es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': -1}},
+                  retry_on_conflict=5)
 
     del mobsf, response, to_store
     gc.collect()
@@ -299,7 +307,8 @@ def mobsf_analysis(sha256):
 
 
 def apkid_analysis(sha256):
-    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'apkid_analysis': 1}}, retry_on_conflict=5)
+    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'apkid_analysis': 1}},
+              retry_on_conflict=5)
     options = Options(
         timeout=30,
         verbose=False,
@@ -322,12 +331,16 @@ def apkid_analysis(sha256):
 
     try:
         findings = output.build_json_output(res)['files']
-        es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'apkid': findings}}, retry_on_conflict=5)
-        es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'apkid_analysis': 2}}, retry_on_conflict=5)
+        es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'apkid': findings}},
+                  retry_on_conflict=5)
+        es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'apkid_analysis': 2}},
+                  retry_on_conflict=5)
     except AttributeError:
         findings = {}
-        es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'apkid': findings}}, retry_on_conflict=5)
-        es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'apkid_analysis': -1}}, retry_on_conflict=5)
+        es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'apkid': findings}},
+                  retry_on_conflict=5)
+        es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'apkid_analysis': -1}},
+                  retry_on_conflict=5)
 
     del findings, rules, scanner, output, options, res
     gc.collect()
@@ -355,7 +368,8 @@ def get_google_play_info(package):
 
 
 def quark_analysis(sha256):
-    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'quark_analysis': 1}}, retry_on_conflict=5)
+    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'quark_analysis': 1}},
+              retry_on_conflict=5)
     with NamedTemporaryFile() as f:
         f.write(default_storage.open(sha256).read())
         f.seek(0)
@@ -375,14 +389,51 @@ def quark_analysis(sha256):
 
         json_report = data.get_json_report()
         if json_report:
-            es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'quark_analysis': 2}}, retry_on_conflict=5)
-            es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'quark': json_report}}, retry_on_conflict=5)
+            es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'quark_analysis': 2}},
+                      retry_on_conflict=5)
+            es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'quark': json_report}},
+                      retry_on_conflict=5)
         else:
-            es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'quark_analysis': -1}}, retry_on_conflict=5)
+            es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'quark_analysis': -1}},
+                      retry_on_conflict=5)
 
     del json_report, rules_list, data
     return {'status': 'success', 'info': ''}
 
+
+def malware_bazaar_analysis(sha256):
+    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'malware_bazaar_analysis': 1}},
+              retry_on_conflict=5)
+    url = "https://mb-api.abuse.ch/api/v1/"
+    data_query = {
+        "query": "get_info",
+        "hash": sha256
+    }
+    try:
+        response = requests.post(url, data=data_query)
+        if response.status_code != 200:
+            es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256,
+                      body={'doc': {'malware_bazaar_analysis': -1}}, retry_on_conflict=5)
+            return
+        json_response = response.json()
+    except Exception:
+        es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'malware_bazaar_analysis': -1}},
+                  retry_on_conflict=5)
+        return
+
+    if 'data' in json_response:
+        print(json_response)
+        for d in json_response['data']:
+            if d['sha256_hash'] == sha256:
+                es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'malware_bazaar': d}},
+                          retry_on_conflict=5)
+                es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256,
+                          body={'doc': {'malware_bazaar_analysis': 2}}, retry_on_conflict=5)
+                return
+
+    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'malware_bazaar_analysis': -1}},
+                  retry_on_conflict=5)
+    return
 
 
 def analyze(sha256, force=False):
@@ -399,6 +450,7 @@ def analyze(sha256, force=False):
     if package:
         _prepare(sha256)
         async_task(mobsf_analysis, sha256)
+        async_task(malware_bazaar_analysis, sha256)
         async_task(apkid_analysis, sha256)
         async_task(ssdeep_analysis, sha256)
         async_task(extract_classes, sha256)

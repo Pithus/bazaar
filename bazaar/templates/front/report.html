@@ -8,37 +8,25 @@
     <div class="row justify-content-center">
       <div class="col-md-4">
         <div class="card border-0">
-          {% if result.quark %}
-            <div class="card-body text-center">
-              <h6 class="">Threat level <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top" title="Computed with Quark-Engine"></i> </h6>
-              <h3 class="
-              {% if "Low" in result.quark.threat_level %}
-              text-info
-              {% elif "Moderate" in result.quark.threat_level %}
-              text-warning
-              {% else %}
-              text-danger
-              {% endif %}
-              ">{{ result.quark.threat_level }}</h3>
-            </div>
-          {% endif %}
+          <div class="card-body text-center">
+            {% include "front/report/m_threat_level.html" %}
+          </div>
         </div>
       </div>
       <div class="col-md-8">
         <h1>{{ result.handle }}</h1>
+        {% if result.malware_bazaar.vendor_intel.Triage.tags %}
+          <p>
+            {% for t in result.malware_bazaar.vendor_intel.Triage.tags %}
+              <span class="badge badge-secondary text-white">{{ t }}</span>
+            {% endfor %}
+          </p>
+        {% endif %}
         <p class="text-muted">Analyzed on {{ result.analysis_date }}</p>
       </div>
     </div>
 
     <div class="row row-cols-1 row-cols-md-2 mt-2">
-      <div class="col mb-4">
-        <div class="card text-white bg-secondary">
-          <div class="card-body text-center">
-            <h3 class="text-white">{{ result.average_cvss|default:"NC" }}</h3>
-            <h6>CVSS</h6>
-          </div>
-        </div>
-      </div>
       <div class="col mb-4">
         <div class="card text-white bg-secondary">
           <div class="card-body text-center">
@@ -94,6 +82,15 @@
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#threat_intel" role="tab"
+               id="threat_intel-tab"
+               aria-controls="threat_intel"
+               aria-selected="true">
+              <i class="fa fa-virus"></i>
+              <p>Threat intel.</p>
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#apk_analysis" role="tab"
                id="apk_analysis-tab"
                aria-controls="apk_analysis"
@@ -125,15 +122,6 @@
                aria-selected="false">
               <i class="fa fa-globe"></i>
               <p>Network analysis</p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#privacy_analysis" role="tab"
-               id="privacy_analysis-tab"
-               aria-controls="privacy_analysis"
-               aria-selected="false">
-              <i class="fa fa-eye"></i>
-              <p>Privacy analysis</p>
             </a>
           </li>
         </ul>
@@ -198,14 +186,14 @@
           {% endif %}
         </div>
 
-        <div class="tab-pane" role="tabpanel" aria-labelledby="privacy_analysis-tab" id="privacy_analysis">
-          {% if result.trackers %}
+        <div class="tab-pane" role="tabpanel" aria-labelledby="threat_intel-tab" id="threat_intel">
+          {% if result.malware_bazaar %}
             <div>
-              <h3>Tracking analysis</h3>
-              <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                       href="https://github.com/Exodus-Privacy/exodus-core">Exodus-core</a>.
+              <h3>Threat intelligence</h3>
+              <p class="text-muted small">Information provided by <a class="" target="_blank"
+                                                                     href="https://bazaar.abuse.ch/">MalwareBazaar</a>.
               </p>
-              {% include "front/report/m_trackers.html" with d=result %}
+              {% include "front/report/m_malware_bazaar.html" with d=result %}
             </div>
           {% endif %}
         </div>
@@ -272,6 +260,16 @@
                                                                        href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
               </p>
               {% include "front/report/m_permissions.html" with d=result %}
+            </div>
+          {% endif %}
+
+          {% if result.trackers %}
+            <div>
+              <h3>Tracking analysis</h3>
+              <p class="text-muted small">Information computed with <a class="" target="_blank"
+                                                                       href="https://github.com/Exodus-Privacy/exodus-core">Exodus-core</a>.
+              </p>
+              {% include "front/report/m_trackers.html" with d=result %}
             </div>
           {% endif %}
 
