@@ -242,7 +242,10 @@ class ApplicationSignature(object):
         sign.app_name = apk.get_app_name()
         sign.uaid = compute_uaid(apk)
         sign.version_name = apk.get_androidversion_name()
-        sign.version_code = int(apk.get_androidversion_code())
+        version_code = apk.get_androidversion_code()
+        if not version_code:
+            version_code = -1
+        sign.version_code = int(version_code)
         sign.apk_hash = get_sha256_of_file(apk_path)
         hashes = get_check_sums_of_file_as_dict(apk_path)
         sign.md5 = hashes['md5']
