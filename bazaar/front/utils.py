@@ -91,7 +91,7 @@ def init_es():
             'index': {
                 'mapping': {
                     'total_fields': {
-                        'limit': '65635'
+                        'limit': '65635000'
                     }
                 },
                 'highlight': {
@@ -132,3 +132,19 @@ def init_es():
     except Exception as e:
         print(e)
         pass
+
+def compute_status(status):
+    success = True
+    error = False
+    running = len(status.keys()) != 8
+    for k, v in status.items():
+        if k != 'analysis_date':
+            success = success and v == 2
+            error = error or v == -1
+            running = running or v == 1 or v == 0
+
+    return {
+        'in_error': error,
+        'success': success,
+        'running': running
+    }

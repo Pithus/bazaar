@@ -25,36 +25,30 @@ class Command(BaseCommand):
             self._handle_sample(sha256, tasks)
 
     def _handle_sample(self, sha256, tasks):
-        if 'm' in tasks:
-            print(f'Start mobsf_analysis for {sha256}')
-            async_task(mobsf_analysis, sha256)
-        if 'b' in tasks:
-            print(f'Start malware_bazaar_analysis for {sha256}')
-            malware_bazaar_analysis(sha256)
-        if 'v' in tasks:
-            print(f'Start vt_analysis for {sha256}')
-            vt_analysis(sha256)
-            sleep(15)
-        if 'a' in tasks:
-            print(f'Start apkid_analysis for {sha256}')
-            async_task(apkid_analysis, sha256)
-        if 's' in tasks:
-            print(f'Start ssdeep_analysis for {sha256}')
-            async_task(ssdeep_analysis, sha256)
-        if 'c' in tasks:
-            print(f'Start extract_classes for {sha256}')
-            async_task(extract_classes, sha256)
-        if 'q' in tasks:
-            print(f'Start quark_analysis for {sha256}')
-            async_task(quark_analysis, sha256)
+        try:
+            if 'm' in tasks:
+                print(f'Start mobsf_analysis for {sha256}')
+                async_task(mobsf_analysis, sha256)
+            if 'b' in tasks:
+                print(f'Start malware_bazaar_analysis for {sha256}')
+                malware_bazaar_analysis(sha256)
+            if 'v' in tasks:
+                print(f'Start vt_analysis for {sha256}')
+                vt_analysis(sha256)
+                sleep(15)
+            if 'a' in tasks:
+                print(f'Start apkid_analysis for {sha256}')
+                async_task(apkid_analysis, sha256)
+            if 's' in tasks:
+                print(f'Start ssdeep_analysis for {sha256}')
+                async_task(ssdeep_analysis, sha256)
+            if 'c' in tasks:
+                print(f'Start extract_classes for {sha256}')
+                async_task(extract_classes, sha256)
+            if 'q' in tasks:
+                print(f'Start quark_analysis for {sha256}')
+                async_task(quark_analysis, sha256)
 
-        # for poll_id in options['poll_ids']:
-        #     try:
-        #         poll = Poll.objects.get(pk=poll_id)
-        #     except Poll.DoesNotExist:
-        #         raise CommandError('Poll "%s" does not exist' % poll_id)
-        #
-        #     poll.opened = False
-        #     poll.save()
-        #
-        #     self.stdout.write(self.style.SUCCESS('Successfully closed poll "%s"' % poll_id))
+        except Exception:
+            pass
+

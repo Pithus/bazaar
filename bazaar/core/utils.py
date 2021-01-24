@@ -1,8 +1,20 @@
 import hashlib
+import json
 import re
+from django.utils import timezone
+from datetime import timedelta
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 
+import requests
 from androguard.core.bytecodes import apk
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.urls import reverse
 from django.utils.html import escape
+from django_q.models import Schedule
+from django_q.tasks import schedule
+from elasticsearch import Elasticsearch
+
 
 
 def get_sha256_of_file_path(file_path):
@@ -110,3 +122,44 @@ def strings_from_apk(apk_file):
     except Exception:
         print('Extracting Strings from APK')
         return {}
+
+
+def upload_sample_to_malware_bazaar(sha256):
+    es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+    try:
+        result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
+        if not result or 'vt' not in result:
+            return
+
+        if result['vt']['malicious'] > 1 and 'malware_bazaar' not in result:
+            print(f'Upload {sha256}')
+            headers = {'API-KEY': settings.MALWARE_BAZAAR_API_KEY}
+            uri = reverse('front:report', args=[sha256])
+            data = {
+                'tags': [
+                    'apk',
+                ],
+                'references': {
+                    'links': [
+                        f'https://beta.pithus.org{uri}',
+                    ]
+                }
+            }
+            print(data)
+            with NamedTemporaryFile() as f:
+                f.write(default_storage.open(sha256).read())
+                f.seek(0)
+                files = {
+                    'json_data': (None, json.dumps(data), 'application/json'),
+                    'file': (open(f.name, 'rb'))
+                }
+                response = requests.post('https://mb-api.abuse.ch/api/v1/', files=files, verify=False,
+                                         headers=headers)
+                if response.status_code < 400:
+                    print(f'Update MB report in 15 minutes {sha256}')
+                    schedule('bazaar.core.tasks.malware_bazaar_analysis', [sha256],
+                             schedule_type=Schedule.ONCE,
+                             next_run=timezone.now() + timedelta(minutes=30))
+
+    except Exception:
+        pass

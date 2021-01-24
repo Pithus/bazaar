@@ -1,5 +1,5 @@
 from tempfile import NamedTemporaryFile
-
+import logging
 from androguard.core.androconf import is_android
 from django.conf import settings
 from django.contrib import messages
@@ -11,11 +11,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from elasticsearch import Elasticsearch
 from rest_framework.reverse import reverse_lazy
-
 from bazaar.core.tasks import analyze
 from bazaar.core.utils import get_sha256_of_file
 from bazaar.front.forms import SearchForm, BasicUploadForm
-from bazaar.front.utils import transform_results, get_similarity_matrix
+from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -87,15 +86,17 @@ class ReportView(View):
         es = Elasticsearch([settings.ELASTICSEARCH_HOST])
         try:
             result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha)['_source']
-            if 'analysis_date' not in result:
-                messages.info(request, 'The analysis is still running, refresh this page in few minutes.')
-                return render(request, 'front/report.html', {'result': result})
+            status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha)['_source']
+            status = compute_status(status)
+            if status['running']:
+                return render(request, 'front/report.html', {'result': result, 'status': status})
             else:
                 # The analysis is done so put the report into the cache
-                html_report = render(request, 'front/report.html', {'result': result})
+                html_report = render(request, 'front/report.html', {'result': result, 'status': status})
                 cache.set(cache_key, html_report)
                 return html_report
-        except Exception:
+        except Exception as e:
+            logging.exception(e)
             return redirect(reverse_lazy('front:home'))
 
 

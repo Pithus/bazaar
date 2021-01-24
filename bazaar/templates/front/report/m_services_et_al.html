@@ -1,0 +1,14 @@
+{% if d.activities %}
+  <h3>Activities</h3>
+<pre><code>{% for s in d.activities %}{{ s }}<br>{% endfor %}</code></pre>
+{% endif %}
+
+{% if d.receivers %}
+  <h3>Receivers</h3>
+<pre><code>{% for s in d.receivers %}{{ s }}<br>{% endfor %}</code></pre>
+{% endif %}
+
+{% if d.services %}
+  <h3>Services</h3>
+<pre><code>{% for s in d.services %}{{ s }}<br>{% endfor %}</code></pre>
+{% endif %}

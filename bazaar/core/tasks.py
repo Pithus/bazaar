@@ -28,7 +28,7 @@ from tqdm import tqdm
 
 from bazaar.core.fingerprinting import ApplicationSignature
 from bazaar.core.mobsf import MobSF
-from bazaar.core.utils import strings_from_apk
+from bazaar.core.utils import strings_from_apk, upload_sample_to_malware_bazaar
 
 es = Elasticsearch([settings.ELASTICSEARCH_HOST])
 
@@ -413,11 +413,13 @@ def malware_bazaar_analysis(sha256):
     try:
         response = requests.post(url, data=data_query)
         if response.status_code != 200:
+            upload_sample_to_malware_bazaar(sha256)
+
             es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256,
                       body={'doc': {'malware_bazaar_analysis': -1}}, retry_on_conflict=5)
             return
         json_response = response.json()
-    except Exception:
+    except Exception as e:
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'malware_bazaar_analysis': -1}},
                   retry_on_conflict=5)
         return

@@ -4,7 +4,6 @@
 
 {% block content %}
   <div class="container">
-
     <div class="row justify-content-center">
       <div class="col-md-4">
         <div class="card border-0">
@@ -14,7 +13,7 @@
         </div>
       </div>
       <div class="col-md-8">
-        <h1>{{ result.handle }}</h1>
+        <h1 class="text-primary">{{ result.handle }}</h1>
         {% if result.malware_bazaar.vendor_intel.Triage.tags %}
           <p>
             {% for t in result.malware_bazaar.vendor_intel.Triage.tags %}
@@ -22,11 +21,15 @@
             {% endfor %}
           </p>
         {% endif %}
-        <p class="text-muted">Analyzed on {{ result.analysis_date }}</p>
+        <p class="text-muted">Analyzed on {{ result.uploaded_at }}</p>
       </div>
     </div>
 
-    <div class="row row-cols-1 row-cols-md-2 mt-2">
+    <div class="row justify-content-center">
+      {% include "front/report/m_status_progress.html" %}
+    </div>
+
+    <div class="row justify-content-center">
       <div class="col mb-4">
         <div class="card text-white bg-secondary">
           <div class="card-body text-center">
@@ -184,10 +187,12 @@
               {% include "front/report/m_manifest.html" with d=result %}
             </div>
           {% endif %}
+
+        {% include "front/report/m_services_et_al.html" with d=result %}
         </div>
 
         <div class="tab-pane" role="tabpanel" aria-labelledby="threat_intel-tab" id="threat_intel">
-          {% if result.malware_bazaar %}
+          {% if result.malware_bazaar or result.vt%}
             <div>
               <h3>Threat intelligence</h3>
               <p class="text-muted small">Information provided by <a class="" target="_blank"

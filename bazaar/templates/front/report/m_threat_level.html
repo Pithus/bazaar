@@ -9,15 +9,16 @@
   <p class="small text-muted">Threat <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
                                         title="Provided by VirusTotal"></i></p>
   <p>
-  {% if result.vt.malicious > 1  %}
-    <span class="text-danger h4">Malicious<br>{{ result.vt.malicious }}</span><span class="text-muted">/{{ result.vt.total }}</span>
+    {% if result.vt.malicious > 1 %}
+      <span class="text-danger h4">Malicious<br>{{ result.vt.malicious }}</span>
+      <span class="text-muted">/{{ result.vt.total }}</span>
     {% else %}
-    <span class="text-info h4">{{ result.vt.malicious }}</span><span class="text-muted">/{{ result.vt.total }}</span>
+      <span class="text-info h4">{{ result.vt.malicious }}</span><span class="text-muted">/{{ result.vt.total }}</span>
     {% endif %}
   </p>
 {% elif result.quark %}
-  <h6 class="">Threat level <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
-                               title="Computed with Quark-Engine"></i></h6>
+  <p class="small text-muted">Threat level <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
+                               title="Computed with Quark-Engine"></i></p>
   <h3 class="
               {% if "Low" in result.quark.threat_level %}
               text-info

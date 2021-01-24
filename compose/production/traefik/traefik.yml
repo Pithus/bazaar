@@ -23,7 +23,7 @@ certificatesResolvers:
 http:
   routers:
     web-router:
-      rule: "Host(`pithus.org`) || Host(`www.pithus.org`)"
+      rule: "Host(`beta.pithus.org`)"
 
       entryPoints:
         - web
@@ -33,7 +33,7 @@ http:
       service: django
 
     web-secure-router:
-      rule: "Host(`pithus.org`) || Host(`www.pithus.org`)"
+      rule: "Host(`beta.pithus.org`)"
 
       entryPoints:
         - web-secure
