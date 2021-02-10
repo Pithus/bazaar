@@ -63,10 +63,11 @@ services:
     image: redis:5.0
 
   elasticsearch:
-    image: elasticsearch:7.7.0
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
     hostname: elasticsearch
     environment:
       - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms4000m -Xmx4000m"
     volumes:
       - production_elasticsearch_data:/usr/share/elasticsearch/data
 

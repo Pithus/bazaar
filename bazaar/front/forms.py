@@ -2,6 +2,7 @@ from django import forms
 from django.conf import settings
 from elasticsearch import Elasticsearch
 
+from bazaar.core.utils import get_matching_items_by_dexofuzzy, get_matching_items_by_ssdeep
 from bazaar.front.utils import transform_results, transform_hl_results, append_dexofuzzy_similarity, get_aggregations
 
 
@@ -26,6 +27,27 @@ class BasicSearchForm(forms.Form):
             return results
         except Exception:
             return []
+
+
+class SimilaritySearchForm(forms.Form):
+    hash = forms.CharField(max_length=128)
+    algorithm = forms.ChoiceField(choices=[('ssdeep', 'ssdeep'), ('dexofuzzy', 'dexofuzzy')])
+
+    def do_search(self):
+        print(self.cleaned_data)
+        results = []
+        algorithm = self.cleaned_data['algorithm']
+        hash = self.cleaned_data['hash'].strip()
+        try:
+            if algorithm == 'dexofuzzy':
+                results = get_matching_items_by_dexofuzzy(hash, 25, settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, '')
+            if algorithm == 'ssdeep':
+                results = get_matching_items_by_ssdeep(hash, 25, settings.ELASTICSEARCH_SSDEEP_APK_INDEX, '')
+
+        except Exception as e:
+            print(e)
+
+        return results
 
 
 class SearchForm(forms.Form):
@@ -81,6 +103,11 @@ class SearchForm(forms.Form):
             raw_results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
             results = transform_hl_results(raw_results)
             results = append_dexofuzzy_similarity(results, 'sim', 30)
+
+            # for r in results:
+            #     print(r['id'])
+            #     print(get_matching_items_by_dexofuzzy(r['source']['dexofuzzy']['apk'], 0.2, settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, r['id']))
+
             return results, get_aggregations(raw_results)
         except Exception as e:
             return [], []

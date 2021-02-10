@@ -1,14 +1,14 @@
 <div class="col">
-  {% if status.in_error %}
-    <div class="alert alert-secondary small" role="alert">
-      An error occurred during the analysis, we have been notified.
-    </div>
-  {% elif status.running %}
+  {% if status.running %}
     <div class="alert alert-secondary small" role="alert">
       <div class="spinner-border  spinner-border-sm text-primary mr-2" role="status">
         <span class="sr-only">Loading...</span>
       </div>
       the analysis is still running, refresh this page in few minutes.
+    </div>
+  {% elif status.in_error %}
+    <div class="alert alert-secondary small" role="alert">
+      An error occurred during the analysis, we have been notified.
     </div>
   {% endif %}
 </div>

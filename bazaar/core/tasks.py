@@ -7,7 +7,7 @@ import vt
 import zipfile
 from datetime import datetime
 from tempfile import NamedTemporaryFile, TemporaryDirectory
-
+import time
 import dexofuzzy
 import requests
 import ssdeep
@@ -28,7 +28,7 @@ from tqdm import tqdm
 
 from bazaar.core.fingerprinting import ApplicationSignature
 from bazaar.core.mobsf import MobSF
-from bazaar.core.utils import strings_from_apk, upload_sample_to_malware_bazaar
+from bazaar.core.utils import strings_from_apk, upload_sample_to_malware_bazaar, insert_fuzzy_hash
 
 es = Elasticsearch([settings.ELASTICSEARCH_HOST])
 
@@ -105,6 +105,7 @@ def extract_ioc(sha256):
 
 
 def exodus_analysis(classes):
+    start = time.time()
     exodus_url = "https://reports.exodus-privacy.eu.org/api/trackers"
     r = requests.get(exodus_url)
     data = r.json()
@@ -123,24 +124,25 @@ def exodus_analysis(classes):
     results = []
 
     for t in tracker_signatures:
-        for c in classes:
-            if t['compiled_code_signature'].search(c):
-                results.append({
-                    'id': t['id'],
-                    'name': t['name'],
-                    'code_signature': t['code_signature'],
-                    'network_signature': t['network_signature'],
-                    'website': t['website'],
-                })
-                break
+        if t['compiled_code_signature'].search(classes):
+            results.append({
+                'id': t['id'],
+                'name': t['name'],
+                'code_signature': t['code_signature'],
+                'network_signature': t['network_signature'],
+                'website': t['website'],
+            })
+            continue
 
     del tracker_signatures, r, classes, data
     gc.collect()
-
+    stop = time.time()
+    print(f'exodus_analysis took {stop-start}')
     return results
 
 
 def extract_classes(sha256):
+    start = time.time()
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_classes': 1}},
               retry_on_conflict=5)
 
@@ -153,36 +155,47 @@ def extract_classes(sha256):
     with NamedTemporaryFile() as f:
         f.write(default_storage.open(sha256).read())
         f.seek(0)
+        s1 = time.time()
         a, d, dx = AnalyzeAPK(f.name)
+        s2 = time.time()
+        print(f'AnalyzeAPK took {s2-s1}')
 
+        s1 = time.time()
         class_names = []
         try:
-            for c in dx.get_classes():
-                class_name = c.name
+            for class_name in dx.classes:
                 if not class_name.startswith('Lkotlin/') and not class_name.startswith(
                     'Landroid/') and not class_name.startswith('Landroidx/') and not class_name.startswith(
                     'Ljavax/') and not class_name.startswith('Lkotlinx/') and not class_name.startswith(
-                    'Ljava/') and _lcheck(class_name) and class_name not in class_names:
+                    'Ljava/'): # and _lcheck(class_name) and class_name not in class_names:
                     class_names.append(str(class_name))
         except Exception as e:
             es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_classes': -1}},
                       retry_on_conflict=5)
             return {'status': 'failed', 'info': str(e)}
+        s2 = time.time()
+        print(f'Cleanup took {s2-s1}')
+
+        java_classes = ' '.join(class_names)
 
         doc = {
-            'java_classes': ', '.join(class_names)
+            'java_classes': java_classes
         }
         es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': doc}, retry_on_conflict=5)
 
         doc = {
-            'trackers': exodus_analysis(class_names)
+            'trackers': exodus_analysis(java_classes)
         }
         es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': doc}, retry_on_conflict=5)
 
-    del a, d, dx, doc, f
+    del a, d, dx, doc, f, java_classes, class_names
     gc.collect()
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_classes': 2}},
               retry_on_conflict=5)
+
+    stop = time.time()
+    print(f'extract_classes took {stop-start}')
+
     return {'status': 'success', 'info': ''}
 
 
@@ -193,15 +206,21 @@ def ssdeep_analysis(sha256):
         f.write(default_storage.open(sha256).read())
         f.seek(0)
 
+        ssdeep_apk = ssdeep.hash_from_file(f.name)
+        insert_fuzzy_hash(ssdeep_apk, sha256, settings.ELASTICSEARCH_SSDEEP_APK_INDEX)
+
+        dexofuzzy_apk = dexofuzzy.hash_from_file(f.name)
+        insert_fuzzy_hash(dexofuzzy_apk, sha256, settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX)
+
         doc = {
             'ssdeep': {
-                'apk': ssdeep.hash_from_file(f.name),
+                'apk': ssdeep_apk,
                 'manifest': '',
                 'resources': '',
                 'dex': []
             },
             'dexofuzzy': {
-                'apk': dexofuzzy.hash_from_file(f.name),
+                'apk': dexofuzzy_apk,
                 'dex': []
             }
         }
@@ -475,6 +494,7 @@ def analyze(sha256, force=False):
         async_task(vt_analysis, sha256)
         async_task(apkid_analysis, sha256)
         async_task(ssdeep_analysis, sha256)
+        # extract_classes(sha256)
         async_task(extract_classes, sha256)
         async_task(quark_analysis, sha256)
         async_task(get_google_play_info, package)

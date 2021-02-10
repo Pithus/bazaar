@@ -3,7 +3,13 @@
 <table class="table table-condensed table-sm">
   <tr>
     <td class=""><span class="">APK file</span></td>
-    <td class=""><samp>{{ d.ssdeep.apk }}</samp></td>
+    <td class="">
+      <samp>{{ d.ssdeep.apk }}</samp>
+      <a href="{% url 'front:similarity_search' %}?hash={{ d.ssdeep.apk }}&algorithm=ssdeep"
+         data-toggle="tooltip" data-placement="top" title="Find similar samples">
+        <i class="fa fa-search"></i>
+      </a>
+    </td>
   </tr>
   <tr>
     <td class=""><span class="">Manifest</span></td>

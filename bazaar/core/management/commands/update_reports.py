@@ -1,4 +1,3 @@
-import time
 from time import sleep
 
 from django.core.management.base import BaseCommand, CommandError
@@ -41,7 +40,7 @@ class Command(BaseCommand):
                 async_task(apkid_analysis, sha256)
             if 's' in tasks:
                 print(f'Start ssdeep_analysis for {sha256}')
-                async_task(ssdeep_analysis, sha256)
+                ssdeep_analysis(sha256)
             if 'c' in tasks:
                 print(f'Start extract_classes for {sha256}')
                 async_task(extract_classes, sha256)

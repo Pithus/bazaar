@@ -13,7 +13,7 @@ from elasticsearch import Elasticsearch
 from rest_framework.reverse import reverse_lazy
 from bazaar.core.tasks import analyze
 from bazaar.core.utils import get_sha256_of_file
-from bazaar.front.forms import SearchForm, BasicUploadForm
+from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm
 from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status
 
 
@@ -128,3 +128,13 @@ def basic_upload_view(request):
                     return redirect(reverse_lazy('front:report', [sha256]))
 
     return redirect(reverse_lazy('front:home'))
+
+
+def similarity_search_view(request):
+    if request.method == 'GET':
+        print(request.GET)
+        form = SimilaritySearchForm(request.GET)
+        results = None
+        if form.is_valid():
+            results = form.do_search()
+        return render(request, 'front/similarity_search.html', {'form': form, 'results': results})

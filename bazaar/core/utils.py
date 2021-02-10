@@ -1,10 +1,12 @@
 import hashlib
 import json
 import re
+
+import dexofuzzy
 from django.utils import timezone
 from datetime import timedelta
 from tempfile import NamedTemporaryFile, TemporaryDirectory
-
+import ssdeep
 import requests
 from androguard.core.bytecodes import apk
 from django.conf import settings
@@ -163,3 +165,130 @@ def upload_sample_to_malware_bazaar(sha256):
 
     except Exception:
         pass
+
+
+def insert_fuzzy_hash(hash_value, sha256, index):
+    chunksize, chunk, double_chunk = hash_value.split(':')
+    chunksize = int(chunksize)
+
+    es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+
+    document = {'chunk_size': chunksize, 'chunk': chunk, 'double_chunk': double_chunk, 'sha256': sha256}
+
+    es.index(index, id=sha256, body=document)
+    es.indices.refresh(index=index)
+
+
+def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
+    chunksize, chunk, double_chunk = ssdeep_value.split(':')
+    chunksize = int(chunksize)
+
+    es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+
+    query = {
+        'query': {
+            'bool': {
+                'must': [
+                    {
+                        'terms': {
+                            'chunk_size': [chunksize, chunksize * 2, int(chunksize / 2)]
+                        }
+                    },
+                    {
+                        'bool': {
+                            'should': [
+                                {
+                                    'match': {
+                                        'chunk': {
+                                            'query': chunk
+                                        }
+                                    }
+                                },
+                                {
+                                    'match': {
+                                        'double_chunk': {
+                                            'query': double_chunk
+                                        }
+                                    }
+                                }
+                            ],
+                            'minimum_should_match': 1
+                        }
+                    }
+                ]
+            }
+        }
+    }
+
+    results = es.search(index=index, body=query)
+
+    sha256_list_to_return = []
+
+    for record in results['hits']['hits']:
+        if record['_source']['sha256'] != sha256:
+            chunk_size, chunk, double_chunk = record['_source']['chunk_size'], record['_source']['chunk'], record['_source']['double_chunk']
+            record_ssdeep = f'{chunk_size}:{chunk}:{double_chunk}'
+            ssdeep_grade = ssdeep.compare(record_ssdeep, ssdeep_value)
+
+            if ssdeep_grade >= threshold_grade:
+                sha256_list_to_return.append((record['_source']['sha256'], ssdeep_grade))
+
+    return sha256_list_to_return
+
+
+def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha256):
+    chunksize, chunk, double_chunk = dexofuzzy_value.split(':')
+    chunksize = int(chunksize)
+
+    es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+
+    query = {
+        'query': {
+            'bool': {
+                'must': [
+                    {
+                        'terms': {
+                            'chunk_size': [chunksize, chunksize * 2, int(chunksize / 2)]
+                        }
+                    },
+                    {
+                        'bool': {
+                            'should': [
+                                {
+                                    'match': {
+                                        'chunk': {
+                                            'query': chunk
+                                        }
+                                    }
+                                },
+                                {
+                                    'match': {
+                                        'double_chunk': {
+                                            'query': double_chunk
+                                        }
+                                    }
+                                }
+                            ],
+                            'minimum_should_match': 1
+                        }
+                    }
+                ]
+            }
+        }
+    }
+
+    results = es.search(index=index, body=query)
+
+    sha256_list_to_return = []
+
+    for record in results['hits']['hits']:
+        if record['_source']['sha256'] != sha256:
+            chunk_size, chunk, double_chunk = record['_source']['chunk_size'], record['_source']['chunk'], record['_source']['double_chunk']
+            record_dexofuzzy = f'{chunk_size}:{chunk}:{double_chunk}'
+            dexofuzzy_grade = dexofuzzy.compare(record_dexofuzzy, dexofuzzy_value)
+
+            if dexofuzzy_grade >= threshold_grade:
+                sha256_list_to_return.append((record['_source']['sha256'], dexofuzzy_grade))
+
+    return sha256_list_to_return
+

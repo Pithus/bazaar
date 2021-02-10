@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block whole_content %}
+  <div class="bg-secondary p-4 mb-4">
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-md-12 text-center">
+          <h1 class="text-white">Similarity search</h1>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-12">
+          <form method="GET">
+            <div class="form-row">
+              <div class="col-md-3">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fa fa-cogs"></i></span>
+                  </div>
+                  <select class="custom-select" required name="algorithm">
+                    {% for v,t in form.fields.algorithm.choices %}
+                      {% if v in form.data.algorithm %}
+                        <option selected value="{{ v }}">{{ t }}</option>
+                      {% else %}
+                        <option value="{{ v }}">{{ t }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="col">
+                <div class="input-group">
+                  {% if form.data.hash %}
+                    <input type="text" class="form-control" name="hash" required placeholder="Hash"
+                           value="{{ form.data.hash }}">
+                  {% else %}
+                    <input type="text" class="form-control" name="hash" required placeholder="Hash">
+                  {% endif %}
+                  <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-md-12">
+        {% if not results %}
+          <h2>No results</h2>
+        {% else %}
+          <h2>Results</h2>
+          <table class="table table-condensed">
+            <thead>
+            <tr>
+              <th>SHA256</th>
+              <th>Similarity</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for hash, score in results %}
+              <tr>
+                <td>
+                  <a href="{% url 'front:report' hash %}">
+                    <code>{{ hash }}</code>
+                  </a>
+                </td>
+                <td>
+                  <div class="progress">
+                    <div class="progress-bar progress-bar-striped bg-secondary" role="progressbar" style="width: {{ score }}%" aria-valuenow="{{ score }}"
+                         aria-valuemin="0" aria-valuemax="100">{{ score }}%</div>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock whole_content %}
