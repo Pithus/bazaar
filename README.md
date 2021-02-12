@@ -18,6 +18,39 @@ When an APK is submitted, it is analyzed by the different tools listed above. Ea
 
 The beta version is available at [beta.pithus.org](https://beta.pithus.org/).
 
+# Installation
+
+On Linux:
+
+```sh
+git clone git@github.com:Pithus/bazaar.git
+cd bazaar
+```
+It is possible to run the entire development stack through with [docker-compose](https://docs.docker.com/compose/install/):
+
+```sh
+docker-compose -f local.yml build
+```
+
+Then browse to [http://localhost:8001] and enjoy Pithus!
+
+*Note*: It is possible that you might have an error for a missing index while browsing to the address the first time. It is probable that Django hasn't been properly loaded. To fix that, add a blank line in any of the Django file, save it and refresh the page in the browser. 
+
+## Set up the internal Python interpreter with Visual Studio Code
+
+It is possible to run the entire development environment in a Docker container. This will allow you to run on the same Python interpreter as anyone else contributing to this project. To do so with Visual Studio Code, follow these steps:
+
+* Install the [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) and the [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extensions.
+* Open the command palette and look for the option: "Remote Containers: Attach to running container".
+* Choose `bazaar_local_django`.
+* VSCode will restart and you will be presented with a new window of VSCode.
+* Open the file explorer and open the folder `/app`, the code is there.
+* You are all set up!
+
+*Note*: By default, only your theme and the Remote Containers will be installed, you will need to install more extension in the Docker manually. However, your settings will be imported automatically.
+
+More information on developping in a container in the Visual Studio Code [documentation](https://code.visualstudio.com/docs/remote/containers).
+
 # Development
 Pithus is currently in beta so if you want to contribute, please refer to the [Cookiecutter documentation](https://cookiecutter-django.readthedocs.io/en/latest/).
 
