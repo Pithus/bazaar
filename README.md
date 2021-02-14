@@ -18,7 +18,9 @@ When an APK is submitted, it is analyzed by the different tools listed above. Ea
 
 The beta version is available at [beta.pithus.org](https://beta.pithus.org/).
 
-# Installation
+# Development environment setup
+
+Pithus is currently in beta so if you want to contribute, please refer to the [Cookiecutter documentation](https://cookiecutter-django.readthedocs.io/en/latest/).
 
 On Linux:
 
@@ -26,7 +28,7 @@ On Linux:
 git clone git@github.com:Pithus/bazaar.git
 cd bazaar
 ```
-It is possible to run the entire development stack through with [docker-compose](https://docs.docker.com/compose/install/):
+It is possible to run the entire development stack with [docker-compose](https://docs.docker.com/compose/install/):
 
 ```sh
 docker-compose -f local.yml build
@@ -50,9 +52,6 @@ It is possible to run the entire development environment in a Docker container. 
 *Note*: By default, only your theme and the Remote Containers will be installed, you will need to install more extension in the Docker manually. However, your settings will be imported automatically.
 
 More information on developping in a container in the Visual Studio Code [documentation](https://code.visualstudio.com/docs/remote/containers).
-
-# Development
-Pithus is currently in beta so if you want to contribute, please refer to the [Cookiecutter documentation](https://cookiecutter-django.readthedocs.io/en/latest/).
 
 ## SASS
 To apply SASS file changes, just run the following command:
