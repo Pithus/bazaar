@@ -89,7 +89,9 @@ class ReportView(View):
             status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha)['_source']
             status = compute_status(status)
 
-            map_svg = generate_world_map(result['domains_analysis'])
+            map_svg = None
+            if 'domains_analysis' in result:
+                map_svg = generate_world_map(result['domains_analysis'])
 
             if status['running']:
                 return render(request, 'front/report.html', {'result': result, 'status': status, 'map': map_svg})

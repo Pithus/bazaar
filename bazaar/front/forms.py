@@ -12,6 +12,7 @@ class BasicSearchForm(forms.Form):
     def do_search(self):
         q = self.cleaned_data['q']
         query = {
+            "sort": {"analysis_date": "desc"},
             "query": {
                 "match": {
                     "apk_hash": q.lower()
@@ -95,6 +96,7 @@ class SearchForm(forms.Form):
                     "terms": {"field": "features.keyword"}
                 }
             },
+            "sort": {"analysis_date": "desc"},
             "_source": ["apk_hash", "sha256", "handle", "app_name", "dexofuzzy.apk", "quark", "vt", "malware_bazaar"],
             "size": 50,
         }
