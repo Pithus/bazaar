@@ -1,4 +1,4 @@
-{   
+{
     "crime": "Check if successfully sending out SMS",
     "x1_permission": [],
     "x2n3n4_comb": [
@@ -14,5 +14,7 @@
         }
     ],
     "yscore": 1,
-    "label": ["sms"]
+    "label": [
+        "sms"
+    ]
 }

@@ -1,18 +1,21 @@
 {
-  "crime": "Calculate WiFi signal strength",
-  "x1_permission": [],
-  "x2n3n4_comb": [
-    {
-      "class": "Landroid/net/wifi/WifiInfo;",
-      "method": "getRssi",
-      "descriptor": "()I"
-    },
-    {
-      "class": "Landroid/net/wifi/WifiManager;",
-      "method": "calculateSignalLevel",
-      "descriptor": "(I I)I"
-    }
-  ],
-  "yscore": 1,
-  "label": ["collection", "wifi"]
+    "crime": "Calculate WiFi signal strength",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/net/wifi/WifiInfo;",
+            "method": "getRssi",
+            "descriptor": "()I"
+        },
+        {
+            "class": "Landroid/net/wifi/WifiManager;",
+            "method": "calculateSignalLevel",
+            "descriptor": "(I I)I"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "collection",
+        "wifi"
+    ]
 }

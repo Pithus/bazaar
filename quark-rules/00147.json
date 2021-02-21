@@ -1,0 +1,21 @@
+{
+    "crime": "Get the time of current location",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "descriptor": "(Ljava/lang/String;)Z",
+            "class": "Landroid/location/LocationManager;",
+            "method": "isProviderEnabled"
+        },
+        {
+            "descriptor": "()J",
+            "class": "Landroid/location/Location;",
+            "method": "getTime"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "collection",
+        "location"
+    ]
+}

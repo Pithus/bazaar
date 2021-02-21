@@ -16,8 +16,13 @@
           </div>
         </div>
       </div>
-      <div class="col-md-8">
-        <h1 class="text-primary">{{ result.handle }}</h1>
+      <div class="col">
+        <h1 class="text-primary">
+          {% if result.icon_base64 %}
+            <img class="" src="data:image/png;base64,{{ result.icon_base64 }}" width="48px">
+          {% endif %}
+          {{ result.handle }}
+        </h1>
         {% if result.app_name %}
           <h3 class="text-secondary">{{ result.app_name }}</h3>
         {% endif %}
@@ -191,6 +196,14 @@
             </div>
           {% endif %}
 
+          {% if result.browsable_activities %}
+            <h3>Browsable activities</h3>
+            <p class="text-muted small">Information computed with <a class="" target="_blank"
+                                                                     href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+            </p>
+            {% include "front/report/m_browsable_activities.html" with d=result %}
+          {% endif %}
+
           {% include "front/report/m_services_et_al.html" with d=result %}
         </div>
 
@@ -198,9 +211,6 @@
           {% if result.malware_bazaar or result.vt %}
             <div>
               <h3>Threat intelligence</h3>
-              <p class="text-muted small">Information provided by <a class="" target="_blank"
-                                                                     href="https://bazaar.abuse.ch/">MalwareBazaar</a>.
-              </p>
               {% include "front/report/m_malware_bazaar.html" with d=result %}
             </div>
           {% endif %}
@@ -229,6 +239,11 @@
         </div>
 
         <div class="tab-pane" role="tabpanel" aria-labelledby="network_analysis-tab" id="network_analysis">
+
+          {% if result.domains_analysis %}
+            {% include "front/report/m_map.html" %}
+          {% endif %}
+
           {% if result.network_security %}
             <div>
               <h3>Network analysis</h3>

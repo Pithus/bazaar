@@ -1,0 +1,21 @@
+{
+    "crime": "Get the date of the calendar event",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "descriptor": "()J",
+            "class": "Ljava/util/Calendar;",
+            "method": "getTimeInMillis"
+        },
+        {
+            "descriptor": "()Ljava/lang/String;",
+            "class": "Ljava/util/Date;",
+            "method": "toString"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "collection",
+        "calendar"
+    ]
+}

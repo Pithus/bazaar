@@ -1,13 +1,11 @@
 {% load get %}
 {% if result.malware_bazaar.vendor_intel.ReversingLabs.threat_name %}
-  <p class="small text-muted">Threat <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
-                                        title="Provided by MalwareBazaar"></i></p>
   <h5>
     <span class="text-danger">{{ result.malware_bazaar.vendor_intel.ReversingLabs.threat_name }}</span>
   </h5>
-{% elif result.vt %}
   <p class="small text-muted">Threat <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
-                                        title="Provided by VirusTotal"></i></p>
+                                        title="Provided by MalwareBazaar"></i></p>
+{% elif result.vt %}
   <p>
     {% if result.vt.malicious > 1 %}
       <span class="text-danger h4">Malicious<br>{{ result.vt.malicious }}</span>
@@ -16,9 +14,9 @@
       <span class="text-info h4">{{ result.vt.malicious }}</span><span class="text-muted">/{{ result.vt.total }}</span>
     {% endif %}
   </p>
+  <p class="small text-muted">Threat <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
+                                        title="Provided by VirusTotal"></i></p>
 {% elif result.quark %}
-  <p class="small text-muted">Threat level <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
-                               title="Computed with Quark-Engine"></i></p>
   <h3 class="
               {% if "Low" in result.quark.threat_level %}
               text-info
@@ -28,4 +26,6 @@
               text-danger
               {% endif %}
               ">{{ result.quark.threat_level }}</h3>
+  <p class="small text-muted">Threat level <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
+                               title="Computed with Quark-Engine"></i></p>
 {% endif %}

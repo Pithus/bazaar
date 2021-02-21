@@ -14,5 +14,8 @@
         }
     ],
     "yscore": 1,
-    "label": ["location", "collection"]
+    "label": [
+        "location",
+        "collection"
+    ]
 }

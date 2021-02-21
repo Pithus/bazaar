@@ -1,18 +1,20 @@
 {
-  "crime": "Query the IMEI number",
-  "x1_permission": [],
-  "x2n3n4_comb": [
-    {
-      "class": "Landroid/content/Context;",
-      "method": "getSystemService",
-      "descriptor": "(Ljava/lang/String;)Ljava/lang/Object;"
-    },
-    {
-      "class": "Landroid/telephony/TelephonyManager;",
-      "method": "getDeviceId",
-      "descriptor": "()Ljava/lang/String;"
-    }
-  ],
-  "yscore": 1,
-  "label": ["collection"]
+    "crime": "Query the IMEI number",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "getSystemService",
+            "descriptor": "(Ljava/lang/String;)Ljava/lang/Object;"
+        },
+        {
+            "class": "Landroid/telephony/TelephonyManager;",
+            "method": "getDeviceId",
+            "descriptor": "()Ljava/lang/String;"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "collection"
+    ]
 }

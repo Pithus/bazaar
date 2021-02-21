@@ -1,17 +1,35 @@
-{%  for c in d.certificates %}
+{% for c in d.certificates %}
 
   <table class="table table-condensed table-sm">
     <tr>
       <td class="">MD5</td>
-      <td class=""><samp>{{ c.fingerprint_md5 }}</samp></td>
+      <td class="">
+        <samp>{{ c.fingerprint_md5 }}</samp>
+        <a href="{% url 'front:home' %}?q=cert_md5:{{ c.fingerprint_md5 }}"
+           data-toggle="tooltip" data-placement="top" title="Find similar samples">
+          <i class="fa fa-search"></i>
+        </a>
+      </td>
     </tr>
     <tr>
       <td class="">SHA1</td>
-      <td class=""><samp>{{ c.fingerprint_sha1 }}</samp></td>
+      <td class="">
+        <samp>{{ c.fingerprint_sha1 }}</samp>
+        <a href="{% url 'front:home' %}?q=cert_sha1:{{ c.fingerprint_sha1 }}"
+           data-toggle="tooltip" data-placement="top" title="Find similar samples">
+          <i class="fa fa-search"></i>
+        </a>
+      </td>
     </tr>
     <tr>
       <td class="">SHA256</td>
-      <td class=""><samp>{{ c.fingerprint_sha256 }}</samp></td>
+      <td class="">
+        <samp>{{ c.fingerprint_sha256 }}</samp>
+        <a href="{% url 'front:home' %}?q=cert_sha256:{{ c.fingerprint_sha256 }}"
+           data-toggle="tooltip" data-placement="top" title="Find similar samples">
+          <i class="fa fa-search"></i>
+        </a>
+      </td>
     </tr>
     <tr>
       <td class="">Issuer</td>

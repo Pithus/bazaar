@@ -1,0 +1,21 @@
+{
+    "crime": "Read the input stream from given URL",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "descriptor": "()Ljava/io/InputStream;",
+            "class": "Ljava/net/HttpURLConnection;",
+            "method": "getInputStream"
+        },
+        {
+            "descriptor": "([B)I",
+            "class": "Ljava/io/InputStream;",
+            "method": "read"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "network",
+        "command"
+    ]
+}

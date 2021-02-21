@@ -10,9 +10,12 @@
         {
             "class": "Landroid/location/LocationManager;",
             "method": "requestLocationUpdates",
-            "descriptor":"(Ljava/lang/String; J F Landroid/location/LocationListener;)V"
+            "descriptor": "(Ljava/lang/String; J F Landroid/location/LocationListener;)V"
         }
     ],
     "yscore": 1,
-    "label": ["location", "collection"]
+    "label": [
+        "location",
+        "collection"
+    ]
 }

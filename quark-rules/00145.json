@@ -1,0 +1,21 @@
+{
+    "crime": "Create a socket connection to the proxy address",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "descriptor": "()Ljava/net/SocketAddress;",
+            "class": "Ljava/net/Proxy;",
+            "method": "address"
+        },
+        {
+            "descriptor": "()Ljava/net/Socket;",
+            "class": "Ljavax/net/SocketFactory;",
+            "method": "createSocket"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "network",
+        "command"
+    ]
+}

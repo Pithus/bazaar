@@ -72,8 +72,10 @@ services:
   mobsf:
     image: opensecurity/mobile-security-framework-mobsf:latest
     hostname: mobsf
+    ports:
+      - 8181:8000
     environment:
-      - "MOBSF_API_ONLY=1"
+      - "MOBSF_API_ONLY=0"
       - "MOBSF_API_KEY=515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9"
 
   kibana:

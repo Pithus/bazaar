@@ -1,20 +1,24 @@
 {% load get %}
 
 <table class="table table-condensed table-sm">
-  <tr>
-    <td class=""><span class="">APK file</span></td>
-    <td class="">
-      <samp>{{ d.ssdeep.apk }}</samp>
-      <a href="{% url 'front:similarity_search' %}?hash={{ d.ssdeep.apk }}&algorithm=ssdeep"
-         data-toggle="tooltip" data-placement="top" title="Find similar samples">
-        <i class="fa fa-search"></i>
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td class=""><span class="">Manifest</span></td>
-    <td class=""><samp>{{ d.ssdeep.manifest }}</samp></td>
-  </tr>
+  {% if d.ssdeep.apk %}
+    <tr>
+      <td class=""><span class="">APK file</span></td>
+      <td class="">
+        <samp>{{ d.ssdeep.apk }}</samp>
+        <a href="{% url 'front:similarity_search' %}?hash={{ d.ssdeep.apk }}&algorithm=ssdeep"
+           data-toggle="tooltip" data-placement="top" title="Find similar samples">
+          <i class="fa fa-search"></i>
+        </a>
+      </td>
+    </tr>
+  {% endif %}
+  {% if d.ssdeep.manifest %}
+    <tr>
+      <td class=""><span class="">Manifest</span></td>
+      <td class=""><samp>{{ d.ssdeep.manifest }}</samp></td>
+    </tr>
+  {% endif %}
   {% for p in d.ssdeep.dex|dictsort:"file" %}
     <tr>
       <td class=""><span class=""><samp>{{ p.file }}</samp></span></td>

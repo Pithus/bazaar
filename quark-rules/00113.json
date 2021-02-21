@@ -1,0 +1,21 @@
+{
+    "crime": "Get location and put it into JSON",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "descriptor": "(Ljava/lang/String;)Landroid/location/Location;",
+            "class": "Landroid/location/LocationManager;",
+            "method": "getLastKnownLocation"
+        },
+        {
+            "descriptor": "(Ljava/lang/String; Ljava/lang/Object;)Lorg/json/JSONObject;",
+            "class": "Lorg/json/JSONObject;",
+            "method": "put"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "collection",
+        "location"
+    ]
+}

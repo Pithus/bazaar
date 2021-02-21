@@ -7,6 +7,10 @@
         {{ p.geolocation.country_short }}
       </td>
       <td class=""><samp>{{ p|get:"_name" }}</samp>
+        <a href="{% url 'front:home' %}?q=domains:{{ p|get:"_name" }}"
+           data-toggle="tooltip" data-placement="top" title="Find similar samples">
+          <i class="fa fa-search"></i>
+        </a>
       </td>
       <td class=""><samp>{{ p.geolocation.ip }}</samp>
       </td>

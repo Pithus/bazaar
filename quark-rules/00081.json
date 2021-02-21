@@ -1,0 +1,20 @@
+{
+    "crime": "Get declared method from given method name",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "descriptor": "()V",
+            "class": "Ljava/lang/StringBuilder;",
+            "method": "<init>"
+        },
+        {
+            "descriptor": "()[Ljava/lang/reflect/Method;",
+            "class": "Ljava/lang/Class;",
+            "method": "getDeclaredMethods"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "reflection"
+    ]
+}

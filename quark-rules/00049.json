@@ -1,18 +1,21 @@
 {
-  "crime": "Query the phone number from SMS sender",
-  "x1_permission": [],
-  "x2n3n4_comb": [
-    {
-      "class": "Landroid/telephony/SmsMessage;",
-      "method": "createFromPdu",
-      "descriptor": "([B)Landroid/telephony/SmsMessage;"
-    },
-    {
-      "class": "Landroid/telephony/SmsMessage;",
-      "method": "getDisplayOriginatingAddress",
-      "descriptor": "()Ljava/lang/String;"
-    }
-  ],
-  "yscore": 1,
-  "label": ["sms", "collection"]
+    "crime": "Query the phone number from SMS sender",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/telephony/SmsMessage;",
+            "method": "createFromPdu",
+            "descriptor": "([B)Landroid/telephony/SmsMessage;"
+        },
+        {
+            "class": "Landroid/telephony/SmsMessage;",
+            "method": "getDisplayOriginatingAddress",
+            "descriptor": "()Ljava/lang/String;"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "sms",
+        "collection"
+    ]
 }

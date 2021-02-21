@@ -1,13 +1,39 @@
 {% load get %}
 
-<table class="table table-condensed table-sm">
-  {%  for p in d.code_analysis %}
-  <tr>
-    <td class="">{% include "front/report/m_severity.html" with s=p.metadata.severity %}<br>CVSS: {{ p.metadata.cvss }}</td>
-    <td class="">{{ p.metadata.description }}<br>
-      <span class="small text-muted">MASVS: {{ p.metadata.masvs }}</span><br>
-      <span class="small text-muted">{{ p.metadata.cwe }}</span>
-    </td>
-  </tr>
+<table class="table table-condensed table-responsive-md">
+  {% for p in d.code_analysis %}
+    <tr>
+      <td class="">{% include "front/report/m_severity.html" with s=p.metadata.severity %}<br>CVSS:{{ p.metadata.cvss }}
+        <br>
+        <a class="btn btn-sm btn-light btn-primary" data-toggle="collapse" href="#{{ p.metadata.id }}" role="button"
+           aria-expanded="false"
+           aria-controls="{{ p.metadata.id }}">
+          <i class="fa fa-eye"></i>
+        </a>
+      </td>
+      <td class="">
+        {% if p.metadata.ref %}
+          <a href="{{ p.metadata.ref }}" target="_blank"><i class="fas fa-external-link-alt fa-xs"></i></a>
+        {% endif %}
+        {{ p.metadata.description }}
+        <br>
+        {% if p.metadata.masvs %}
+          <span class="small text-muted">MASVS: {{ p.metadata.masvs }}</span><br>
+        {% endif %}
+        {% if p.metadata.cwe %}
+          <span class="small text-muted">{{ p.metadata.cwe }}</span><br>
+        {% endif %}
+        {% if p.metadata|get:"owasp-mobile" %}
+          <span class="small text-muted">{{ p.metadata|get:"owasp-mobile" }}</span><br>
+        {% endif %}
+        <div class="collapse mt-2" id="{{ p.metadata.id }}">
+          Files:
+          <div class="small">
+            <pre><code>{% for f in p.files %} {{ f }}<br>{% endfor %}</code></pre>
+          </div>
+        </div>
+
+      </td>
+    </tr>
   {% endfor %}
 </table>

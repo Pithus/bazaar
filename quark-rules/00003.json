@@ -14,5 +14,7 @@
         }
     ],
     "yscore": 1,
-    "label": ["camera"]
+    "label": [
+        "camera"
+    ]
 }

@@ -14,7 +14,7 @@ from rest_framework.reverse import reverse_lazy
 from bazaar.core.tasks import analyze
 from bazaar.core.utils import get_sha256_of_file
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm
-from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status
+from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status, generate_world_map
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -88,11 +88,14 @@ class ReportView(View):
             result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha)['_source']
             status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha)['_source']
             status = compute_status(status)
+
+            map_svg = generate_world_map(result['domains_analysis'])
+
             if status['running']:
-                return render(request, 'front/report.html', {'result': result, 'status': status})
+                return render(request, 'front/report.html', {'result': result, 'status': status, 'map': map_svg})
             else:
                 # The analysis is done so put the report into the cache
-                html_report = render(request, 'front/report.html', {'result': result, 'status': status})
+                html_report = render(request, 'front/report.html', {'result': result, 'status': status, 'map': map_svg})
                 cache.set(cache_key, html_report)
                 return html_report
         except Exception as e:
@@ -132,7 +135,6 @@ def basic_upload_view(request):
 
 def similarity_search_view(request):
     if request.method == 'GET':
-        print(request.GET)
         form = SimilaritySearchForm(request.GET)
         results = None
         if form.is_valid():

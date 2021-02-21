@@ -1,18 +1,21 @@
 {
-  "crime": "Query the current data network type",
-  "x1_permission": [],
-  "x2n3n4_comb": [
-    {
-      "class": "Landroid/content/Context;",
-      "method": "getSystemService",
-      "descriptor": "(Ljava/lang/String;)Ljava/lang/Object;"
-    },
-    {
-      "class": "Landroid/telephony/TelephonyManager;",
-      "method": "getNetworkType",
-      "descriptor": "()I"
-    }
-  ],
-  "yscore": 1,
-  "label": ["collection", "network"]
+    "crime": "Query the current data network type",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "getSystemService",
+            "descriptor": "(Ljava/lang/String;)Ljava/lang/Object;"
+        },
+        {
+            "class": "Landroid/telephony/TelephonyManager;",
+            "method": "getNetworkType",
+            "descriptor": "()I"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "collection",
+        "network"
+    ]
 }

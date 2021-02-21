@@ -1,0 +1,22 @@
+{
+    "crime": "Send IMSI over Internet",
+    "x1_permission": [
+        "android.permission.INTERNET"
+    ],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/telephony/TelephonyManager;",
+            "method": "getSubscriberId",
+            "descriptor": "()Ljava/lang/String;"
+        },
+        {
+            "class": "Ljava/net/URL;",
+            "method": "openConnection",
+            "descriptor": "()Ljava/net/URLConnection;"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "phone"
+    ]
+}

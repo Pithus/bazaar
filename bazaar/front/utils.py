@@ -100,3 +100,35 @@ def compute_status(status):
         'success': success,
         'running': running
     }
+
+
+def generate_world_map(domains):
+    import pygal
+    from pygal.style import Style
+
+    countries = {}
+    for d in domains:
+        try:
+            if d['geolocation']['country_short']:
+                c = d['geolocation']['country_short'].lower()
+                if c in countries:
+                    countries[c] +=1
+                else:
+                    countries[c] = 1
+        except:
+            pass
+    custom_style = Style(
+        foreground='#a991d4',
+        foreground_strong='#a991d4',
+        foreground_subtle='#a991d4',
+        opacity='.6',
+        opacity_hover='.9',
+        transition='400ms ease-in',
+        colors=('#6349b7', '#a991d4', '#E95355', '#E87653', '#E89B53'))
+    worldmap_chart = pygal.maps.world.World(style=custom_style, margin=0, width=1200, height=600)
+    worldmap_chart.add('Server locations', countries)
+    worldmap_chart.show_legend = False
+    if countries:
+        return worldmap_chart.render(is_unicode=True)
+    else:
+        return None

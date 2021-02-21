@@ -1,7 +1,13 @@
 <table class="table table-condensed table-sm">
   <tr>
     <td class="">Package</td>
-    <td class=""><samp>{{ d.handle }}</samp></td>
+    <td class="">
+      <samp>{{ d.handle }}</samp>
+      <a href="{% url 'front:home' %}?q=handle:{{ d.handle }}"
+         data-toggle="tooltip" data-placement="top" title="Find similar samples">
+        <i class="fa fa-search"></i>
+      </a>
+    </td>
   </tr>
   <tr>
     <td class="">App name</td>
@@ -21,6 +27,11 @@
   </tr>
   <tr>
     <td class="">UAID</td>
-    <td class=""><samp>{{ d.uaid }}</samp></td>
+    <td class="">
+      <samp>{{ d.uaid }}</samp>
+      <a href="{% url 'front:home' %}?q=uaid:{{ d.uaid }}"
+         data-toggle="tooltip" data-placement="top" title="Find similar samples">
+        <i class="fa fa-search"></i>
+      </a></td>
   </tr>
 </table>

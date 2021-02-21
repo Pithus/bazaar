@@ -14,5 +14,8 @@
         }
     ],
     "yscore": 1,
-    "label": ["file", "collection"]
+    "label": [
+        "file",
+        "collection"
+    ]
 }

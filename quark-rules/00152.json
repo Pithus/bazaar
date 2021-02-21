@@ -1,0 +1,23 @@
+{
+    "crime": "Get data from HTTP and send SMS",
+    "x1_permission": [
+        "android.permission.INTERNET"
+    ],
+    "x2n3n4_comb": [
+        {
+            "class": "Ljava/net/URL;",
+            "method": "openConnection",
+            "descriptor": "()Ljava/net/URLConnection;"
+        },
+        {
+            "descriptor": "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Landroid/app/PendingIntent; Landroid/app/PendingIntent;)V",
+            "class": "Landroid/telephony/SmsManager;",
+            "method": "sendTextMessage"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "command",
+        "sms"
+    ]
+}

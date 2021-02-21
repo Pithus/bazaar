@@ -1,18 +1,21 @@
 {
-  "crime": "Connect to the specific WIFI network",
-  "x1_permission": [],
-  "x2n3n4_comb": [
-    {
-      "class": "Landroid/net/wifi/WifiManager;",
-      "method": "getConfiguredNetworks",
-      "descriptor": "()Ljava/util/List;"
-    },
-    {
-      "class": "Landroid/net/wifi/WifiManager;",
-      "method": "enableNetwork",
-      "descriptor": "(I Z)Z"
-    }
-  ],
-  "yscore": 1,
-  "label": ["wifi", "control"]
+    "crime": "Connect to the specific WIFI network",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/net/wifi/WifiManager;",
+            "method": "getConfiguredNetworks",
+            "descriptor": "()Ljava/util/List;"
+        },
+        {
+            "class": "Landroid/net/wifi/WifiManager;",
+            "method": "enableNetwork",
+            "descriptor": "(I Z)Z"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "wifi",
+        "control"
+    ]
 }

@@ -1,0 +1,21 @@
+{
+    "crime": "Get the currently formatted WiFi IP address",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "descriptor": "()I",
+            "class": "Landroid/net/wifi/WifiInfo;",
+            "method": "getIpAddress"
+        },
+        {
+            "descriptor": "(I)Ljava/lang/String;",
+            "class": "Landroid/text/format/Formatter;",
+            "method": "formatIpAddress"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "collection",
+        "wifi"
+    ]
+}

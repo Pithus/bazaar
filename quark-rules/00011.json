@@ -14,5 +14,9 @@
         }
     ],
     "yscore": 1,
-    "label": ["sms", "calllog", "collection"]
+    "label": [
+        "sms",
+        "calllog",
+        "collection"
+    ]
 }

@@ -1,0 +1,21 @@
+{
+    "crime": "Connect to a URL and set request method",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "descriptor": "()Ljava/net/URLConnection;",
+            "class": "Ljava/net/URL;",
+            "method": "openConnection"
+        },
+        {
+            "descriptor": "(Ljava/lang/String;)V",
+            "class": "Ljava/net/HttpURLConnection;",
+            "method": "setRequestMethod"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "command",
+        "network"
+    ]
+}

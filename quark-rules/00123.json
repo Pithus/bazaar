@@ -1,0 +1,21 @@
+{
+    "crime": "Save the response to JSON after connecting to the remote server",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "descriptor": "()V",
+            "class": "Ljava/net/HttpURLConnection;",
+            "method": "connect"
+        },
+        {
+            "descriptor": "(Ljava/lang/String;)V",
+            "class": "Lorg/json/JSONObject;",
+            "method": "<init>"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "network",
+        "command"
+    ]
+}

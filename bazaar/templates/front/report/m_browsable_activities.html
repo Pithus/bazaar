@@ -1,0 +1,35 @@
+{% load get %}
+
+<table class="table table-condensed table-sm">
+  {% for p in d.browsable_activities %}
+    <tr>
+      <td><samp>{{ p|get:"_name" }}</samp></td>
+      <td class="">
+        {% if p.hosts %}
+          <p>
+            Hosts:
+            {% for elt in p.hosts %}
+              <samp>{{ elt }}</samp>
+            {% endfor %}
+          </p>
+        {% endif %}
+        {% if p.schemes %}
+          <p>
+            Schemes:
+            {% for elt in p.schemes %}
+              <samp>{{ elt }}</samp>
+            {% endfor %}
+          </p>
+        {% endif %}
+        {% if p.mime_types %}
+          <p>
+            Mime types:
+            {% for elt in p.mime_types %}
+              <samp>{{ elt }}</samp>
+            {% endfor %}
+          </p>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+</table>

@@ -36,3 +36,7 @@ gpapi
 requests
 dexofuzzy
 vt-py
+
+# Map
+pygal_maps_world
+cairosvg

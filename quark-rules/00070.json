@@ -1,0 +1,22 @@
+{
+    "crime": "Get sender's address and send SMS",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "descriptor": "()Ljava/lang/String;",
+            "class": "Landroid/telephony/SmsMessage;",
+            "method": "getOriginatingAddress"
+        },
+        {
+            "descriptor": "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Landroid/app/PendingIntent; Landroid/app/PendingIntent;)V",
+            "class": "Landroid/telephony/SmsManager;",
+            "method": "sendTextMessage"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "collection",
+        "command",
+        "sms"
+    ]
+}

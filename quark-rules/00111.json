@@ -1,0 +1,21 @@
+{
+    "crime": "Get the sender address of the SMS",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "descriptor": "()Ljava/lang/String;",
+            "class": "Landroid/telephony/SmsMessage;",
+            "method": "getOriginatingAddress"
+        },
+        {
+            "descriptor": "()Ljava/lang/String;",
+            "class": "Ljava/lang/String;",
+            "method": "toString"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "collection",
+        "sms"
+    ]
+}

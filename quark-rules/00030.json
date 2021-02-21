@@ -1,18 +1,20 @@
 {
-  "crime": "Connect to the remote server through the given URL",
-  "x1_permission": [],
-  "x2n3n4_comb": [
-    {
-      "class": "Ljava/net/URL;",
-      "method": "openConnection",
-      "descriptor": "()Ljava/net/URLConnection;"
-    },
-    {
-      "class": "Ljava/net/HttpURLConnection;",
-      "method": "connect",
-      "descriptor": "()V"
-    }
-  ],
-  "yscore": 1,
-  "label": ["network"]
+    "crime": "Connect to the remote server through the given URL",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "class": "Ljava/net/URL;",
+            "method": "openConnection",
+            "descriptor": "()Ljava/net/URLConnection;"
+        },
+        {
+            "class": "Ljava/net/HttpURLConnection;",
+            "method": "connect",
+            "descriptor": "()V"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "network"
+    ]
 }

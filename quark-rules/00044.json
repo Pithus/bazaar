@@ -1,18 +1,21 @@
 {
-  "crime": "Query the last time this package's activity was used",
-  "x1_permission": [],
-  "x2n3n4_comb": [
-    {
-      "class": "Landroid/app/usage/UsageStatsManager;",
-      "method": "queryUsageStats",
-      "descriptor": "(I J J)Ljava/util/List;"
-    },
-    {
-      "class": "Landroid/app/usage/UsageStats;",
-      "method": "getLastTimeUsed",
-      "descriptor": "()J"
-    }
-  ],
-  "yscore": 1,
-  "label": ["collection", "reflection"]
+    "crime": "Query the last time this package's activity was used",
+    "x1_permission": [],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/app/usage/UsageStatsManager;",
+            "method": "queryUsageStats",
+            "descriptor": "(I J J)Ljava/util/List;"
+        },
+        {
+            "class": "Landroid/app/usage/UsageStats;",
+            "method": "getLastTimeUsed",
+            "descriptor": "()J"
+        }
+    ],
+    "yscore": 1,
+    "label": [
+        "collection",
+        "reflection"
+    ]
 }
