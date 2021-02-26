@@ -21,7 +21,7 @@ class BasicSearchForm(forms.Form):
             "_source": ["handle", "apk_hash", "size", "app_name"],
             "size": 50,
         }
-        es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
         try:
             results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
             results = transform_results(results)
@@ -100,7 +100,7 @@ class SearchForm(forms.Form):
             "_source": ["apk_hash", "sha256", "handle", "app_name", "dexofuzzy.apk", "quark", "vt", "malware_bazaar"],
             "size": 50,
         }
-        es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
         try:
             raw_results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
             results = transform_hl_results(raw_results)

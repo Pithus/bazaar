@@ -30,7 +30,7 @@ from bazaar.core.fingerprinting import ApplicationSignature
 from bazaar.core.mobsf import MobSF
 from bazaar.core.utils import strings_from_apk, upload_sample_to_malware_bazaar, insert_fuzzy_hash
 
-es = Elasticsearch([settings.ELASTICSEARCH_HOST], timeout=30, max_retries=5, retry_on_timeout=True)
+es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, timeout=30, max_retries=5, retry_on_timeout=True)
 
 
 def _prepare(sha256):

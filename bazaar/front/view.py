@@ -22,7 +22,7 @@ class HomeView(View):
 
     def get(self, request, *args, **kwargs):
         # Gets the latest complete report as an example
-        es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
         q = {
             "size": 1,
             "sort": {"analysis_date": "desc"},
@@ -83,7 +83,7 @@ class ReportView(View):
             return cached_report
 
         # Not cached so, let's compute the report
-        es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
         try:
             result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha)['_source']
             status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha)['_source']

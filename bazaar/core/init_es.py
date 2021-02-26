@@ -1,42 +1,21 @@
+import json
+
 from django.conf import settings
 from elasticsearch import Elasticsearch
 
 
 def init_es():
-    index_settings = {
-        'settings': {
-            'index': {
-                'mapping': {
-                    'total_fields': {
-                        'limit': '65635000'
-                    }
-                },
-                'highlight': {
-                    'max_analyzed_offset': '60000000'
-                }
-            }
-        },
-        "mappings": {
-            "properties": {
-                "java_classes": {
-                    "type": "text",
-                    "term_vector": "with_positions_offsets"
-                },
-                "analysis_date": {
-                    "type": "date"
-                }
-            }
-        }
-    }
-
-    es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    with open('bazaar/es_mappings/apk_analysis.json') as mapping:
+        apk_analysis_settings = json.load(mapping)
     try:
         es.indices.create(index=settings.ELASTICSEARCH_GP_INDEX)
         es.indices.create(index=settings.ELASTICSEARCH_TASKS_INDEX)
-        es.indices.create(index=settings.ELASTICSEARCH_APK_INDEX, body=index_settings)
+        es.indices.create(index=settings.ELASTICSEARCH_APK_INDEX, body=apk_analysis_settings)
     except Exception as e:
         print(e)
         pass
+
 
 def init_fuzzy_match_es():
     index_settings = {
@@ -77,7 +56,7 @@ def init_fuzzy_match_es():
         }
     }
 
-    es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
     try:
         es.indices.create(index=settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, body=index_settings)
         es.indices.create(index=settings.ELASTICSEARCH_SSDEEP_APK_INDEX, body=index_settings)
@@ -85,4 +64,3 @@ def init_fuzzy_match_es():
     except Exception as e:
         print(e)
         pass
-

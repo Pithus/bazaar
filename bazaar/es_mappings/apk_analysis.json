@@ -1,0 +1,627 @@
+{
+  "settings": {
+    "index": {
+      "mapping": {
+        "total_fields": {
+          "limit": "65635000"
+        }
+      },
+      "highlight": {
+        "max_analyzed_offset": "60000000"
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "java_classes": {
+        "type": "text",
+        "term_vector": "with_positions_offsets"
+      },
+      "activities": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "analysis_date": {
+        "type": "date"
+      },
+      "android_api_analysis": {
+        "type": "object",
+        "enabled": false
+      },
+      "aosp_permissions": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "apk_hash": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "apkid": {
+        "type": "object",
+        "enabled": false
+      },
+      "app_name": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "average_cvss": {
+        "type": "float"
+      },
+      "browsable_activities": {
+        "type": "object",
+        "enabled": false
+      },
+      "certificates": {
+        "properties": {
+          "fingerprint": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "fingerprint_md5": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "fingerprint_sha1": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "fingerprint_sha256": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "issuer": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "not_after": {
+            "type": "date"
+          },
+          "not_before": {
+            "type": "date"
+          },
+          "public_key_base64": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "self_issued": {
+            "type": "boolean"
+          },
+          "self_signed": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "serial": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "subject": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "code_analysis": {
+        "type": "object",
+        "enabled": false
+      },
+      "detailed_permissions": {
+        "type": "object",
+        "enabled": false
+      },
+      "domains_analysis": {
+        "properties": {
+          "_name": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "bad": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "geolocation": {
+            "properties": {
+              "city": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "country_long": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "country_short": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "ip": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "latitude": {
+                "type": "float"
+              },
+              "longitude": {
+                "type": "float"
+              },
+              "region": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "email_analysis": {
+        "type": "object",
+        "enabled": false
+      },
+      "features": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "file_analysis": {
+        "type": "object",
+        "enabled": false
+      },
+      "firebase_urls": {
+        "properties": {
+          "open": {
+            "type": "boolean"
+          },
+          "url": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "handle": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "icon_base64": {
+        "type": "object",
+        "enabled": false
+      },
+      "icon_found": {
+        "type": "boolean"
+      },
+      "icon_hash": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "icon_hidden": {
+        "type": "boolean"
+      },
+      "is_signed": {
+        "type": "boolean"
+      },
+      "is_signed_v1": {
+        "type": "boolean"
+      },
+      "is_signed_v2": {
+        "type": "boolean"
+      },
+      "is_signed_v3": {
+        "type": "boolean"
+      },
+      "is_valid": {
+        "type": "boolean"
+      },
+      "libraries": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "main_activity": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "malware_bazaar": {
+        "type": "object",
+        "enabled": false
+      },
+      "manifest_analysis": {
+        "type": "object",
+        "enabled": false
+      },
+      "md5": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "min_sdk_version": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "network_security": {
+        "type": "object",
+        "enabled": false
+      },
+      "niap_analysis": {
+        "type": "object",
+        "enabled": false
+      },
+      "permissions": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "playstore_details": {
+        "type": "object",
+        "enabled": false
+      },
+      "providers": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "quark": {
+        "type": "object",
+        "enabled": false
+      },
+      "receivers": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "secrets": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "security_score": {
+        "type": "long"
+      },
+      "services": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "sha1": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "sha256": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "size": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "ssdeep": {
+        "properties": {
+          "apk": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "dex": {
+            "properties": {
+              "file": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "hash": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          },
+          "manifest": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "resources": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "target_sdk_version": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "third_party_permissions": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "trackers": {
+        "properties": {
+          "code_signature": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "id": {
+            "type": "long"
+          },
+          "name": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "network_signature": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "website": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "uaid": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "uploaded_at": {
+        "type": "date"
+      },
+      "url_analysis": {
+        "type": "object",
+        "enabled": false
+      },
+      "vt": {
+        "properties": {
+          "confirmed-timeout": {
+            "type": "long"
+          },
+          "failure": {
+            "type": "long"
+          },
+          "harmless": {
+            "type": "long"
+          },
+          "malicious": {
+            "type": "long"
+          },
+          "suspicious": {
+            "type": "long"
+          },
+          "timeout": {
+            "type": "long"
+          },
+          "total": {
+            "type": "long"
+          },
+          "type-unsupported": {
+            "type": "long"
+          },
+          "undetected": {
+            "type": "long"
+          }
+        }
+      }
+    }
+  }
+}

@@ -63,6 +63,11 @@ services:
     hostname: elasticsearch
     environment:
       - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms2000m -Xmx2000m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     volumes:
       - local_elasticsearch_data:/usr/share/elasticsearch/data
     ports:

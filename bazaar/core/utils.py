@@ -127,7 +127,7 @@ def strings_from_apk(apk_file):
 
 
 def upload_sample_to_malware_bazaar(sha256):
-    es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
     try:
         result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
         if not result or 'vt' not in result:
@@ -171,7 +171,7 @@ def insert_fuzzy_hash(hash_value, sha256, index):
     chunksize, chunk, double_chunk = hash_value.split(':')
     chunksize = int(chunksize)
 
-    es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
 
     document = {'chunk_size': chunksize, 'chunk': chunk, 'double_chunk': double_chunk, 'sha256': sha256}
 
@@ -183,7 +183,7 @@ def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
     chunksize, chunk, double_chunk = ssdeep_value.split(':')
     chunksize = int(chunksize)
 
-    es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
 
     query = {
         'query': {
@@ -240,7 +240,7 @@ def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha
     chunksize, chunk, double_chunk = dexofuzzy_value.split(':')
     chunksize = int(chunksize)
 
-    es = Elasticsearch([settings.ELASTICSEARCH_HOST])
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
 
     query = {
         'query': {
