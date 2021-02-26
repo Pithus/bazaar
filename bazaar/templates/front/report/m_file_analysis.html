@@ -1,0 +1,19 @@
+{% if d.file_analysis %}
+<h3>File Analysis</h3>
+<p class="text-muted small">Information computed with <a class="" target="_blank"
+    href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.</p>
+<table class="table table-condensed table-sm">
+  {% for findings in d.file_analysis %}
+  <th>Findings</th>
+  <th>Files</th>
+  <tr>
+    <td>{{ findings.finding }}</td>
+    <td>
+      {% for file in findings.files %}
+      <samp>{{ file }}</samp><br>
+      {% endfor %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}

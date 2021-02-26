@@ -1,10 +1,10 @@
 {% load get %}
 
 <table class="table table-condensed table-sm">
-  {%  for p in d.detailed_permissions|dictsort:"status" %}
+  {% for p in d.detailed_permissions|dictsort:"status" %}
   <tr>
     <td class="">{% include "front/report/m_severity.html" with s=p.status %}</td>
-    <td class=""><samp>{{ p|get:"_name" }}</samp></td>
+    <td class=""><samp>{{ p|get:"_name"|truncatechars:90 }}</samp></td>
     <td class="">
       {% if p.info %}{{ p.info }}<br>{% endif %}
       <span class="small">{{ p.description }}</span><br>
