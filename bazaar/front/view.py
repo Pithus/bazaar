@@ -6,7 +6,9 @@ from django.contrib import messages
 from django.core.cache import cache
 from django.core.files.storage import default_storage
 from django.http import JsonResponse, HttpResponse
+from django.http.response import HttpResponseBadRequest, HttpResponseRedirectBase
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
@@ -16,6 +18,8 @@ from bazaar.core.tasks import analyze
 from bazaar.core.utils import get_sha256_of_file
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm
 from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status, generate_world_map
+from bazaar.core.models import Yara
+from .forms import YaraCreateForm
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -155,9 +159,11 @@ def download_sample_view(request, sha256):
         if not default_storage.exists(sha256):
             return redirect(reverse_lazy('front:home'))
 
-        response = HttpResponse(default_storage.open(sha256).read(), content_type="application/vnd.android.package-archive")
+        response = HttpResponse(default_storage.open(sha256).read(),
+                                content_type="application/vnd.android.package-archive")
         response['Content-Disposition'] = f'inline; filename=pithus_sample_{sha256}.apk'
         return response
+
 
 def export_report_view(request, sha256):
     if not request.user.is_authenticated:
@@ -174,3 +180,148 @@ def export_report_view(request, sha256):
             logging.exception(e)
             return redirect(reverse_lazy('front:home'))
 
+
+def my_rules_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+
+    if request.method == 'GET':
+        my_rules = get_rules(request)
+
+    return render(request, 'front/yara_rules/my_rules.html', context={'my_rules': my_rules})
+
+
+def my_rule_create_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+
+    new_rule = YaraCreateForm()
+
+    if request.method == 'POST':
+        new_rule = YaraCreateForm(request.POST)
+        new_rule = new_rule.save(commit=False)
+        new_rule.owner = request.user
+        new_rule.last_update = timezone.now()
+        try:
+            new_rule.save()
+            messages.success(request, 'Your rule has been created!')
+            return redirect(reverse_lazy('front:my_rules'))
+        except Exception as e:
+            logging.exception(e)
+            messages.warning(request, "There has been an error, the admin has been notified.")
+            return redirect(reverse_lazy('front:my_rules'))
+
+    return render(request, 'front/yara_rules/my_rule_create.html', {'form': new_rule})
+
+
+def my_rule_edit_view(request, uuid):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+
+    if request.method == 'GET':
+        rule = Yara.objects.get(id=uuid)
+        new_rule = YaraCreateForm(instance=rule)
+        return render(request, 'front/yara_rules/my_rule_edit.html', {'form': new_rule})
+    elif request.method == 'POST':
+        rule = Yara.objects.get(id=uuid)
+        new_rule = YaraCreateForm(request.POST or None, instance=rule)
+        new_rule = new_rule.save(commit=False)
+        new_rule.owner = request.user
+        new_rule.last_update = timezone.now()
+        try:
+            new_rule.save()
+            delete_es_matches(request, rule)
+            messages.success(request, 'Your rule has been updated!')
+            return redirect(reverse_lazy('front:my_rules'))
+        except Exception as e:
+            logging.exception(e)
+            messages.warning(request, "There has been an error, the admin has been notified.")
+            return redirect(reverse_lazy('front:my_rules'))
+    else:
+        return HttpResponseBadRequest()
+
+
+def my_rule_delete_view(request, uuid=None):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+
+    if request.method == 'GET':
+        rule = Yara.objects.get(id=uuid)
+        try:
+            delete_es_matches(request, rule)
+            rule.delete()
+            messages.success(request, 'Your rule has been deleted.')
+            return redirect(reverse_lazy('front:my_rules'))
+        except Exception as e:
+            logging.exception(e)
+            messages.warning(request, "There has been an error, the admin has been notified.")
+            return redirect(reverse_lazy('front:my_rules'))
+
+
+def delete_es_matches(request, rule):
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    public_es_index, private_es_index = Yara.get_es_index_names(request.user)
+    q = {'query': {
+        'match': {
+            'rule': rule.id,
+        }
+    }}
+    if rule.is_private:
+        try:
+            es.delete_by_query(index=private_es_index, body=q)
+        except Exception as e:
+            logging.exception(e)
+            messages.warning(request, "There has been an error, the admin has been notified.")
+    elif not rule.is_private:
+        try:
+            es.delete_by_query(index=public_es_index, body=q)
+        except Exception as e:
+            logging.exception(e)
+            messages.warning(request, "There has been an error, the admin has been notified.")
+    else:
+        pass
+
+    return
+
+
+def get_rules(request):
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    yara_rules = Yara.objects.filter(owner=request.user)
+    public_es_index, private_es_index = Yara.get_es_index_names(request.user)
+    q = {'query': {
+        'terms': {
+            'owner': [request.user.id]
+        }
+    }}
+
+    public_matches, private_matches = None, None
+    try:
+        private_matches = es.search(index=private_es_index, body=q)['hits']['hits']
+    except:
+        pass
+
+    try:
+        public_matches = es.search(index=public_es_index, body=q)['hits']['hits']
+    except:
+        pass
+
+    my_rules = []
+    for rule in yara_rules:
+        my_rule = {
+            'rule': rule,
+            'matching_date': '',
+            'matches': [],
+        }
+        if rule.is_private and private_matches:
+            for match in private_matches:
+                if match['_source']['rule'] == str(rule.id):
+                    my_rule['matches'].append(match['_source'])
+                    my_rule['matching_date'] = match['_source']['matching_date']
+        elif not rule.is_private and public_matches:
+            for match in public_matches:
+                if match['_source']['rule'] == str(rule.id):
+                    my_rule['matches'].append(match['_source'])
+                    my_rule['matching_date'] = match['_source']['matching_date']
+        my_rules.append(my_rule)
+
+    return my_rules

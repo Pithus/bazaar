@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% load cache %}
+{% block content %}
+{% load crispy_forms_tags %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-12 mt-2 mb-3">
+      <h2>Add or edit a rule:</h2>
+      <form method="POST" enctype="multipart/form-data">
+        {% if form.errors %}
+        {% for error in field.errors %}
+        <div class="alert alert-danger">
+          <strong>{{ error|escape }}</strong>
+        </div>
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+          <strong>{{ error|escape }}</strong>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button class='btn btn-primary' type='submit'>Sumbit</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -50,7 +50,9 @@ class Command(BaseCommand):
             if 'q' in tasks:
                 print(f'Start quark_analysis for {sha256}')
                 async_task(quark_analysis, sha256)
+            if 'y' in tasks:
+                print(f'Start yara_analysis for {sha256}')
+                yara_analysis(sha256)
 
         except Exception:
             pass
-
