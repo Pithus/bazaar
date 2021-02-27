@@ -186,6 +186,8 @@
             {% include "front/report/m_certificate.html" with d=result %}
           </div>
 
+          {% include "front/report/m_file_analysis.html" with d=result %}
+
           {% if result.manifest_analysis %}
             <div>
               <h3>Manifest analysis</h3>
@@ -205,7 +207,6 @@
           {% endif %}
 
           {% include "front/report/m_services_et_al.html" with d=result %}
-        {% include "front/report/m_file_analysis.html" with d=result %}
         </div>
 
         <div class="tab-pane" role="tabpanel" aria-labelledby="threat_intel-tab" id="threat_intel">

@@ -1,0 +1,9 @@
+{% if results %}
+  <div class="row">
+    {% for result in results %}
+      <div class="col-md-12">
+        {% include "front/m_result_flat.html" with result=result %}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

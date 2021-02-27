@@ -26,6 +26,9 @@
   font-weight: 700;
   src: url(/static/fonts/opensans/OpenSans-Bold.woff2) format("woff2"); }
 
+.bg-secondary-light {
+  background-color: rgba(169, 145, 212, 0.1) !important; }
+
 /*!
  * Bootstrap v4.5.3 (https://getbootstrap.com/)
  * Copyright 2011-2020 The Bootstrap Authors

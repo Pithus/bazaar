@@ -1,0 +1,11 @@
+{% with d=s|lower %}
+  {% if "dangerous" in d or "high" in d %}
+    <span class="text-danger {{ class }}">{{ s }}</span>
+  {% elif  "signature" in d or "warning" in d or "medium" in d or "moderate" in d %}
+    <span class="text-warning {{ class }}">{{ s }}</span>
+  {% elif  "normal" in d or "info" in d or "low" in d %}
+    <span class="text-info {{ class }}">{{ s }}</span>
+  {% elif  "good" in d %}
+    <span class="text-success {{ class }}">{{ s }}</span>
+  {% endif %}
+{% endwith %}

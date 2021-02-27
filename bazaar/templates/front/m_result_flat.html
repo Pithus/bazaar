@@ -1,0 +1,124 @@
+{% if result and result.source %}
+  <div class="card m-1 shadow-sm bg-secondary-light">
+    <div class="card-body p-2">
+      <div class="row">
+        <div class="col-md-8 text-truncate border-right">
+          <div class="">
+            <a class="h4" href="{% url 'front:report'  result.source.apk_hash %}">
+              <samp>{{ result.source.handle }}</samp>
+            </a>
+            <br>
+            <a class="" href="{% url 'front:report'  result.source.apk_hash %}">
+              <code>{{ result.source.apk_hash }}</code>
+            </a>
+            <br>
+            {% if result.source.icon_base64 %}
+              <img class="" src="data:image/png;base64,{{ result.source.icon_base64 }}" width="20px"
+                   style="filter: saturate(.15);">
+            {% endif %}{{ result.source.app_name }}
+            {% if result.source.version_code %}
+              <div class="small text-muted mt-0">Version: {{ result.source.version_code }}</div>
+            {% endif %}
+            {% if result.source.quark.size_bytes %}
+              <div class="small text-muted mt-0">Size: {{ result.source.quark.size_bytes|filesizeformat }}</div>
+            {% endif %}
+            <div class="small text-muted mt-0">First seen: {{ result.source.uploaded_at }}</div>
+          </div>
+
+          {% if result.highlight.items %}
+            <div class="mt-2">
+              {% for k,v in result.highlight.items %}
+                <span class="small text-muted">Attribute: <samp>{{ k }}</samp></span>
+                <p class="small code-samples">
+                  {% for l in v %}
+                    <samp>{{ l|safe }}</samp><br>
+                  {% endfor %}
+                </p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="col-md-4 text-truncate ">
+          {% if result.source.vt and result.source.vt.malicious > 0 and result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name %}
+            <div class="small text-muted">Threat:</div>
+          {% endif %}
+          {% if result.source.vt and result.source.vt.malicious > 0 %}
+            <span class="small text-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ result.source.vt.malicious }}/{{ result.source.vt.total }}
+              </span>
+            <div class="progress" style="height: 2px;">
+              <div class="progress-bar bg-danger" role="progressbar" style="width: {{ result.source.vt.malicious }}%;"
+                   aria-valuenow="{{ result.source.vt.malicious }}" aria-valuemin="0"
+                   aria-valuemax="{{ result.source.vt.total }}"></div>
+            </div>
+          {% elif result.source.quark %}
+            <span class="small text-muted">Threat level: </span>
+            {% include "front/report/m_severity_alt.html" with s=result.source.quark.threat_level class="small" %}<br>
+          {% endif %}
+          {% if result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name %}
+            <span class="small text-danger"><i
+                    class="fa fa-bug"></i> {{ result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name }}</span>
+          {% endif %}
+
+          {% if result.sim %}
+            <div class="mt-2">
+              <span class="small text-muted">Similar samples: </span><br>
+              {% for s in result.sim %}
+                <a class="small" href="{% url 'front:report' s.sha256 %}"><i class="fa fa-eye"></i> <span
+                        class=""><samp>{{ s.handle|truncatechars:17 }}</samp></span></a>
+                <div class="progress" style="height: 2px;">
+                  <div class="progress-bar bg-secondary" role="progressbar"
+                       style="width: {{ s.score }}%;" aria-valuenow="{{ s.score }}"
+                       aria-valuemin="0"
+                       aria-valuemax="100">
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+        </div>
+      </div>
+    </div>
+  </div>
+  {#  #}
+  {#  <tr>#}
+  {#    <td class="text-center">#}
+  {#      {% include "front/report/m_short_threat_level.html" with d=result.source %}#}
+  {#    </td>#}
+  {#    <td>#}
+  {##}
+  {#      <br>#}
+  {#      {{ result.source.app_name|truncatechars:17 }}<br>#}
+  {#      <span class="small text-muted"><samp>{{ result.source.handle }}</samp></span>#}
+  {#    </td>#}
+  {#    <td>#}
+  {#      {% for k,v in result.highlight.items %}#}
+  {#        <span class="text-muted">Attribute: <samp>{{ k }}</samp></span>#}
+  {#        <p class="small code-samples">#}
+  {#          {% for l in v %}#}
+  {#            <samp>{{ l|safe }}</samp><br>#}
+  {#          {% endfor %}#}
+  {#        </p>#}
+  {#      {% endfor %}#}
+  {#    </td>#}
+  {#    <td>#}
+  {#      {% for s in result.sim %}#}
+  {#        <div class="progress mt-1">#}
+  {#          <div class="progress-bar progress-bar-striped bg-secondary" role="progressbar" style="width: {{ s.score }}%;" aria-valuenow="{{ s.score }}"#}
+  {#               aria-valuemin="0"#}
+  {#               aria-valuemax="100">{{ s.score }}%#}
+  {#          </div>#}
+  {#        </div>#}
+  {#        <span class="small text-muted"><samp>{{ s.handle|truncatechars:17 }}</samp></span>#}
+  {#        <a class="small" href="{% url 'front:report' s.sha256 %}"><i class="fa fa-eye"></i></a>#}
+  {#      {% endfor %}#}
+  {#    </td>#}
+  {#  </tr>#}
+{% endif %}

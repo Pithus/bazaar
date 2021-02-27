@@ -89,15 +89,12 @@ class SearchForm(forms.Form):
                 "domains": {
                     "terms": {"field": "domains_analysis._name.keyword"}
                 },
-                "android_api": {
-                    "terms": {"field": "android_api_analysis.metadata.description.keyword"}
-                },
                 "android_features": {
                     "terms": {"field": "features.keyword"}
                 }
             },
             "sort": {"analysis_date": "desc"},
-            "_source": ["apk_hash", "sha256", "handle", "app_name", "dexofuzzy.apk", "quark", "vt", "malware_bazaar"],
+            "_source": ["apk_hash", "sha256", "uploaded_at", "icon_base64", "handle", "app_name", "version_code", "size", "dexofuzzy.apk", "quark", "vt", "malware_bazaar"],
             "size": 50,
         }
         es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
