@@ -40,6 +40,14 @@
         </div>
 
         <div class="col-md-4 text-truncate ">
+          {% if user.is_authenticated %}
+            <div class="text-right">
+              <a href="{% url 'front:download_sample' result.source.apk_hash %}" class="" data-toggle="tooltip"
+                 data-placement="top" title="Download the sample"><i class="fas fa-download"></i></a>
+              <a href="{% url 'front:export_report' result.source.apk_hash %}" class="" data-toggle="tooltip"
+                 data-placement="top" title="Export the report in JSON"><i class="fas fa-file-export"></i></a>
+            </div>
+          {% endif %}
           {% if result.source.vt and result.source.vt.malicious > 0 and result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name %}
             <div class="small text-muted">Threat:</div>
           {% endif %}

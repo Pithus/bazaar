@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.core.files.storage import default_storage
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -93,13 +94,15 @@ class ReportView(View):
             if 'domains_analysis' in result:
                 map_svg = generate_world_map(result['domains_analysis'])
 
-            if status['running']:
-                return render(request, 'front/report.html', {'result': result, 'status': status, 'map': map_svg})
-            else:
-                # The analysis is done so put the report into the cache
-                html_report = render(request, 'front/report.html', {'result': result, 'status': status, 'map': map_svg})
-                cache.set(cache_key, html_report)
-                return html_report
+            cache_retention_time = 5
+            if not status['running']:
+                cache_retention_time = 600
+
+            return render(request, 'front/report.html', {
+                'result': result,
+                'status': status,
+                'map': map_svg,
+                'cache_retention_time': cache_retention_time})
         except Exception as e:
             logging.exception(e)
             return redirect(reverse_lazy('front:home'))
@@ -142,3 +145,32 @@ def similarity_search_view(request):
         if form.is_valid():
             results = form.do_search()
         return render(request, 'front/similarity_search.html', {'form': form, 'results': results})
+
+
+def download_sample_view(request, sha256):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+
+    if request.method == 'GET':
+        if not default_storage.exists(sha256):
+            return redirect(reverse_lazy('front:home'))
+
+        response = HttpResponse(default_storage.open(sha256).read(), content_type="application/vnd.android.package-archive")
+        response['Content-Disposition'] = f'inline; filename=pithus_sample_{sha256}.apk'
+        return response
+
+def export_report_view(request, sha256):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+
+    if request.method == 'GET':
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+        try:
+            result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
+            response = JsonResponse(result)
+            response['Content-Disposition'] = f'attachment; filename=pithus_report_{sha256}.json'
+            return response
+        except Exception as e:
+            logging.exception(e)
+            return redirect(reverse_lazy('front:home'))
+

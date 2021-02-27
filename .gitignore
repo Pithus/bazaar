@@ -329,3 +329,10 @@ bazaar/media/
 .env
 .envs/*
 !.envs/.local/
+/bazaar/static/images/src/amphora.svg
+/bazaar/static/images/src/confetti.svg
+/bazaar/static/images/src/congrats.svg
+/index.html
+/index.html.1
+/.idea/jsLibraryMappings.xml
+/mob.json
