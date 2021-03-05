@@ -1,0 +1,34 @@
+{% if d.features %}
+  <span class="text-secondary">
+    {% if "android.hardware.audio" in d.features %}
+      <i class="fas fa-volume-up" data-toggle="tooltip" data-placement="top" title="android.hardware.audio"></i>
+    {% endif %}
+    {% if "android.hardware.microphone" in d.features %}
+      <i class="fas fa-microphone-alt" data-toggle="tooltip" data-placement="top" title="android.hardware.microphone"></i>
+    {% endif %}
+    {% if "android.hardware.bluetooth" in d.features %}
+      <i class="fab fa-bluetooth" data-toggle="tooltip" data-placement="top" title="android.hardware.bluetooth"></i>
+    {% endif %}
+    {% if "android.hardware.camera" in d.features %}
+      <i class="fas fa-camera" data-toggle="tooltip" data-placement="top" title="android.hardware.camera"></i>
+    {% endif %}
+    {% if "android.hardware.location" in d.features %}
+      <i class="fas fa-location-arrow" data-toggle="tooltip" data-placement="top" title="android.hardware.location"></i>
+    {% endif %}
+    {% if "android.hardware.sensor" in d.features %}
+      <i class="fas fa-microchip" data-toggle="tooltip" data-placement="top" title="android.hardware.sensor"></i>
+    {% endif %}
+    {% if "android.hardware.telephony" in d.features %}
+      <i class="fas fa-phone-alt" data-toggle="tooltip" data-placement="top" title="android.hardware.telephony"></i>
+    {% endif %}
+    {% if "android.hardware.usb" in d.features %}
+      <i class="fab fa-usb" data-toggle="tooltip" data-placement="top" title="android.hardware.usb"></i>
+    {% endif %}
+    {% if "android.hardware.wifi" in d.features %}
+      <i class="fas fa-wifi" data-toggle="tooltip" data-placement="top" title="android.hardware.wifi"></i>
+    {% endif %}
+    {% if "android.software.device_admin" in d.features %}
+      <i class="fas fa-user-shield" data-toggle="tooltip" data-placement="top" title="android.software.device_admin"></i>
+    {% endif %}
+  </span>
+{% endif %}

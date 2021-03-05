@@ -46,7 +46,7 @@
       </div>
     </div>
 
-    {% cache cache_retention_time result.apk_hash %}
+    {% cache cache_retention_time report result.sha256 %}
       <div class="row justify-content-center">
         <div class="col mb-4">
           <div class="card text-white bg-secondary">

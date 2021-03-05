@@ -34,4 +34,42 @@
         <i class="fa fa-search"></i>
       </a></td>
   </tr>
+  <tr>
+    <td class="">Signature</td>
+    <td class="">
+      {% if not d.is_signed %}
+        <span class="badge badge-danger">Not signed</span>
+      {% endif %}
+
+      {% if d.is_signed_v1 %}
+        <span class="badge badge-success">Signature V1</span>
+      {% endif %}
+      {% if d.is_signed_v2 %}
+        <span class="badge badge-success">Signature V2</span>
+      {% endif %}
+      {% if d.is_signed_v3 %}
+        <span class="badge badge-success">Signature V3</span>
+      {% endif %}
+
+  </tr>
+  <tr>
+    <td class="">Frosting</td>
+    <td>
+      {% if d.frosting_data.is_frosted %}
+        <span class="badge badge-success">Frosted</span>
+      {% else %}
+        <span class="badge badge-danger">Not frosted</span>
+      {% endif %}
+      {% if d.frosting_data.v2_signature_blocks|length > 0 %}
+        <div class="small">
+          Blocks found within V2 signature:
+          <ul class="list-unstyled mt-0">
+            {% for elt in d.frosting_data.v2_signature_blocks %}
+              <li><samp>{{ elt.value }}</samp>: {{ elt.comment }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    </td>
+  </tr>
 </table>

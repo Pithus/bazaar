@@ -31,6 +31,9 @@ class Command(BaseCommand):
             if 'b' in tasks:
                 print(f'Start malware_bazaar_analysis for {sha256}')
                 malware_bazaar_analysis(sha256)
+            if 'f' in tasks:
+                print(f'Start frosting_analysis for {sha256}')
+                frosting_analysis(sha256)
             if 'v' in tasks:
                 print(f'Start vt_analysis for {sha256}')
                 vt_analysis(sha256)

@@ -40,14 +40,30 @@
         </div>
 
         <div class="col-md-4 text-truncate ">
-          {% if user.is_authenticated %}
-            <div class="text-right">
-              <a href="{% url 'front:download_sample' result.source.apk_hash %}" class="" data-toggle="tooltip"
-                 data-placement="top" title="Download the sample"><i class="fas fa-download"></i></a>
-              <a href="{% url 'front:export_report' result.source.apk_hash %}" class="" data-toggle="tooltip"
-                 data-placement="top" title="Export the report in JSON"><i class="fas fa-file-export"></i></a>
+          <div class="row">
+            <div class="col">
+              {% include "front/report/m_features_tiny.html" with d=result.source %}
+              {% if result.source.is_signed %}
+                <i class="fas fa-file-signature text-secondary" data-toggle="tooltip"
+                     data-placement="top" title="Is correctly signed"></i>
+              {% endif %}
+              {% if result.source.frosting_data.is_frosted %}
+                <i class="far fa-snowflake text-secondary" data-toggle="tooltip"
+                     data-placement="top" title="Has been frosted"></i>
+              {% endif %}
             </div>
-          {% endif %}
+            <div class="col-md-4">
+              {% if user.is_authenticated %}
+                <div class="text-right">
+                  <a href="{% url 'front:download_sample' result.source.apk_hash %}" class="" data-toggle="tooltip"
+                     data-placement="top" title="Download the sample"><i class="fas fa-download"></i></a>
+                  <a href="{% url 'front:export_report' result.source.apk_hash %}" class="" data-toggle="tooltip"
+                     data-placement="top" title="Export the report in JSON"><i class="fas fa-file-export"></i></a>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
           {% if result.source.vt and result.source.vt.malicious > 0 and result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name %}
             <div class="small text-muted">Threat:</div>
           {% endif %}
