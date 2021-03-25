@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+{% load cache %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-12 mt-2 mb-3">
+
+      <div class="row">
+        <h2>My Hunting Rules </h2>
+      </div>
+      <h3><a href="/rules/new">Add a new rule</a></h3>
+      <div class="accordion" id="accordionExample">
+        {% for rule in my_rules %}
+        <div class="card">
+          <div class="card-header" id="heading-{{rule.rule.id}}">
+            <h2 class="mb-0">
+              <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
+                data-target="#collapse-{{rule.rule.id}}" aria-expanded="true" aria-controls="collapse-{{rule.rule.id}}">
+                <span class="badge badge-secondary mr-2"><i class="fas fa-binoculars text-white"></i>&nbsp;
+                  {{ rule.matches|length }}</span>
+                {{rule.rule.title}}
+
+
+                <i data-toggle="modal" data-target="#ruleModal-{{rule.rule.id}}" class="fa fa-eye"></i>
+                {% if rule.rule.is_private %}
+                <i class="fas fa-lock text-muted"></i>
+                {% else %}
+                <i class="fas fa-lock-open text-muted"></i>
+                {% endif %}
+              </button>
+            </h2>
+            <!-- Modal -->
+            <div class=" modal fade" id="ruleModal-{{rule.rule.id}}" tabindex="-1" role="dialog"
+              aria-labelledby="ruleModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <div class="modal-title" id="title">{{ rule.rule.title }}
+                      <a href="/rules/{{rule.rule.id}}/edit"><i class="fa fa-pen"></i></a>
+                      <a href="/rules/{{rule.rule.id}}/delete"><i class="fas fa-trash"></i></a>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                  </div>
+                  <div class="modal-body">
+                    <pre id="content">{{ rule.rule.content }}</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="collapse-{{rule.rule.id}}" class="collapse " aria-labelledby="heading-{{rule.rule.id}}"
+            data-parent="#accordionExample">
+            <div class="card-body">
+              {% if rule.matches|length > 0%}
+              <p>Hunting results:</p>
+              {% else %}
+              <p>No matches</p>
+              {% endif %}
+
+              {% for m in rule.matches %}
+              <a href="{% url 'front:report' m.matches.apk_id %}">
+                {{ m.matches.apk_id }}</a>
+              <p>Date of detection: {{ m.matching_date }}</p>
+              <ul class="list-unstyled small">
+                {% for f in m.matches.matching_files %}
+                <li class="ml-4"><samp>{{ f }}</samp></li>
+                {% endfor %}
+              </ul>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}

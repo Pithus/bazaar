@@ -5,6 +5,9 @@ from elasticsearch import Elasticsearch
 from bazaar.core.utils import get_matching_items_by_dexofuzzy, get_matching_items_by_ssdeep
 from bazaar.front.utils import transform_results, transform_hl_results, append_dexofuzzy_similarity, get_aggregations
 
+from django.forms import ModelForm
+from bazaar.core.models import Yara
+
 
 class BasicSearchForm(forms.Form):
     q = forms.CharField(label='The SHA256 you are looking for', max_length=65)
@@ -116,3 +119,9 @@ class SearchForm(forms.Form):
 
 class BasicUploadForm(forms.Form):
     apk = forms.FileField()
+
+
+class YaraCreateForm(ModelForm):
+    class Meta:
+        model = Yara
+        fields = ['title', 'content', 'is_private']
