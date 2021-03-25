@@ -1,7 +1,7 @@
 {
     "crime": "Read file from assets directory",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "class": "Landroid/content/res/AssetManager;",
             "method": "open",
@@ -13,7 +13,7 @@
             "descriptor": "([B)I"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "file"
     ]

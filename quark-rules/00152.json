@@ -1,9 +1,9 @@
 {
     "crime": "Get data from HTTP and send SMS",
-    "x1_permission": [
+    "permission": [
         "android.permission.INTERNET"
     ],
-    "x2n3n4_comb": [
+    "api": [
         {
             "class": "Ljava/net/URL;",
             "method": "openConnection",
@@ -15,7 +15,7 @@
             "method": "sendTextMessage"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "command",
         "sms"

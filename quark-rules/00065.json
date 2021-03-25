@@ -1,7 +1,7 @@
 {
     "crime": "Get the country code of the SIM card provider",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "class": "Landroid/content/Context;",
             "method": "getSystemService",
@@ -13,7 +13,7 @@
             "descriptor": "()Ljava/lang/String;"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "collection"
     ]

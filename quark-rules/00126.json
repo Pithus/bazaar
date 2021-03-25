@@ -1,7 +1,7 @@
 {
     "crime": "Read sensitive data(SMS, CALLLOG, etc)",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "descriptor": "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;",
             "class": "Landroid/content/ContentResolver;",
@@ -13,7 +13,7 @@
             "method": "toString"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "collection",
         "sms",

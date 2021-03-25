@@ -1,7 +1,7 @@
 {
     "crime": "Monitor the broadcast action events (BOOT_COMPLETED)",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "class": "Landroid/content/Intent;",
             "method": "getAction",
@@ -13,7 +13,7 @@
             "descriptor": "(Ljava/lang/Object;)Z"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "reflection"
     ]

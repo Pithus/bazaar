@@ -1,7 +1,7 @@
 {
     "crime": "Run shell script programmably",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "class": "Ljava/lang/Runtime;",
             "method": "exec",
@@ -13,7 +13,7 @@
             "descriptor": "()Ljava/io/OutputStream;"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "control"
     ]

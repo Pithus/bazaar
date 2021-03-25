@@ -1,7 +1,7 @@
 {
     "crime": "Calculate WiFi signal strength",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "class": "Landroid/net/wifi/WifiInfo;",
             "method": "getRssi",
@@ -13,7 +13,7 @@
             "descriptor": "(I I)I"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "collection",
         "wifi"

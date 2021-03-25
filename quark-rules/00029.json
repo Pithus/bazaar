@@ -1,7 +1,7 @@
 {
     "crime": "Initialize class object dynamically",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "class": "Ljava/lang/Class;",
             "method": "forName",
@@ -13,7 +13,7 @@
             "descriptor": "([Ljava/lang/Object;)Ljava/lang/Object;"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "reflection"
     ]

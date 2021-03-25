@@ -1,7 +1,7 @@
 {
     "crime": "Write the phone number into a file",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "descriptor": "()Ljava/lang/String;",
             "class": "Landroid/telephony/TelephonyManager;",
@@ -13,7 +13,7 @@
             "method": "write"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "collection",
         "telephony",

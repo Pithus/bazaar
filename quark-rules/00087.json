@@ -1,7 +1,7 @@
 {
     "crime": "Check the current network type",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "descriptor": "()I",
             "class": "Landroid/net/NetworkInfo;",
@@ -13,7 +13,7 @@
             "method": "equals"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "network"
     ]

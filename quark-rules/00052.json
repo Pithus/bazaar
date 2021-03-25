@@ -1,7 +1,7 @@
 {
     "crime": "Deletes media specified by a content URI(SMS, CALL_LOG, File, etc.)",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "class": "Landroid/net/Uri;",
             "method": "parse",
@@ -13,7 +13,7 @@
             "descriptor": "(Landroid/net/Uri; Ljava/lang/String; [Ljava/lang/String;)I"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "sms"
     ]

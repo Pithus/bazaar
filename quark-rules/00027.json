@@ -1,7 +1,7 @@
 {
     "crime": "Get specific method from other Dex files",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "class": "Ljava/lang/ClassLoader;",
             "method": "loadClass",
@@ -13,7 +13,7 @@
             "descriptor": "(Ljava/lang/String; [Ljava/lang/Class;)Ljava/lang/reflect/Method;"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "reflection"
     ]

@@ -1,7 +1,7 @@
 {
     "crime": "Get absolute path of file and put it to JSON object",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "class": "Ljava/io/File;",
             "method": "getAbsolutePath",
@@ -13,7 +13,7 @@
             "descriptor": "(Ljava/lang/String; Ljava/lang/Object;)Lorg/json/JSONObject;"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "file"
     ]

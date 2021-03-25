@@ -1,7 +1,7 @@
 {
     "crime": "Query the local IP address",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "class": "Ljava/net/Socket;",
             "method": "getLocalAddress",
@@ -13,7 +13,7 @@
             "descriptor": "()Ljava/lang/String;"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "network",
         "collection"

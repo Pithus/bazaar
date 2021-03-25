@@ -1,7 +1,7 @@
 {
     "crime": "Connect to the remote server through the given URL",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "class": "Ljava/net/URL;",
             "method": "openConnection",
@@ -13,7 +13,7 @@
             "descriptor": "()V"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "network"
     ]

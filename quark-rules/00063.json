@@ -1,7 +1,7 @@
 {
     "crime": "Implicit intent(view a web page, make a phone call, etc.)",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "class": "Landroid/net/Uri;",
             "method": "parse",
@@ -13,7 +13,7 @@
             "descriptor": "(Ljava/lang/String; Landroid/net/Uri;)V"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "control"
     ]

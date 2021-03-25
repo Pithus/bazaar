@@ -1,7 +1,7 @@
 {
     "crime": "Create a socket connection to the given host address",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "descriptor": "()Ljava/lang/String;",
             "class": "Ljava/net/InetAddress;",
@@ -13,7 +13,7 @@
             "method": "createSocket"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "network",
         "command"

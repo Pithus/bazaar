@@ -1,7 +1,7 @@
 {
     "crime": "Hide the current app's icon",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "descriptor": "()Landroid/content/pm/PackageManager;",
             "class": "Landroid/content/Context;",
@@ -13,7 +13,7 @@
             "method": "setComponentEnabledSetting"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "evasion"
     ]

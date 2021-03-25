@@ -1,9 +1,9 @@
 {
     "crime": "Send phone number over Internet",
-    "x1_permission": [
+    "permission": [
         "android.permission.INTERNET"
     ],
-    "x2n3n4_comb": [
+    "api": [
         {
             "class": "Landroid/telephony/TelephonyManager;",
             "method": "getLine1Number",
@@ -15,7 +15,7 @@
             "descriptor": "()Ljava/net/URLConnection;"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "phone",
         "privacy"

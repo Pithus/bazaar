@@ -1,7 +1,7 @@
 {
     "crime": "Get the content of SMS and forward it to others via SMS",
-    "x1_permission": [],
-    "x2n3n4_comb": [
+    "permission": [],
+    "api": [
         {
             "descriptor": "()Ljava/lang/String;",
             "class": "Landroid/telephony/SmsMessage;",
@@ -13,7 +13,7 @@
             "method": "sendTextMessage"
         }
     ],
-    "yscore": 1,
+    "score": 1,
     "label": [
         "collection",
         "sms",
