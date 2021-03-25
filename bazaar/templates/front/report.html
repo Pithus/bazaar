@@ -3,6 +3,21 @@
 {% load cache %}
 {% load crispy_forms_tags %}
 
+{% block title %}Pithus report for {{ result.app_name }} - {{ result.handle }}{% endblock title %}
+
+{% block meta %}
+  <meta property="og:title" content="Pithus report of {{ result.app_name }} - {{ result.handle }}" />
+  <meta property="og:description" content="Android security & privacy analysis for the masses." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://beta.pithus.org{% url 'front:report' result.apk_hash %}" />
+  <meta property="og:image" content="https://beta.pithus.org{% url 'front:og_card' result.apk_hash %}" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Pithus report for {{ result.app_name }} - {{ result.handle }}" />
+  <meta name="twitter:description" content="Android security & privacy analysis for the masses." />
+  <meta name="twitter:image" content="https://beta.pithus.org{% url 'front:og_card' result.apk_hash %}" />
+{% endblock meta %}
+
 {% block content %}
   <div class="container">
     <div class="row justify-content-center mt-1">

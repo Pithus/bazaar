@@ -1,3 +1,5 @@
+from tempfile import NamedTemporaryFile
+
 import dexofuzzy
 
 from django.conf import settings
@@ -102,8 +104,9 @@ def compute_status(status):
     }
 
 
-def generate_world_map(domains):
+def generate_world_map(domains, to_png=False, fp=None):
     import pygal
+    import cairosvg
     from pygal.style import Style
 
     countries = {}
@@ -129,6 +132,12 @@ def generate_world_map(domains):
     worldmap_chart.add('Server locations', countries)
     worldmap_chart.show_legend = False
     if countries:
-        return worldmap_chart.render(is_unicode=True)
+        if to_png and fp:
+            with NamedTemporaryFile() as tmp_svg:
+                worldmap_chart.render_to_file(tmp_svg.name)
+                cairosvg.svg2png(url=tmp_svg.name, write_to=fp)
+        else:
+            return worldmap_chart.render(is_unicode=True)
     else:
         return None
+

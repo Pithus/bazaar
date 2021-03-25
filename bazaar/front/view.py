@@ -8,6 +8,7 @@ from django.core.files.storage import default_storage
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from elasticsearch import Elasticsearch
@@ -15,6 +16,7 @@ from rest_framework.reverse import reverse_lazy
 from bazaar.core.tasks import analyze
 from bazaar.core.utils import get_sha256_of_file
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm
+from bazaar.front.og import generate_og_card
 from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status, generate_world_map
 
 
@@ -159,6 +161,7 @@ def download_sample_view(request, sha256):
         response['Content-Disposition'] = f'inline; filename=pithus_sample_{sha256}.apk'
         return response
 
+
 def export_report_view(request, sha256):
     if not request.user.is_authenticated:
         return redirect(reverse_lazy('front:home'))
@@ -173,4 +176,12 @@ def export_report_view(request, sha256):
         except Exception as e:
             logging.exception(e)
             return redirect(reverse_lazy('front:home'))
+
+
+@cache_page(2*60*60)
+def og_card_view(request, sha256):
+    if request.method == 'GET':
+        with NamedTemporaryFile() as fp:
+            generate_og_card(sha256, fp.name)
+            return HttpResponse(fp.read(), content_type="image/png")
 
