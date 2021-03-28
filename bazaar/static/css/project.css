@@ -1796,7 +1796,7 @@ textarea.form-control {
   padding: 0.375rem 0.75rem;
   font-size: 1rem;
   line-height: 1.5;
-  border-radius: 1.35rem;
+  border-radius: 0.6rem;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
   @media (prefers-reduced-motion: reduce) {
     .btn {
@@ -3116,7 +3116,7 @@ input[type="button"].btn-block {
   line-height: 1;
   background-color: transparent;
   border: 1px solid transparent;
-  border-radius: 1.35rem; }
+  border-radius: 0.6rem; }
   .navbar-toggler:hover, .navbar-toggler:focus {
     text-decoration: none; }
 

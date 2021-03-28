@@ -4,14 +4,18 @@ import glob
 import logging
 import os
 import re
-import vt
+import shutil
+import time
+import uuid
 import zipfile
 from datetime import datetime
 from tempfile import NamedTemporaryFile, TemporaryDirectory
-import time
+
 import dexofuzzy
 import requests
 import ssdeep
+import vt
+import yara
 from androguard.core.bytecodes.apk import APK
 from androguard.misc import AnalyzeAPK
 from apkid.apkid import Scanner, Options
@@ -29,6 +33,7 @@ from tqdm import tqdm
 
 from bazaar.core.fingerprinting import ApplicationSignature
 from bazaar.core.mobsf import MobSF
+from bazaar.core.models import Yara
 from bazaar.core.utils import strings_from_apk, upload_sample_to_malware_bazaar, insert_fuzzy_hash
 
 es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, timeout=30, max_retries=5, retry_on_timeout=True)
@@ -105,9 +110,80 @@ def extract_ioc(sha256):
     return {'status': 'success', 'info': ''}
 
 
+def yara_analysis(sha256):
+    with NamedTemporaryFile() as f:
+        f.write(default_storage.open(sha256).read())
+        f.seek(0)
+        with TemporaryDirectory() as tmp:
+            shutil.copyfile(f.name, f'{tmp}/{sha256}.apk')
+            with zipfile.ZipFile(f.name, 'r') as apk:
+                apk.extractall(tmp)
+
+            for rule in Yara.objects.all():
+                es_index = rule.get_es_index_name()
+
+                try:
+                    es.indices.create(index=es_index, ignore=400)
+                except Exception as e:
+                    pass
+
+                try:
+                    yara_rule = yara.compile(source=rule.content)
+                except Exception:
+                    continue
+
+                document_uuid = uuid.uuid4()
+                res_struct = {
+                    'name': rule.title,
+                    'rule': rule.id,
+                    'owner': rule.owner.id,
+                    'matching_date': timezone.now(),
+                    'matches':{
+                            'apk_id': sha256,
+                            'matching_files': [],
+                            'inner_rules': [],
+                        },
+                }
+                for file in glob.iglob(f'{tmp}/**/*', recursive=True):
+                    try:
+                        found = yara_rule.match(file)
+                        if len(found) > 0:
+                            res_struct['matches']['matching_files'].append(file.replace(tmp, ''))
+                            res_struct['matches']['inner_rules'].extend([str(f) for f in found])
+                            logging.info(res_struct)
+                    except Exception as e:
+                        pass
+
+                res_struct['matches']['inner_rules'] = list(set(res_struct['matches']['inner_rules']))
+
+                q = {
+                    'query': {
+                        'bool': {
+                            'must': [
+                                {'match': {'owner': rule.owner.id}},
+                                {'match': {'rule': rule.id}},
+                                {'match': {
+                                    'matches.apk_id': sha256}}
+                            ]
+                        }
+                    }
+                }
+                count_existing_matches = es.count(index=es_index, body=q)['count']
+                if len(res_struct['matches']['matching_files']) > 0 and count_existing_matches == 0:
+                    try:
+                        es.index(index=es_index, id=document_uuid, body=res_struct)
+                        # TODO: notify user if match
+                    except Exception as e:
+                        logging.exception(e)
+
+    del rule, yara_rule, res_struct, file, found, es_index, document_uuid
+    gc.collect()
+    return {'status': 'success', 'info': ''}
+
+
 def exodus_analysis(classes):
     start = time.time()
-    exodus_url = "https://reports.exodus-privacy.eu.org/api/trackers"
+    exodus_url = 'https://reports.exodus-privacy.eu.org/api/trackers'
     r = requests.get(exodus_url)
     data = r.json()
     tracker_signatures = []
@@ -138,7 +214,7 @@ def exodus_analysis(classes):
     del tracker_signatures, r, classes, data
     gc.collect()
     stop = time.time()
-    print(f'exodus_analysis took {stop-start}')
+    print(f'exodus_analysis took {stop - start}')
     return results
 
 
@@ -159,7 +235,7 @@ def extract_classes(sha256):
         s1 = time.time()
         a, d, dx = AnalyzeAPK(f.name)
         s2 = time.time()
-        print(f'AnalyzeAPK took {s2-s1}')
+        print(f'AnalyzeAPK took {s2 - s1}')
 
         # Extract classes
         s1 = time.time()
@@ -169,14 +245,14 @@ def extract_classes(sha256):
                 if not class_name.startswith('Lkotlin/') and not class_name.startswith(
                     'Landroid/') and not class_name.startswith('Landroidx/') and not class_name.startswith(
                     'Ljavax/') and not class_name.startswith('Lkotlinx/') and not class_name.startswith(
-                    'Ljava/'): # and _lcheck(class_name) and class_name not in class_names:
+                    'Ljava/'):  # and _lcheck(class_name) and class_name not in class_names:
                     class_names.append(str(class_name))
         except Exception as e:
             es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_classes': -1}},
                       retry_on_conflict=5)
             return {'status': 'failed', 'info': str(e)}
         s2 = time.time()
-        print(f'Cleanup took {s2-s1}')
+        print(f'Cleanup took {s2 - s1}')
 
         java_classes = ' '.join(class_names)
 
@@ -196,7 +272,7 @@ def extract_classes(sha256):
               retry_on_conflict=5)
 
     stop = time.time()
-    print(f'extract_classes took {stop-start}')
+    print(f'extract_classes took {stop - start}')
 
     return {'status': 'success', 'info': ''}
 
@@ -211,7 +287,7 @@ def frosting_analysis(sha256):
         # JSON with some metadata, used by Chinese company Meituan
         0x71777777: 'Meituan metadata',
         # Dependencies metadata generated by Gradle and encrypted by Google Play.
-        # "...The data is compressed, encrypted by a Google Play signing key..."
+        # '...The data is compressed, encrypted by a Google Play signing key...'
         # https://developer.android.com/studio/releases/gradle-plugin#dependency-metadata
         0x504b4453: 'Dependency metadata',
     }
@@ -245,9 +321,11 @@ def frosting_analysis(sha256):
                             'content': binascii.b2a_base64(a._v2_blocks[b]).decode('utf-8').strip()
                         }
                     )
-            es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'frosting_data': frosting_data}}, retry_on_conflict=5)
+            es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={
+                'doc': {'frosting_data': frosting_data}}, retry_on_conflict=5)
         except Exception as e:
             pass
+
 
 def ssdeep_analysis(sha256):
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'ssdeep_analysis': 1}},
@@ -455,7 +533,7 @@ def quark_analysis(sha256):
         rules_path = 'quark-rules'
         rules_list = os.listdir(rules_path)
         for single_rule in tqdm(rules_list):
-            if single_rule.endswith("json"):
+            if single_rule.endswith('json'):
                 rule_path = os.path.join(rules_path, single_rule)
                 rule_checker = QuarkRule(rule_path)
                 try:
@@ -481,10 +559,10 @@ def quark_analysis(sha256):
 def malware_bazaar_analysis(sha256):
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'malware_bazaar_analysis': 1}},
               retry_on_conflict=5)
-    url = "https://mb-api.abuse.ch/api/v1/"
+    url = 'https://mb-api.abuse.ch/api/v1/'
     data_query = {
-        "query": "get_info",
-        "hash": sha256
+        'query': 'get_info',
+        'hash': sha256
     }
     try:
         response = requests.post(url, data=data_query)
@@ -510,7 +588,7 @@ def malware_bazaar_analysis(sha256):
                 return
 
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'malware_bazaar_analysis': -1}},
-                  retry_on_conflict=5)
+              retry_on_conflict=5)
     return
 
 
@@ -533,6 +611,7 @@ def vt_analysis(sha256):
                   retry_on_conflict=5)
         return
 
+
 def analyze(sha256, force=False):
     if not default_storage.exists(sha256):
         reason = f'{sha256} not found, unable to analyze'
@@ -551,11 +630,11 @@ def analyze(sha256, force=False):
         async_task(vt_analysis, sha256)
         async_task(apkid_analysis, sha256)
         async_task(ssdeep_analysis, sha256)
-        # extract_classes(sha256)
         async_task(frosting_analysis, sha256)
         async_task(extract_classes, sha256)
         async_task(quark_analysis, sha256)
         async_task(get_google_play_info, package)
+        async_task(yara_analysis, sha256)
 
     gc.collect()
 

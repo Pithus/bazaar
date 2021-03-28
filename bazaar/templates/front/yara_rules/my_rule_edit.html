@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+{% load cache %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-12 mt-2 mb-3">
+        <h2>Add or edit your Yara rule:</h2>
+      </div>
+      <div class="col-md-12 mt-2 mb-3">
+        <span class="alert alert-secondary">
+            <i class="fas fa-info mr-1"></i>
+            Pithus supports vanilla <a href="https://yara.readthedocs.io/en/stable/" target="_blank">Yara</a> rules. Each time a new sample is uploaded your rules are applied on the
+            decompressed content of the sample + on the sample itself.
+        </span>
+      </div>
+      <div class="col-md-12 mt-2 mb-3">
+
+        {% if form.errors %}
+          {% for error in field.errors %}
+            <div class="alert alert-danger">
+              <strong>{{ error|escape }}</strong>
+            </div>
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+              <strong>{{ error|escape }}</strong>
+            </div>
+          {% endfor %}
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form|crispy }}
+          {% if edit %}
+            <p class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>By editing this rule its hunting history will be erased.</strong>
+            </p>
+          {% endif %}
+          <button class='btn btn-primary' type='submit'>Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

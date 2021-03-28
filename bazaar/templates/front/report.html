@@ -19,332 +19,326 @@
 {% endblock meta %}
 
 {% block content %}
-  <div class="container">
-    <div class="row justify-content-center mt-1">
-      {% include "front/report/m_status_progress.html" %}
-    </div>
-
-    <div class="row justify-content-center">
-      <div class="col-md-4">
-        <div class="card border-0">
-          <div class="card-body text-center">
-            <div>
-              {% include "front/report/m_threat_level.html" %}
-            </div>
-            {% if user.is_authenticated %}
-            <div>
-            <a href="{% url 'front:download_sample' result.apk_hash %}" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Download the sample"><i class="fas fa-download"></i> sample</a>
-            <a href="{% url 'front:export_report' result.apk_hash %}" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Export the report in JSON"><i class="fas fa-file-export"></i> report</a>
-            </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <h1 class="text-primary">
-          {% if result.icon_base64 %}
-            <img class="" src="data:image/png;base64,{{ result.icon_base64 }}" width="48px">
-          {% endif %}
-          {{ result.handle }}
-        </h1>
-        {% if result.app_name %}
-          <h3 class="text-secondary">{{ result.app_name }}</h3>
-        {% endif %}
-        {% if result.malware_bazaar.vendor_intel.Triage.tags %}
-          <p>
-            {% for t in result.malware_bazaar.vendor_intel.Triage.tags %}
-              <span class="badge badge-secondary text-white">{{ t }}</span>
-            {% endfor %}
-          </p>
-        {% endif %}
-        <p class="text-muted">Analyzed on {{ result.uploaded_at }}</p>
-      </div>
-    </div>
-
-    {% cache cache_retention_time report result.sha256 %}
-      <div class="row justify-content-center">
-        <div class="col mb-4">
-          <div class="card text-white bg-secondary">
-            <div class="card-body text-center">
-              <h3 class="text-white">{{ result.permissions|length }}</h3>
-              <h6>permissions</h6>
-            </div>
-          </div>
-        </div>
-        <div class="col mb-4">
-          <div class="card text-white bg-secondary">
-            <div class="card-body text-center">
-              <h3 class="text-white">{{ result.activities|length }}</h3>
-              <h6>activities</h6>
-            </div>
-          </div>
-        </div>
-        <div class="col mb-4">
-          <div class="card text-white bg-secondary">
-            <div class="card-body text-center">
-              <h3 class="text-white">{{ result.services|length }}</h3>
-              <h6>services</h6>
-            </div>
-          </div>
-        </div>
-        <div class="col mb-4">
-          <div class="card text-white bg-secondary">
-            <div class="card-body text-center">
-              <h3 class="text-white">{{ result.receivers|length }}</h3>
-              <h6>receivers</h6>
-            </div>
-          </div>
-        </div>
-        <div class="col mb-4">
-          <div class="card text-white bg-secondary">
-            <div class="card-body text-center">
-              <h3 class="text-white">{{ result.domains_analysis|length }}</h3>
-              <h6>domains</h6>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row justify-content-center ">
-        <div class="col-md-12 mt-2 mb-3">
-          <ul class="nav justify-content-center nav-pills" id="menu-tabs" role="tablist">
-            <li class="nav-item">
-              <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#fingerprints" role="tab"
-                 id="fingerprints-tab"
-                 aria-controls="fingerprints"
-                 aria-selected="true">
-                <i class="fa fa-fingerprint"></i>
-                <p>Fingerprints</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#threat_intel" role="tab"
-                 id="threat_intel-tab"
-                 aria-controls="threat_intel"
-                 aria-selected="true">
-                <i class="fa fa-virus"></i>
-                <p>Threat intel.</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#apk_analysis" role="tab"
-                 id="apk_analysis-tab"
-                 aria-controls="apk_analysis"
-                 aria-selected="true">
-                <i class="fa fa-archive"></i>
-                <p>APK analysis</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#code_analysis" role="tab"
-                 id="code_analysis-tab"
-                 aria-controls="code_analysis"
-                 aria-selected="false">
-                <i class="fa fa-bug"></i>
-                <p>Code analysis</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#behavior_analysis" role="tab"
-                 id="behavior_analysis-tab" aria-controls="behavior_analysis" aria-selected="false">
-                <i class="fa fa-hand-spock"></i>
-                <p>Behavior analysis</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#network_analysis" role="tab"
-                 id="network_analysis-tab"
-                 aria-controls="network_analysis"
-                 aria-selected="false">
-                <i class="fa fa-globe"></i>
-                <p>Network analysis</p>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="row justify-content-center">
-        <div class="col-md-12 mt-5 tab-content">
-          <div class="tab-pane" role="tabpanel" aria-labelledby="fingerprints-tab" id="fingerprints">
-            <div class="col-md-12">
-              <h3>File sums</h3>
-              {% include "front/report/m_file.html" with d=result %}
-            </div>
-            <div class="col-md-12">
-              <h3>APKiD</h3>
-              <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                       href="https://github.com/rednaga/APKiD">APKiD</a>.
-              </p>
-              {% include "front/report/m_apkid.html" with d=result %}
-            </div>
-            <div class="col-md-12">
-              <h3>SSdeep</h3>
-              <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                       href="https://github.com/DinoTools/python-ssdeep">ssdeep</a>.
-              </p>
-              {% include "front/report/m_ssdeep.html" with d=result %}
-            </div>
-            <div class="col-md-12">
-              <h3>Dexofuzzy</h3>
-              <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                       href="https://github.com/ESTsecurity/Dexofuzzy">Dexofuzzy</a>.
-              </p>
-              {% include "front/report/m_dexofuzzy.html" with d=result %}
-            </div>
-          </div>
-
-          <div class="tab-pane" role="tabpanel" aria-labelledby="apk_analysis-tab" id="apk_analysis">
-            <div>
-              <h3>APK details</h3>
-              <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                       href="https://github.com/androguard/androguard">AndroGuard</a>.
-              </p>
-              {% include "front/report/m_apk.html" with d=result %}
-            </div>
-
-            <div>
-              <h3>Certificate details</h3>
-              <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                       href="https://github.com/androguard/androguard">AndroGuard</a>.
-              </p>
-              {% include "front/report/m_certificate.html" with d=result %}
-            </div>
-
-            {% include "front/report/m_file_analysis.html" with d=result %}
-
-            {% if result.manifest_analysis %}
-              <div>
-                <h3>Manifest analysis</h3>
-                <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                         href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-                </p>
-                {% include "front/report/m_manifest.html" with d=result %}
-              </div>
-            {% endif %}
-
-            {% if result.browsable_activities %}
-              <h3>Browsable activities</h3>
-              <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                       href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-              </p>
-              {% include "front/report/m_browsable_activities.html" with d=result %}
-            {% endif %}
-
-            {% include "front/report/m_services_et_al.html" with d=result %}
-          </div>
-
-          <div class="tab-pane" role="tabpanel" aria-labelledby="threat_intel-tab" id="threat_intel">
-            {% if result.malware_bazaar or result.vt %}
-              <div>
-                <h3>Threat intelligence</h3>
-                {% include "front/report/m_malware_bazaar.html" with d=result %}
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="tab-pane" role="tabpanel" aria-labelledby="code_analysis-tab" id="code_analysis">
-            {% if result.niap_analysis %}
-              <div>
-                <h3>NIAP analysis</h3>
-                <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                         href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-                </p>
-                {% include "front/report/m_niap.html" with d=result %}
-              </div>
-            {% endif %}
-
-            {% if result.code_analysis %}
-              <div>
-                <h3>Code analysis</h3>
-                <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                         href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-                </p>
-                {% include "front/report/m_code.html" with d=result %}
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="tab-pane" role="tabpanel" aria-labelledby="network_analysis-tab" id="network_analysis">
-
-            {% if result.domains_analysis %}
-              {% include "front/report/m_map.html" %}
-            {% endif %}
-
-            {% if result.network_security %}
-              <div>
-                <h3>Network analysis</h3>
-                <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                         href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-                </p>
-                {% include "front/report/m_network.html" with d=result %}
-              </div>
-            {% endif %}
-
-            {% if result.domains_analysis %}
-              <div>
-                <h3>Domains analysis</h3>
-                <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                         href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-                </p>
-                {% include "front/report/m_domains.html" with d=result %}
-              </div>
-            {% endif %}
-
-            {% if result.url_analysis %}
-              <div>
-                <h3>URL analysis</h3>
-                <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                         href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-                </p>
-                {% include "front/report/m_url.html" with d=result %}
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="tab-pane" role="tabpanel" aria-labelledby="behavior_analysis-tab" id="behavior_analysis">
-            {% if result.detailed_permissions %}
-              <div>
-                <h3>Permissions analysis</h3>
-                <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                         href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-                </p>
-                {% include "front/report/m_permissions.html" with d=result %}
-              </div>
-            {% endif %}
-
-            {% if result.trackers %}
-              <div>
-                <h3>Tracking analysis</h3>
-                <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                         href="https://github.com/Exodus-Privacy/exodus-core">Exodus-core</a>.
-                </p>
-                {% include "front/report/m_trackers.html" with d=result %}
-              </div>
-            {% endif %}
-
-            {% if result.quark.crimes %}
-              <div>
-                <h3>Threat analysis</h3>
-                <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                         href="https://github.com/quark-engine/quark-engine">Quark-Engine</a>.
-                </p>
-                {% include "front/report/m_quark.html" with d=result %}
-              </div>
-            {% endif %}
-
-            {% if result.android_api_analysis %}
-              <div>
-                <h3>Behavior analysis</h3>
-                <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                                         href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-                </p>
-                {% include "front/report/m_api.html" with d=result %}
-              </div>
-            {% endif %}
-          </div>
-        </div>
-      </div>
-    {% endcache %}
+<div class="container">
+  <div class="row justify-content-center mt-1">
+    {% include "front/report/m_status_progress.html" %}
   </div>
+
+  <div class="row justify-content-center">
+    <div class="col-md-4">
+      <div class="card border-0">
+        <div class="card-body text-center">
+          <div>
+            {% include "front/report/m_threat_level.html" %}
+          </div>
+          {% if user.is_authenticated %}
+          <div>
+            <a href="{% url 'front:download_sample' result.apk_hash %}" class="btn btn-primary btn-sm"
+              data-toggle="tooltip" data-placement="top" title="Download the sample"><i class="fas fa-download"></i>
+              sample</a>
+            <a href="{% url 'front:export_report' result.apk_hash %}" class="btn btn-primary btn-sm"
+              data-toggle="tooltip" data-placement="top" title="Export the report in JSON"><i
+                class="fas fa-file-export"></i> report</a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <h1 class="text-primary">
+        {% if result.icon_base64 %}
+        <img class="" src="data:image/png;base64,{{ result.icon_base64 }}" width="48px">
+        {% endif %}
+        {{ result.handle }}
+      </h1>
+      {% if result.app_name %}
+      <h3 class="text-secondary">{{ result.app_name }}</h3>
+      {% endif %}
+      {% if result.malware_bazaar.vendor_intel.Triage.tags %}
+      <p>
+        {% for t in result.malware_bazaar.vendor_intel.Triage.tags %}
+        <span class="badge badge-secondary text-white">{{ t }}</span>
+        {% endfor %}
+      </p>
+      {% endif %}
+      <p class="text-muted">Analyzed on {{ result.uploaded_at }}</p>
+    </div>
+  </div>
+
+  {% cache cache_retention_time report result.sha256 %}
+  <div class="row justify-content-center">
+    <div class="col mb-4">
+      <div class="card text-white bg-secondary">
+        <div class="card-body text-center">
+          <h3 class="text-white">{{ result.permissions|length }}</h3>
+          <h6>permissions</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card text-white bg-secondary">
+        <div class="card-body text-center">
+          <h3 class="text-white">{{ result.activities|length }}</h3>
+          <h6>activities</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card text-white bg-secondary">
+        <div class="card-body text-center">
+          <h3 class="text-white">{{ result.services|length }}</h3>
+          <h6>services</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card text-white bg-secondary">
+        <div class="card-body text-center">
+          <h3 class="text-white">{{ result.receivers|length }}</h3>
+          <h6>receivers</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card text-white bg-secondary">
+        <div class="card-body text-center">
+          <h3 class="text-white">{{ result.domains_analysis|length }}</h3>
+          <h6>domains</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center ">
+    <div class="col-md-12 mt-2 mb-3">
+      <ul class="nav justify-content-center nav-pills" id="menu-tabs" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#fingerprints" role="tab"
+            id="fingerprints-tab" aria-controls="fingerprints" aria-selected="true">
+            <i class="fa fa-fingerprint"></i>
+            <p>Fingerprints</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#threat_intel" role="tab"
+            id="threat_intel-tab" aria-controls="threat_intel" aria-selected="true">
+            <i class="fa fa-virus"></i>
+            <p>Threat intel.</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#apk_analysis" role="tab"
+            id="apk_analysis-tab" aria-controls="apk_analysis" aria-selected="true">
+            <i class="fa fa-archive"></i>
+            <p>APK analysis</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#code_analysis" role="tab"
+            id="code_analysis-tab" aria-controls="code_analysis" aria-selected="false">
+            <i class="fa fa-bug"></i>
+            <p>Code analysis</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#behavior_analysis" role="tab"
+            id="behavior_analysis-tab" aria-controls="behavior_analysis" aria-selected="false">
+            <i class="fa fa-hand-spock"></i>
+            <p>Behavior analysis</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#network_analysis" role="tab"
+            id="network_analysis-tab" aria-controls="network_analysis" aria-selected="false">
+            <i class="fa fa-globe"></i>
+            <p>Network analysis</p>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-md-12 mt-5 tab-content">
+      <div class="tab-pane" role="tabpanel" aria-labelledby="fingerprints-tab" id="fingerprints">
+        <div class="col-md-12">
+          <h3>File sums</h3>
+          {% include "front/report/m_file.html" with d=result %}
+        </div>
+        <div class="col-md-12">
+          <h3>APKiD</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/rednaga/APKiD">APKiD</a>.
+          </p>
+          {% include "front/report/m_apkid.html" with d=result %}
+        </div>
+        <div class="col-md-12">
+          <h3>SSdeep</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/DinoTools/python-ssdeep">ssdeep</a>.
+          </p>
+          {% include "front/report/m_ssdeep.html" with d=result %}
+        </div>
+        <div class="col-md-12">
+          <h3>Dexofuzzy</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/ESTsecurity/Dexofuzzy">Dexofuzzy</a>.
+          </p>
+          {% include "front/report/m_dexofuzzy.html" with d=result %}
+        </div>
+      </div>
+
+      <div class="tab-pane" role="tabpanel" aria-labelledby="apk_analysis-tab" id="apk_analysis">
+        <div>
+          <h3>APK details</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/androguard/androguard">AndroGuard</a>.
+          </p>
+          {% include "front/report/m_apk.html" with d=result %}
+        </div>
+
+        <div>
+          <h3>Certificate details</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/androguard/androguard">AndroGuard</a>.
+          </p>
+          {% include "front/report/m_certificate.html" with d=result %}
+        </div>
+
+        {% include "front/report/m_file_analysis.html" with d=result %}
+
+        {% if result.manifest_analysis %}
+        <div>
+          <h3>Manifest analysis</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          {% include "front/report/m_manifest.html" with d=result %}
+        </div>
+        {% endif %}
+
+        {% if result.browsable_activities %}
+        <h3>Browsable activities</h3>
+        <p class="text-muted small">Information computed with <a class="" target="_blank"
+            href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+        </p>
+        {% include "front/report/m_browsable_activities.html" with d=result %}
+        {% endif %}
+
+        {% include "front/report/m_services_et_al.html" with d=result %}
+      </div>
+
+      <div class="tab-pane" role="tabpanel" aria-labelledby="threat_intel-tab" id="threat_intel">
+        {% if result.malware_bazaar or result.vt %}
+        <div>
+          <h3>Threat intelligence</h3>
+          {% include "front/report/m_malware_bazaar.html" with d=result %}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="tab-pane" role="tabpanel" aria-labelledby="code_analysis-tab" id="code_analysis">
+        {% if result.niap_analysis %}
+        <div>
+          <h3>NIAP analysis</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          {% include "front/report/m_niap.html" with d=result %}
+        </div>
+        {% endif %}
+
+        {% if result.code_analysis %}
+        <div>
+          <h3>Code analysis</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          {% include "front/report/m_code.html" with d=result %}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="tab-pane" role="tabpanel" aria-labelledby="network_analysis-tab" id="network_analysis">
+
+        {% if result.domains_analysis %}
+        {% include "front/report/m_map.html" %}
+        {% endif %}
+
+        {% if result.network_security %}
+        <div>
+          <h3>Network analysis</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          {% include "front/report/m_network.html" with d=result %}
+        </div>
+        {% endif %}
+
+        {% if result.domains_analysis %}
+        <div>
+          <h3>Domains analysis</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          {% include "front/report/m_domains.html" with d=result %}
+        </div>
+        {% endif %}
+
+        {% if result.url_analysis %}
+        <div>
+          <h3>URL analysis</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          {% include "front/report/m_url.html" with d=result %}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="tab-pane" role="tabpanel" aria-labelledby="behavior_analysis-tab" id="behavior_analysis">
+        {% if result.detailed_permissions %}
+        <div>
+          <h3>Permissions analysis</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          {% include "front/report/m_permissions.html" with d=result %}
+        </div>
+        {% endif %}
+
+        {% if result.trackers %}
+        <div>
+          <h3>Tracking analysis</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/Exodus-Privacy/exodus-core">Exodus-core</a>.
+          </p>
+          {% include "front/report/m_trackers.html" with d=result %}
+        </div>
+        {% endif %}
+
+        {% if result.quark.crimes %}
+        <div>
+          <h3>Threat analysis</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/quark-engine/quark-engine">Quark-Engine</a>.
+          </p>
+          {% include "front/report/m_quark.html" with d=result %}
+        </div>
+        {% endif %}
+
+        {% if result.android_api_analysis %}
+        <div>
+          <h3>Behavior analysis</h3>
+          <p class="text-muted small">Information computed with <a class="" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          {% include "front/report/m_api.html" with d=result %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% endcache %}
+</div>
 {% endblock content %}

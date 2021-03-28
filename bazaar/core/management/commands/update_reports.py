@@ -1,5 +1,5 @@
 from time import sleep
-
+import logging
 from django.core.management.base import BaseCommand, CommandError
 
 from bazaar.core.tasks import *
@@ -50,7 +50,10 @@ class Command(BaseCommand):
             if 'q' in tasks:
                 print(f'Start quark_analysis for {sha256}')
                 async_task(quark_analysis, sha256)
+            if 'y' in tasks:
+                print(f'Start yara_analysis for {sha256}')
+                yara_analysis(sha256)
 
-        except Exception:
+        except Exception as e:
+            logging.exception(e)
             pass
-
