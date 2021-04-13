@@ -110,7 +110,31 @@ def extract_ioc(sha256):
     return {'status': 'success', 'info': ''}
 
 
-def yara_analysis(sha256):
+def execute_single_yara_rule(rule, sha256):
+    es_index = rule.get_es_index_name()
+
+    try:
+        es.indices.create(index=es_index, ignore=400)
+    except Exception as e:
+        pass
+
+    try:
+        yara_rule = yara.compile(source=rule.content)
+    except Exception:
+        return
+
+    document_uuid = uuid.uuid4()
+    res_struct = {
+        'name': rule.title,
+        'rule': rule.id,
+        'owner': rule.owner.id,
+        'matching_date': timezone.now(),
+        'matches': {
+            'apk_id': sha256,
+            'matching_files': [],
+            'inner_rules': [],
+        },
+    }
     with NamedTemporaryFile() as f:
         f.write(default_storage.open(sha256).read())
         f.seek(0)
@@ -119,65 +143,73 @@ def yara_analysis(sha256):
             with zipfile.ZipFile(f.name, 'r') as apk:
                 apk.extractall(tmp)
 
-            for rule in Yara.objects.all():
-                es_index = rule.get_es_index_name()
-
+            for file in glob.iglob(f'{tmp}/**/*', recursive=True):
                 try:
-                    es.indices.create(index=es_index, ignore=400)
+                    found = yara_rule.match(file)
+                    if len(found) > 0:
+                        res_struct['matches']['matching_files'].append(file.replace(tmp, ''))
+                        res_struct['matches']['inner_rules'].extend([str(f) for f in found])
+                        logging.info(res_struct)
                 except Exception as e:
                     pass
 
-                try:
-                    yara_rule = yara.compile(source=rule.content)
-                except Exception:
-                    continue
+    res_struct['matches']['inner_rules'] = list(set(res_struct['matches']['inner_rules']))
 
-                document_uuid = uuid.uuid4()
-                res_struct = {
-                    'name': rule.title,
-                    'rule': rule.id,
-                    'owner': rule.owner.id,
-                    'matching_date': timezone.now(),
-                    'matches':{
-                            'apk_id': sha256,
-                            'matching_files': [],
-                            'inner_rules': [],
-                        },
-                }
-                for file in glob.iglob(f'{tmp}/**/*', recursive=True):
-                    try:
-                        found = yara_rule.match(file)
-                        if len(found) > 0:
-                            res_struct['matches']['matching_files'].append(file.replace(tmp, ''))
-                            res_struct['matches']['inner_rules'].extend([str(f) for f in found])
-                            logging.info(res_struct)
-                    except Exception as e:
-                        pass
+    q = {
+        'query': {
+            'bool': {
+                'must': [
+                    {'match': {'owner': rule.owner.id}},
+                    {'match': {'rule': rule.id}},
+                    {'match': {
+                        'matches.apk_id': sha256}}
+                ]
+            }
+        }
+    }
+    count_existing_matches = es.count(index=es_index, body=q)['count']
+    if len(res_struct['matches']['matching_files']) > 0 and count_existing_matches == 0:
+        try:
+            es.index(index=es_index, id=document_uuid, body=res_struct)
+            # TODO: notify user if match
+        except Exception as e:
+            logging.exception(e)
 
-                res_struct['matches']['inner_rules'] = list(set(res_struct['matches']['inner_rules']))
-
-                q = {
-                    'query': {
-                        'bool': {
-                            'must': [
-                                {'match': {'owner': rule.owner.id}},
-                                {'match': {'rule': rule.id}},
-                                {'match': {
-                                    'matches.apk_id': sha256}}
-                            ]
-                        }
-                    }
-                }
-                count_existing_matches = es.count(index=es_index, body=q)['count']
-                if len(res_struct['matches']['matching_files']) > 0 and count_existing_matches == 0:
-                    try:
-                        es.index(index=es_index, id=document_uuid, body=res_struct)
-                        # TODO: notify user if match
-                    except Exception as e:
-                        logging.exception(e)
-
-    del rule, yara_rule, res_struct, file, found, es_index, document_uuid
+    del es_index, yara_rule, document_uuid, res_struct, f, tmp, file, found, q, count_existing_matches
     gc.collect()
+
+    return {'status': 'success', 'info': ''}
+
+
+def yara_analysis(sha256, rule_id=-1):
+    if rule_id == -1:
+        for rule in Yara.objects.all():
+            execute_single_yara_rule(rule, sha256)
+    else:
+        # TODO: handle missing yara rule
+        rule = Yara.objects.get(id=rule_id)
+        execute_single_yara_rule(rule, sha256)
+
+    # TODO
+    del rule
+    gc.collect()
+
+    return {'status': 'success', 'info': ''}
+
+
+def retrohunt(rule_id):
+    try:
+        rule = Yara.objects.get(id=rule_id)
+    except Exception as e:
+        logging.exception(e)
+
+    _, hashes = default_storage.listdir('.')
+    for h in hashes:
+        execute_single_yara_rule(rule, h)
+
+    del rule, hashes
+    gc.collect()
+
     return {'status': 'success', 'info': ''}
 
 
