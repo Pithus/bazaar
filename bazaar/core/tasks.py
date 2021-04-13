@@ -30,11 +30,13 @@ from google_play_scraper import app
 from quark.Objects.quark import Quark
 from quark.Objects.quarkrule import QuarkRule
 from tqdm import tqdm
+from django_cron import CronJobBase, Schedule
 
 from bazaar.core.fingerprinting import ApplicationSignature
 from bazaar.core.mobsf import MobSF
 from bazaar.core.models import Yara
 from bazaar.core.utils import strings_from_apk, upload_sample_to_malware_bazaar, insert_fuzzy_hash
+
 
 es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, timeout=30, max_retries=5, retry_on_timeout=True)
 
@@ -110,6 +112,38 @@ def extract_ioc(sha256):
     return {'status': 'success', 'info': ''}
 
 
+class RetroHuntCron(CronJobBase):
+    RUN_AT_TIMES = ['23:59']
+    schedule = Schedule(run_at_times=RUN_AT_TIMES)
+    code = 'bazaar.core.tasks.retrohunt'
+
+    def do(self):
+        pass
+
+
+def retrohunt(CronJobBase):
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    # get all samples
+    result = {}
+    try:
+        result = es.search(index=settings.ELASTICSEARCH_APK_INDEX)
+    except Exception as e:
+        logging.exception(e)
+
+    print("number of hits:", result["hits"]["total"]["value"])
+
+    # run analysis on them
+    hits = result["hits"]["hits"]
+    for hit in hits:
+        sha256 = hit["_source"]["apk_hash"]
+        async_task(analyze, sha256)
+
+    del result, hits, sha256
+    gc.collect()
+
+    return {'status': 'success', 'info': ''}
+
+
 def yara_analysis(sha256):
     with NamedTemporaryFile() as f:
         f.write(default_storage.open(sha256).read())
@@ -138,11 +172,11 @@ def yara_analysis(sha256):
                     'rule': rule.id,
                     'owner': rule.owner.id,
                     'matching_date': timezone.now(),
-                    'matches':{
-                            'apk_id': sha256,
-                            'matching_files': [],
-                            'inner_rules': [],
-                        },
+                    'matches': {
+                        'apk_id': sha256,
+                        'matching_files': [],
+                        'inner_rules': [],
+                    },
                 }
                 for file in glob.iglob(f'{tmp}/**/*', recursive=True):
                     try:

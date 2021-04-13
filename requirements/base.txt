@@ -40,3 +40,6 @@ vt-py
 # Map
 pygal_maps_world
 cairosvg
+
+# cron
+django_cron
