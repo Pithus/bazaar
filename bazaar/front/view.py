@@ -322,7 +322,8 @@ def get_rules(request):
             'terms': {
                 'owner': [request.user.id]
             }
-        }
+        },
+        'size': 5000,
     }
 
     public_matches, private_matches = None, None

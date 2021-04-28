@@ -1,5 +1,5 @@
 {% for m in hunting_matches %}
-  <div class="card border-secondary">
+  <div class="card border-secondary mb-2">
     <div class="card-header bg-secondary-light">
       Yara ruleset: <strong>{{ m.name }}</strong>
     </div>
@@ -10,7 +10,7 @@
             <i class="fas fa-tags"></i>
           {% endif %}
           {% for ir in m.matches.inner_rules %}
-            <span class="badge badge-secondary">{{ ir }}</span>
+            <span class="badge badge-secondary text-white">{{ ir }}</span>
           {% endfor %}
         </div>
         <div class="col-md-6">
