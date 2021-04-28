@@ -366,7 +366,7 @@ def get_sample_light(sha256):
 def my_retrohunt_view(request, uuid):
     # TODO: add a cap on user use
     try:
-        retrohunt(uuid)
+        async_task(retrohunt, uuid)
         messages.success(request, 'The retrohunt has been launched.')
     except Exception as e:
         logging.exception(e)
