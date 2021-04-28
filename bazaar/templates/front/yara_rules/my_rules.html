@@ -36,11 +36,14 @@
                 <span class="h6">{{ rule.rule.title }}</span>
               </div>
               <div class="col-md-2 text-right h5">
-                <a href="#" data-toggle="modal" data-target="#ruleModal-{{ rule.rule.id }}"><i
-                    class="fa fa-eye"></i></a>
-                <a href="{% url "front:my_rule_edit" rule.rule.id %}"><i class="fa fa-pen"></i></a>
-                <a href="{% url "front:my_rule_retro" rule.rule.id %}">
-                  <i class="fas fa-history"></i>
+                <a href="#" data-toggle="modal" data-target="#ruleModal-{{ rule.rule.id }}" class="mr-1">
+                  <i class="fa fa-eye" data-toggle="tooltip" data-placement="top" title="View the ruleset"></i>
+                </a>
+                <a href="{% url "front:my_rule_edit" rule.rule.id %}" class="mr-1">
+                  <i class="fa fa-pen" data-toggle="tooltip" data-placement="top" title="Edit the ruleset"></i>
+                </a>
+                <a href="{% url "front:my_rule_retro" rule.rule.id %}" class="mr-1">
+                  <i class="fas fa-history" data-toggle="tooltip" data-placement="top" title="Launch retro-hunt"></i>
                 </a>
               </div>
             </div>
