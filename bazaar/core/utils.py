@@ -17,6 +17,7 @@ from django_q.models import Schedule
 from django_q.tasks import schedule
 from elasticsearch import Elasticsearch
 
+from bazaar.core.models import Yara
 
 
 def get_sha256_of_file_path(file_path):

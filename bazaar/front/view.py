@@ -99,6 +99,7 @@ class ReportView(View):
             status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha)['_source']
             status = compute_status(status)
 
+            # Generate map
             map_svg = None
             if 'domains_analysis' in result:
                 map_svg = generate_world_map(result['domains_analysis'])
@@ -319,7 +320,8 @@ def get_rules(request):
             'terms': {
                 'owner': [request.user.id]
             }
-        }
+        },
+        'size': 5000
     }
 
     public_matches, private_matches = None, None
@@ -365,7 +367,7 @@ def get_sample_light(sha256):
             }
         },
         "_source": ["apk_hash", "sha256", "uploaded_at", "icon_base64", "handle", "app_name",
-                        "version_code", "size", "dexofuzzy.apk", "quark", "vt", "malware_bazaar",
+                        "version_code", "size", "dexofuzzy.apk", "quark.threat_level", "vt", "malware_bazaar",
                         "is_signed", "frosting_data.is_frosted", "features"],
         "size": 1,
     }

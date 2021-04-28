@@ -129,7 +129,8 @@ def yara_analysis(sha256):
 
                 try:
                     yara_rule = yara.compile(source=rule.content)
-                except Exception:
+                except Exception as e:
+                    logging.exception(e)
                     continue
 
                 document_uuid = uuid.uuid4()
@@ -150,11 +151,11 @@ def yara_analysis(sha256):
                         if len(found) > 0:
                             res_struct['matches']['matching_files'].append(file.replace(tmp, ''))
                             res_struct['matches']['inner_rules'].extend([str(f) for f in found])
-                            logging.info(res_struct)
                     except Exception as e:
                         pass
 
                 res_struct['matches']['inner_rules'] = list(set(res_struct['matches']['inner_rules']))
+                logging.info(res_struct)
 
                 q = {
                     'query': {

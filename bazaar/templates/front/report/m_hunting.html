@@ -1,0 +1,27 @@
+{% for m in hunting_matches %}
+  <div class="card border-secondary">
+    <div class="card-header bg-secondary-light">
+      Yara ruleset: <strong>{{ m.name }}</strong>
+    </div>
+    <div class="card-body p-2">
+      <div class="row">
+        <div class="col-md-6">
+          {% if m.matches.inner_rules %}
+            <i class="fas fa-tags"></i>
+          {% endif %}
+          {% for ir in m.matches.inner_rules %}
+            <span class="badge badge-secondary">{{ ir }}</span>
+          {% endfor %}
+        </div>
+        <div class="col-md-6">
+          {% if m.matches.matching_files %}
+            <i class="fas fa-file-alt"></i> matching files:<br>
+          {% endif %}
+          {% for f in m.matches.matching_files %}
+            <samp class="small">{{ f }}</samp><br>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endfor %}
