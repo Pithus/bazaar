@@ -18,20 +18,21 @@
 
 
   <script src="{% static 'js/d3.v4.js' %}"></script>
+  <script src="{% static 'js/clipboard.js' %}"></script>
 
   <link rel="icon" href="{% static 'images/favicon.png' %}">
 
   {% block css %}
 
 
-    <!-- Your stuff: Third-party CSS libraries go here -->
-    {% compress css %}
-      <!-- This file stores project-specific CSS -->
+  <!-- Your stuff: Third-party CSS libraries go here -->
+  {% compress css %}
+  <!-- This file stores project-specific CSS -->
 
-      <link href="{% static 'css/project.css' %}" rel="stylesheet">
-      <link href="{% static 'fonts/font-awesome/css/all.css' %}" rel="stylesheet">
+  <link href="{% static 'css/project.css' %}" rel="stylesheet">
+  <link href="{% static 'fonts/font-awesome/css/all.css' %}" rel="stylesheet">
 
-    {% endcompress %}
+  {% endcompress %}
   {% endblock %}
 
 </head>
@@ -43,69 +44,70 @@
 {% url 'account_login' as account_login_url %}
 
 <body>
-<div class="mb-0">
-  <nav class="navbar navbar-expand-md navbar-dark bg-primary">
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-            aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <a class="navbar-brand" href="{{ home_url }}">Pithus</a>
+  <div class="mb-0">
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <a class="navbar-brand" href="{{ home_url }}">Pithus</a>
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item {% if request.path == home_url %} active {%endif%}">
-          <a class="nav-link" href="{{ home_url }}"><i class="fas fa-home"></i> Home</a>
-        </li>
-        <li class="nav-item{% if request.path == about_url %} active {%endif%}">
-          <a class="nav-link" href="{{ about_url }}"><i class="fas fa-question"></i> About</a>
-        </li>
-        {% if request.user.is_authenticated %}
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item {% if request.path == home_url %} active {%endif%}">
+            <a class="nav-link" href="{{ home_url }}"><i class="fas fa-home"></i> Home</a>
+          </li>
+          <li class="nav-item{% if request.path == about_url %} active {%endif%}">
+            <a class="nav-link" href="{{ about_url }}"><i class="fas fa-question"></i> About</a>
+          </li>
+          {% if request.user.is_authenticated %}
           </li>
           <li class="nav-item {% if request.path == my_rules_url %} active {%endif%}">
             <a class="nav-link" href="{{ my_rules_url }}"><i class="fas fa-binoculars"></i> {% trans "My hunting" %}
             </a>
           </li>
           <li class="nav-item {% if request.path == account_logout_url %} active {%endif%}">
-            <a class="nav-link" href="{{ account_logout_url }}"><i
-                    class="fas fa-sign-out-alt"></i> {% trans "Sign Out" %}</a>
+            <a class="nav-link" href="{{ account_logout_url }}"><i class="fas fa-sign-out-alt"></i> {% trans "Sign Out"
+              %}</a>
             {% else %}
-          <li class="nav-item border rounded border-secondary {% if request.path == account_login_url %} active {%endif%}">
-            <a id="log-in-link" class="nav-link" href="{{ account_login_url }}"><i
-                    class="fas fa-sign-in-alt"></i> {% trans "Sign In" %}</a>
+          <li
+            class="nav-item border rounded border-secondary {% if request.path == account_login_url %} active {%endif%}">
+            <a id="log-in-link" class="nav-link" href="{{ account_login_url }}"><i class="fas fa-sign-in-alt"></i> {%
+              trans "Sign In" %}</a>
           </li>
-        {% endif %}
-      </ul>
-    </div>
-  </nav>
-
-</div>
-
-<div class="container-fluid">
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert mt-2 {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                aria-hidden="true">&times;</span></button>
+          {% endif %}
+        </ul>
       </div>
-    {% endfor %}
-  {% endif %}
-</div>
+    </nav>
 
-{% block whole_content %}
+  </div>
+
+  <div class="container-fluid">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert mt-2 {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+          aria-hidden="true">&times;</span></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+  </div>
+
+  {% block whole_content %}
   <div class="container-fluid">
     {% block content %}
-      <p>Use this document as a way to quick start any new project.</p>
+    <p>Use this document as a way to quick start any new project.</p>
     {% endblock content %}
   </div> <!-- /container -->
-{% endblock whole_content %}
+  {% endblock whole_content %}
 
-{% block modal %}{% endblock modal %}
+  {% block modal %}{% endblock modal %}
 
-<!-- Le javascript
+  <!-- Le javascript
 ================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-{% block javascript %}
+  <!-- Placed at the end of the document so the pages load faster -->
+  {% block javascript %}
 
 
   <!-- Your stuff: Third-party javascript libraries go here -->
@@ -113,14 +115,14 @@
 
   <!-- place project specific Javascript in this file -->
   {% compress js %}
-    <!-- Bootstrap JS and its dependencies-->
-    <script src="{% static 'js/jquery-3.3.1.slim.min.js' %}"></script>
-    <script src="{% static 'js/popper.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/bs-custom-file-input.min.js' %}"></script>
-    <script src="{% static 'js/project.js' %}"></script>
+  <!-- Bootstrap JS and its dependencies-->
+  <script src="{% static 'js/jquery-3.3.1.slim.min.js' %}"></script>
+  <script src="{% static 'js/popper.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/bs-custom-file-input.min.js' %}"></script>
+  <script src="{% static 'js/project.js' %}"></script>
   {% endcompress %}
-{% endblock javascript %}
+  {% endblock javascript %}
 </body>
 
 </html>

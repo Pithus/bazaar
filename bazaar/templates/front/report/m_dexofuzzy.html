@@ -2,23 +2,31 @@
 
 <table class="table table-condensed table-sm">
   {% if d.dexofuzzy.apk %}
-    <tr>
-      <td class=""><span class="">APK file</span></td>
-      <td class="">
-        <samp>{{ d.dexofuzzy.apk }}</samp>
-        <a href="{% url 'front:similarity_search' %}?hash={{ d.dexofuzzy.apk }}&algorithm=dexofuzzy"
-           data-toggle="tooltip" data-placement="top" title="Find similar samples">
-          <i class="fa fa-search"></i>
-        </a>
-      </td>
-    </tr>
+  <tr>
+    <td class=""><span class="">APK file</span></td>
+    <td class="">
+      <samp id="{{ d.dexofuzzy.apk }}">{{ d.dexofuzzy.apk|truncatechars:70}}</samp>
+    </td>
+    <td>
+      <a class="btn btn-link" href="{% url 'front:similarity_search' %}?hash={{ d.dexofuzzy.apk }}&algorithm=ssdeep"
+        data-toggle="tooltip" data-placement="top" title="Find similar samples">
+        <i class="fa fa-search"></i></a>
+      <button class="btn btn-link" onclick="copyToClipboard('{{ d.dexofuzzy.apk }}')"><i data-toggle="tooltip"
+          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+
+    </td>
+  </tr>
   {% endif %}
   {% for p in d.dexofuzzy.dex|dictsort:"file" %}
-    <tr>
-      <td class=""><span class=""><samp>{{ p.file }}</samp></span></td>
-      <td class="">
-        <samp>{{ p.hash }}</samp>
-      </td>
-    </tr>
+  <tr>
+    <td class=""><span class=""><samp>{{ p.file }}</samp></span></td>
+    <td class="">
+      <samp id="{{ p.hash }}">{{ p.hash|truncatechars:70 }}</samp>
+    </td>
+    <td>
+      <button class="btn btn-link" onclick="copyToClipboard('{{ p.hash }}')"><i data-toggle="tooltip"
+          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+    </td>
+  </tr>
   {% endfor %}
 </table>

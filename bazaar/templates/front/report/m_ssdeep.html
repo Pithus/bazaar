@@ -2,27 +2,40 @@
 
 <table class="table table-condensed table-sm">
   {% if d.ssdeep.apk %}
-    <tr>
-      <td class=""><span class="">APK file</span></td>
-      <td class="">
-        <samp>{{ d.ssdeep.apk }}</samp>
-        <a href="{% url 'front:similarity_search' %}?hash={{ d.ssdeep.apk }}&algorithm=ssdeep"
-           data-toggle="tooltip" data-placement="top" title="Find similar samples">
-          <i class="fa fa-search"></i>
-        </a>
-      </td>
-    </tr>
+  <tr>
+    <td class=""><span class="">APK file</span></td>
+    <td class="">
+      <samp id="{{ d.ssdeep.apk }}">{{ d.ssdeep.apk }}</samp>
+
+    </td>
+    <td>
+      <div><a class="btn btn-link" href="{% url 'front:similarity_search' %}?hash={{ d.ssdeep.apk }}&algorithm=ssdeep"
+          data-toggle="tooltip" data-placement="top" title="Find similar samples">
+          <i class="fa fa-search"></i></a>
+        <button class="btn btn-link" onclick="copyToClipboard('{{ d.ssdeep.apk }}')"><i data-toggle="tooltip"
+            data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+      </div>
+    </td>
+  </tr>
   {% endif %}
   {% if d.ssdeep.manifest %}
-    <tr>
-      <td class=""><span class="">Manifest</span></td>
-      <td class=""><samp>{{ d.ssdeep.manifest }}</samp></td>
-    </tr>
+  <tr>
+    <td class=""><span class="">Manifest</span></td>
+    <td class=""><samp id="{{ d.ssdeep.manifest }}">{{ d.ssdeep.manifest|truncatechars:70 }}</samp>
+    </td>
+    <td><button class="btn btn-link" onclick="copyToClipboard('{{ d.ssdeep.manifest }}')"><i data-toggle="tooltip"
+          data-placement="top" title="Copy to clipboard" )"><i class="fa fa-clipboard" aria-hidden="true"></i></button>
+    </td>
+  </tr>
   {% endif %}
   {% for p in d.ssdeep.dex|dictsort:"file" %}
-    <tr>
-      <td class=""><span class=""><samp>{{ p.file }}</samp></span></td>
-      <td class=""><samp>{{ p.hash }}</samp></td>
-    </tr>
+  <tr>
+    <td class=""><span class=""><samp id="{{ p.file }}">{{ p.file }}</samp></span>
+    </td>
+    <td class=""><samp id="{{ p.hash }}">{{ p.hash|truncatechars:70 }}</samp></td>
+    <td><button class="btn btn-link" onclick="copyToClipboard('{{ p.hash }}')"><i data-toggle="tooltip"
+          data-placement="top" title="Copy to clipboard"><i class=" fa fa-clipboard" aria-hidden="true"></i></button>
+    </td>
+  </tr>
   {% endfor %}
 </table>
