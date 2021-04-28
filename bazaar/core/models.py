@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 import uuid
 
+from elasticsearch import Elasticsearch
+
 
 def check_yara_rule(rule):
     try:
@@ -37,3 +39,23 @@ class Yara(models.Model):
             return private_es_index
         return public_es_index
 
+    @staticmethod
+    def find_public_hunting_matches(sha256):
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+        public_index, _ = Yara.get_es_index_names()
+        q = {
+            'query': {
+                'terms': {
+                    'matches.apk_id': [sha256]
+                }
+            },
+            'size': 5000
+        }
+        public_matches = []
+        try:
+            matches = es.search(index=public_index, body=q)['hits']['hits']
+            for m in matches:
+                public_matches.append(m.get('_source'))
+        except Exception:
+            pass
+        return public_matches

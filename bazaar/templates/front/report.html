@@ -192,7 +192,8 @@
         <div>
           <h3>APK details</h3>
           <p class="text-muted small">Information computed with <a class="" target="_blank"
-              href="https://github.com/androguard/androguard">AndroGuard</a>.
+              href="https://github.com/androguard/androguard">AndroGuard</a> and <a class="" target="_blank"
+              href="https://github.com/pithus/bazaar">Pithus</a>.
           </p>
           {% include "front/report/m_apk.html" with d=result %}
         </div>
@@ -229,10 +230,27 @@
       </div>
 
       <div class="tab-pane" role="tabpanel" aria-labelledby="threat_intel-tab" id="threat_intel">
+        {% if hunting_matches %}
+        <div class="mb-4">
+          <h3>Hunting matches</h3>
+          <p class="text-muted small">Information computed by <a class="" target="_blank"
+              href="https://github.com/pithus/bazaar">Pithus</a>.
+          </p>
+          {% include "front/report/m_hunting.html" %}
+        </div>
+        {% endif %}
         {% if result.malware_bazaar or result.vt %}
         <div>
-          <h3>Threat intelligence</h3>
           {% include "front/report/m_malware_bazaar.html" with d=result %}
+        </div>
+        {% endif %}
+        {% if similar_samples %}
+        <div>
+          <h3>Similar samples</h3>
+          <p class="text-muted small">Information computed by <a class="" target="_blank"
+              href="https://github.com/pithus/bazaar">Pithus</a>.
+          </p>
+          {% include "front/report/m_similar_samples.html" %}
         </div>
         {% endif %}
       </div>

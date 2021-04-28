@@ -21,7 +21,7 @@ from django_q.tasks import async_task
 
 from bazaar.core.models import Yara
 from bazaar.core.tasks import analyze, execute_single_yara_rule, retrohunt, yara_analysis
-from bazaar.core.utils import get_sha256_of_file
+from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status, generate_world_map, \
@@ -101,10 +101,27 @@ class ReportView(View):
             status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha)['_source']
             status = compute_status(status)
 
+            # Generate map
             map_svg = None
             if 'domains_analysis' in result:
                 map_svg = generate_world_map(result['domains_analysis'])
 
+            # Find similar sample based on dexofuzzy
+            similar_samples = None
+            try:
+                dexofuzzy_hash = result['dexofuzzy']['apk']
+                if dexofuzzy_hash:
+                    similar_samples = get_matching_items_by_dexofuzzy(
+                        dexofuzzy_hash,
+                        25,
+                        settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, '')
+            except Exception:
+                pass
+
+            # Find public hunting results
+            hunting_matches = Yara.find_public_hunting_matches(sha)
+
+            # Adapt caching depending on the status of the analysis
             cache_retention_time = 5
             if not status['running']:
                 cache_retention_time = 600
@@ -113,6 +130,8 @@ class ReportView(View):
                 'result': result,
                 'status': status,
                 'map': map_svg,
+                'hunting_matches': hunting_matches,
+                'similar_samples': similar_samples,
                 'cache_retention_time': cache_retention_time})
         except Exception as e:
             logging.exception(e)
@@ -278,7 +297,6 @@ def delete_es_matches(request, rule):
             'rule': rule.id,
         }
     }}
-    # TODO: check if the rule belongs to the user
     if rule.is_private:
         try:
             es.delete_by_query(index=private_es_index, body=q)
@@ -350,7 +368,7 @@ def get_sample_light(sha256):
             }
         },
         "_source": ["apk_hash", "sha256", "uploaded_at", "icon_base64", "handle", "app_name",
-                    "version_code", "size", "dexofuzzy.apk", "quark", "vt", "malware_bazaar",
+                    "version_code", "size", "dexofuzzy.apk", "quark.threat_level", "vt", "malware_bazaar",
                     "is_signed", "frosting_data.is_frosted", "features"],
         "size": 1,
     }
