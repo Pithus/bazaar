@@ -19,7 +19,7 @@ from rest_framework.reverse import reverse_lazy
 
 from bazaar.core.models import Yara
 from bazaar.core.tasks import analyze
-from bazaar.core.utils import get_sha256_of_file
+from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status, generate_world_map, \
@@ -103,6 +103,22 @@ class ReportView(View):
             if 'domains_analysis' in result:
                 map_svg = generate_world_map(result['domains_analysis'])
 
+            # Find similar sample based on dexofuzzy
+            similar_samples = None
+            try:
+                dexofuzzy_hash = result['dexofuzzy']['apk']
+                if dexofuzzy_hash:
+                    similar_samples = get_matching_items_by_dexofuzzy(
+                        dexofuzzy_hash,
+                        25,
+                        settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, '')
+            except Exception:
+                pass
+
+            # Find public hunting results
+            hunting_matches = Yara.find_public_hunting_matches(sha)
+
+            # Adapt caching depending on the status of the analysis
             cache_retention_time = 5
             if not status['running']:
                 cache_retention_time = 600
@@ -111,6 +127,8 @@ class ReportView(View):
                 'result': result,
                 'status': status,
                 'map': map_svg,
+                'hunting_matches': hunting_matches,
+                'similar_samples': similar_samples,
                 'cache_retention_time': cache_retention_time})
         except Exception as e:
             logging.exception(e)

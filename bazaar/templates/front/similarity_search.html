@@ -57,31 +57,7 @@
           <h2>No results</h2>
         {% else %}
           <h2>Results</h2>
-          <table class="table table-condensed">
-            <thead>
-            <tr>
-              <th>SHA256</th>
-              <th>Similarity</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for hash, score in results %}
-              <tr>
-                <td>
-                  <a href="{% url 'front:report' hash %}">
-                    <code>{{ hash }}</code>
-                  </a>
-                </td>
-                <td>
-                  <div class="progress">
-                    <div class="progress-bar progress-bar-striped bg-secondary" role="progressbar" style="width: {{ score }}%" aria-valuenow="{{ score }}"
-                         aria-valuemin="0" aria-valuemax="100">{{ score }}%</div>
-                  </div>
-                </td>
-              </tr>
-            {% endfor %}
-            </tbody>
-          </table>
+          {% include "front/m_similarities.html" %}
         {% endif %}
       </div>
     </div>
