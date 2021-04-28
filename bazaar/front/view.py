@@ -17,8 +17,10 @@ from django.views.generic import View
 from elasticsearch import Elasticsearch
 from rest_framework.reverse import reverse_lazy
 
+from django_q.tasks import async_task
+
 from bazaar.core.models import Yara
-from bazaar.core.tasks import analyze
+from bazaar.core.tasks import analyze, execute_single_yara_rule, retrohunt, yara_analysis
 from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm
 from bazaar.front.og import generate_og_card
@@ -320,8 +322,7 @@ def get_rules(request):
             'terms': {
                 'owner': [request.user.id]
             }
-        },
-        'size': 5000
+        }
     }
 
     public_matches, private_matches = None, None
@@ -367,8 +368,8 @@ def get_sample_light(sha256):
             }
         },
         "_source": ["apk_hash", "sha256", "uploaded_at", "icon_base64", "handle", "app_name",
-                        "version_code", "size", "dexofuzzy.apk", "quark.threat_level", "vt", "malware_bazaar",
-                        "is_signed", "frosting_data.is_frosted", "features"],
+                    "version_code", "size", "dexofuzzy.apk", "quark.threat_level", "vt", "malware_bazaar",
+                    "is_signed", "frosting_data.is_frosted", "features"],
         "size": 1,
     }
     es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
@@ -378,3 +379,14 @@ def get_sample_light(sha256):
         return results
     except Exception:
         return []
+
+
+def my_retrohunt_view(request, uuid):
+    # TODO: add a cap on user use
+    try:
+        async_task(retrohunt, uuid)
+        messages.success(request, 'The retrohunt has been launched.')
+    except Exception as e:
+        logging.exception(e)
+
+    return redirect(reverse_lazy('front:my_rules'))
