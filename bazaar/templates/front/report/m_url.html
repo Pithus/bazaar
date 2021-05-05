@@ -2,13 +2,15 @@
 
 <table class="table table-condensed table-sm">
   {% for p in d.url_analysis %}
-    <tr>
-      <td class="">
-        {% for u in p.urls %}
-          <samp>{{ u }}</samp><br>
-        {% endfor %}
-        <span class="small text-muted">Defined in <samp>{{ p.path }}</samp></span>
-      </td>
-    </tr>
+  <tr>
+    <td class="">
+      {% for u in p.urls %}
+      <samp>{{ u }}</samp><br>
+      {% endfor %}
+      <span class="small text-muted">Defined in <samp>{{ p.path }}</samp></span>
+    </td>
+    <td><button class="btn btn-link" data-clipboard-text="{{ p.urls }}"><i data-toggle="tooltip" data-placement="top"
+          title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button></td>
+  </tr>
   {% endfor %}
 </table>

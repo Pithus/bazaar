@@ -2,38 +2,38 @@
   <tr>
     <td class="">Package</td>
     <td class="">
-      <samp id="{{ d.handle }}">{{ d.handle }}</samp>
+      <samp>{{ d.handle }}</samp>
     </td>
     <td>
       <a class="btn btn-link" href="{% url 'front:home' %}?q=handle:{{ d.handle }}" data-toggle="tooltip"
         data-placement="top" title="Find similar samples">
         <i class="fa fa-search"></i>
       </a>
-      <button class="btn btn-link" onclick="copyToClipboard('{{ d.handle }}')"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+      <button class="btn btn-link" data-clipboard-text="{{ d.handle }}"><i data-toggle="tooltip" data-placement="top"
+          title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
     </td>
   </tr>
   <tr>
     <td class="">App name</td>
-    <td class=""><samp id="{{ d.app_name }}">{{ d.app_name }}</samp></td>
+    <td class=""><samp>{{ d.app_name }}</samp></td>
     <td>
-      <button class="btn btn-link" onclick="copyToClipboard('{{ d.app_name }}')"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+      <button class="btn btn-link" odata-clipboard-text="{{ d.app_name }}"><i data-toggle="tooltip" data-placement="top"
+          title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
     </td>
   </tr>
   <tr>
     <td class="">Version name</td>
-    <td class=""><samp id="{{ d.version_name }}">{{ d.version_name }}</samp></td>
+    <td class=""><samp>{{ d.version_name }}</samp></td>
     <td>
-      <button class="btn btn-link" onclick="copyToClipboard('{{ d.version_name }}')"><i data-toggle="tooltip"
+      <button class="btn btn-link" data-clipboard-text="{{ d.version_name }}"><i data-toggle="tooltip"
           data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
     </td>
   </tr>
   <tr>
     <td class="">Version code</td>
-    <td class=""><samp id="{{ d.version_code }}">{{ d.version_code }}</samp></td>
+    <td class=""><samp>{{ d.version_code }}</samp></td>
     <td>
-      <button class="btn btn-link" onclick="copyToClipboard('{{ d.version_code }}')"><i data-toggle="tooltip"
+      <button class="btn btn-link" data-clipboard-text="{{ d.version_code }}"><i data-toggle="tooltip"
           data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
     </td>
   </tr>
@@ -44,14 +44,14 @@
   <tr>
     <td class="">UAID</td>
     <td class="">
-      <samp id="{{ d.uaid }}">{{ d.uaid }}</samp>
+      <samp>{{ d.uaid }}</samp>
     <td>
       <a class="btn btn-link" href="{% url 'front:home' %}?q=handle:{{ d.uaid }}" data-toggle="tooltip"
         data-placement="top" title="Find similar samples">
         <i class="fa fa-search"></i>
       </a>
-      <button class="btn btn-link" onclick="copyToClipboard('{{ d.uaid }}')"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+      <button class="btn btn-link" data-clipboard-text="{{ d.uaid }}"><i data-toggle="tooltip" data-placement="top"
+          title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
     </td>
     </td>
   </tr>

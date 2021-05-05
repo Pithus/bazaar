@@ -4,61 +4,61 @@
   <tr>
     <td class="">MD5</td>
     <td class="">
-      <samp id="{{ c.fingerprint_md5 }}">{{ c.fingerprint_md5 }}</samp>
+      <samp>{{ c.fingerprint_md5 }}</samp>
     </td>
     <td>
       <a class="btn btn-link" href="{% url 'front:home' %}?q=handle:{{ d.handle }}" data-toggle="tooltip"
         data-placement="top" title="Find similar samples">
         <i class="fa fa-search"></i>
       </a>
-      <button class="btn btn-link" onclick="copyToClipboard('{{ c.fingerprint_md5 }}')"><i data-toggle="tooltip"
+      <button class="btn btn-link" data-clipboard-text="{{ c.fingerprint_md5 }}"><i data-toggle="tooltip"
           data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
     </td>
   </tr>
   <tr>
     <td class="">SHA1</td>
     <td class="">
-      <samp id="{{ c.fingerprint_sha1 }}">{{ c.fingerprint_sha1 }}</samp>
+      <samp>{{ c.fingerprint_sha1 }}</samp>
     </td>
     <td>
       <a class="btn btn-link" href="{% url 'front:home' %}?q=handle:{{ d.handle }}" data-toggle="tooltip"
         data-placement="top" title="Find similar samples">
         <i class="fa fa-search"></i>
       </a>
-      <button class="btn btn-link" onclick="copyToClipboard('{{ c.fingerprint_sha1 }}')"><i data-toggle="tooltip"
+      <button class="btn btn-link" data-clipboard-text="{{ c.fingerprint_sha1 }}"><i data-toggle="tooltip"
           data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
     </td>
   </tr>
   <tr>
     <td class="">SHA256</td>
     <td class="">
-      <samp id="{{ c.fingerprint_sha256 }}">{{ c.fingerprint_sha256 }}</samp>
+      <samp>{{ c.fingerprint_sha256 }}</samp>
     </td>
     <td>
       <a class="btn btn-link" href="{% url 'front:home' %}?q=handle:{{ d.handle }}" data-toggle="tooltip"
         data-placement="top" title="Find similar samples">
         <i class="fa fa-search"></i>
       </a>
-      <button class="btn btn-link" onclick="copyToClipboard('{{ c.fingerprint_sha256 }}')"><i data-toggle="tooltip"
+      <button class="btn btn-link" data-clipboard-text="{{ c.fingerprint_sha256 }}"><i data-toggle="tooltip"
           data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
     </td>
   </tr>
   <tr>
     <td class="">Issuer</td>
-    <td class=""><samp id="{{ c.issuer }}">{{ c.issuer }}</samp></td>
-    <td><button class="btn btn-link" onclick="copyToClipboard('{{ c.issuer }}')"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button></td>
+    <td class=""><samp>{{ c.issuer }}</samp></td>
+    <td><button class="btn btn-link" data-clipboard-text="{{ c.issuer }}"><i data-toggle="tooltip" data-placement="top"
+          title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button></td>
   </tr>
   <tr>
     <td class="">Not before</td>
-    <td class=""><samp id="{{ c.not_before }}">{{ c.not_before }}</samp></td>
-    <td><button class="btn btn-link" onclick="copyToClipboard('{{ c.not_before }}')"><i data-toggle="tooltip"
+    <td class=""><samp>{{ c.not_before }}</samp></td>
+    <td><button class="btn btn-link" data-clipboard-text="{{ c.net_before }}"><i data-toggle="tooltip"
           data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button></td>
   </tr>
   <tr>
     <td class="">Not after</td>
-    <td class=""><samp id="{{ c.not_after }}">{{ c.not_after }}</samp></td>
-    <td><button class="btn btn-link" onclick="copyToClipboard('{{ c.not_after }}')"><i data-toggle="tooltip"
+    <td class=""><samp>{{ c.not_after }}</samp></td>
+    <td><button class="btn btn-link" data-clipboard-text="{{ c.not_after }}"><i data-toggle="tooltip"
           data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button></td>
   </tr>
 </table>

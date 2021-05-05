@@ -5,13 +5,13 @@
   <tr>
     <td class=""><span class="">APK file</span></td>
     <td class="">
-      <samp id="{{ d.dexofuzzy.apk }}">{{ d.dexofuzzy.apk|truncatechars:70}}</samp>
+      <samp>{{ d.dexofuzzy.apk|truncatechars:70}}</samp>
     </td>
     <td>
       <a class="btn btn-link" href="{% url 'front:similarity_search' %}?hash={{ d.dexofuzzy.apk }}&algorithm=ssdeep"
         data-toggle="tooltip" data-placement="top" title="Find similar samples">
         <i class="fa fa-search"></i></a>
-      <button class="btn btn-link" onclick="copyToClipboard('{{ d.dexofuzzy.apk }}')"><i data-toggle="tooltip"
+      <button class="btn btn-link" data-clipboard-text="{{ d.dexofuzzy.apk }}"><i data-toggle="tooltip"
           data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
 
     </td>
@@ -21,11 +21,11 @@
   <tr>
     <td class=""><span class=""><samp>{{ p.file }}</samp></span></td>
     <td class="">
-      <samp id="{{ p.hash }}">{{ p.hash|truncatechars:70 }}</samp>
+      <samp>{{ p.hash|truncatechars:70 }}</samp>
     </td>
     <td>
-      <button class="btn btn-link" onclick="copyToClipboard('{{ p.hash }}')"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+      <button class="btn btn-link" data-clipboard-text="{{ p.hash }}"><i data-toggle="tooltip" data-placement="top"
+          title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
     </td>
   </tr>
   {% endfor %}
