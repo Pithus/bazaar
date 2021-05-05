@@ -31,7 +31,7 @@ cd bazaar
 It is possible to run the entire development stack with [docker-compose](https://docs.docker.com/compose/install/):
 
 ```sh
-docker-compose -f local.yml build
+docker-compose -f local.yml up
 ```
 
 Then browse to [http://localhost:8001] and enjoy Pithus!
