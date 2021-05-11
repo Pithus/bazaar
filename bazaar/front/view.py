@@ -20,7 +20,7 @@ from rest_framework.reverse import reverse_lazy
 from django_q.tasks import async_task
 
 from bazaar.core.models import Yara
-from bazaar.core.tasks import analyze, execute_single_yara_rule, retrohunt, yara_analysis
+from bazaar.core.tasks import analyze, retrohunt
 from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm
 from bazaar.front.og import generate_og_card
