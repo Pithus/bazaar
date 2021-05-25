@@ -111,17 +111,26 @@ def extract_ioc(sha256):
 
 
 def execute_single_yara_rule(rule, sha256):
+    if not default_storage.exists(sha256):
+        reason = f'{sha256} not found, unable to analyze'
+        logging.error(reason)
+        return { 'status': 'error', 'info': ''}
+
+
     es_index = rule.get_es_index_name()
 
-    try:
-        es.indices.create(index=es_index, ignore=400)
-    except Exception as e:
-        pass
-
+    if not es.exists(es_index):
+        try:
+            es.indices.create(index=es_index, ignore=400)
+        except Exception as e:
+            pass
+    
     try:
         yara_rule = yara.compile(source=rule.content)
-    except Exception:
-        return
+    except Exception as e:
+        logging.error(e)
+        return { 'status': 'error', 'info': ''}
+        
 
     document_uuid = uuid.uuid4()
     res_struct = {
