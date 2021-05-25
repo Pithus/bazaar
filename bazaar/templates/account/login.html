@@ -1,6 +1,7 @@
 {% extends "account/base.html" %}
 
 {% load i18n %}
+{% load static %}
 {% load account socialaccount %}
 {% load crispy_forms_tags %}
 
@@ -8,36 +9,43 @@
 
 {% block inner %}
 
-<h1>{% trans "Sign In" %}</h1>
+  <h1>{% trans "Sign In" %}</h1>
 
-{% get_providers as socialaccount_providers %}
+  {% get_providers as socialaccount_providers %}
 
-{% if socialaccount_providers %}
-<p>{% blocktrans with site.name as site_name %}Please sign in with one
-of your existing third party accounts.{% endblocktrans %}</p>
+  {% if socialaccount_providers %}
+    <p>{% blocktrans with site.name as site_name %}Please sign in with one
+      of your existing third party accounts.{% endblocktrans %}</p>
 
-<div class="socialaccount_ballot">
+    <div class="socialaccount_ballot">
 
-  <ul class="socialaccount_providers list-unstyled">
-    {% include "account/provider_list.html" with process="login" %}
-  </ul>
+      <ul class="socialaccount_providers list-unstyled">
+        {% include "account/provider_list.html" with process="login" %}
+      </ul>
 
-</div>
+    </div>
 
-<div>
-<h3>Why?</h3>
-<p>
-  Once connected, you will be able to:
-  <ul>
-    <li>download samples</li>
-    <li>export reports in JSON</li>
-</ul>
-</p>
-</div>
+    <div>
+      <h3>Why?</h3>
+      <div class="row">
+        <div class="col-md-12">
+          <h5>Download samples or export JSON reports.</h5>
+          <div class="text-center">
+            <img src="{% static 'images/help/download.png' %}" width="35%">
+          </div>
+        </div>
+        <div class="col-md-12 mt-4">
+          <h5>Hunt samples based on your own ruleset.</h5>
+          <div class="text-center">
+            <img src="{% static 'images/help/hunting.png' %}" width="100%">
+          </div>
+        </div>
+      </div>
+    </div>
 
-{% include "socialaccount/snippets/login_extra.html" %}
+    {% include "socialaccount/snippets/login_extra.html" %}
 
-{% endif %}
+  {% endif %}
 
 {% endblock %}
 
