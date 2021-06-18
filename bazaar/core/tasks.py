@@ -116,21 +116,18 @@ def execute_single_yara_rule(rule, sha256):
         logging.error(reason)
         return { 'status': 'error', 'info': ''}
 
-
     es_index = rule.get_es_index_name()
 
-    if not es.exists(es_index):
-        try:
-            es.indices.create(index=es_index, ignore=400)
-        except Exception as e:
-            pass
-    
+    try:
+        es.indices.create(index=es_index, ignore=400)
+    except Exception as e:
+        pass
+
     try:
         yara_rule = yara.compile(source=rule.content)
     except Exception as e:
         logging.error(e)
         return { 'status': 'error', 'info': ''}
-        
 
     document_uuid = uuid.uuid4()
     res_struct = {
@@ -144,23 +141,26 @@ def execute_single_yara_rule(rule, sha256):
             'inner_rules': [],
         },
     }
-    with NamedTemporaryFile() as f:
-        f.write(default_storage.open(sha256).read())
-        f.seek(0)
-        with TemporaryDirectory() as tmp:
-            shutil.copyfile(f.name, f'{tmp}/{sha256}.apk')
-            with zipfile.ZipFile(f.name, 'r') as apk:
-                apk.extractall(tmp)
+    try:
+        with NamedTemporaryFile() as f:
+            f.write(default_storage.open(sha256).read())
+            f.seek(0)
+            with TemporaryDirectory() as tmp:
+                shutil.copyfile(f.name, f'{tmp}/{sha256}.apk')
+                with zipfile.ZipFile(f.name, 'r') as apk:
+                    apk.extractall(tmp)
 
-            for file in glob.iglob(f'{tmp}/**/*', recursive=True):
-                try:
-                    found = yara_rule.match(file)
-                    if len(found) > 0:
-                        res_struct['matches']['matching_files'].append(file.replace(tmp, ''))
-                        res_struct['matches']['inner_rules'].extend([str(f) for f in found])
-                        logging.info(res_struct)
-                except Exception as e:
-                    pass
+                for file in glob.iglob(f'{tmp}/**/*', recursive=True):
+                    try:
+                        found = yara_rule.match(file)
+                        if len(found) > 0:
+                            res_struct['matches']['matching_files'].append(file.replace(tmp, ''))
+                            res_struct['matches']['inner_rules'].extend([str(f) for f in found])
+                            logging.info(res_struct)
+                    except Exception as e:
+                        pass
+    except Exception:
+        return
 
     res_struct['matches']['inner_rules'] = list(set(res_struct['matches']['inner_rules']))
 
@@ -211,6 +211,7 @@ def retrohunt(rule_id):
         rule = Yara.objects.get(id=rule_id)
     except Exception as e:
         logging.exception(e)
+        return
 
     _, hashes = default_storage.listdir('.')
     for h in hashes:
