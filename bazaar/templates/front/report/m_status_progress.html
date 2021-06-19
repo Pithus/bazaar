@@ -1,14 +1,20 @@
 <div class="col">
   {% if status.running %}
-    <div class="alert alert-secondary small" role="alert">
+    <div class="alert alert-secondary" role="alert">
       <div class="spinner-border  spinner-border-sm text-primary mr-2" role="status">
         <span class="sr-only">Loading...</span>
       </div>
-      the analysis is still running, refresh this page in few minutes.
+    <span class="small">
+      the analysis is still running, refresh this page in few minutes by pressing <kbd>F5</kbd>.
+      </span>
+     <a href="https://github.com/Pithus/bazaar/discussions" class="small" target="_blank"> Something seems to be broken? Contact us!</a>
     </div>
   {% elif status.in_error %}
-    <div class="alert alert-secondary small" role="alert">
-      An error occurred during the analysis, we have been notified.
+    <div class="alert alert-secondary" role="alert">
+    <span class="small">
+      At least one step of the analysis has failed, we have been notified. Don't worry, the devil is in the details.
+      </span>
+     <a href="https://github.com/Pithus/bazaar/discussions" class="small" target="_blank"> Something seems to be broken? Contact us!</a>
     </div>
   {% endif %}
 </div>
