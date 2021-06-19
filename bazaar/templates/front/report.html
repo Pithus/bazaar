@@ -231,27 +231,30 @@
 
       <div class="tab-pane" role="tabpanel" aria-labelledby="threat_intel-tab" id="threat_intel">
         {% if hunting_matches %}
-        <div class="mb-4">
-          <h3>Hunting matches</h3>
-          <p class="text-muted small">Information computed by <a class="" target="_blank"
-              href="https://github.com/pithus/bazaar">Pithus</a>.
-          </p>
-          {% include "front/report/m_hunting.html" %}
-        </div>
+          <div class="mb-4">
+            <h3>Hunting matches</h3>
+            <p class="text-muted small">Information computed by <a class="" target="_blank"
+                href="https://github.com/pithus/bazaar">Pithus</a>.
+            </p>
+            {% include "front/report/m_hunting.html" %}
+          </div>
         {% endif %}
-        {% if result.malware_bazaar or result.vt %}
-        <div>
-          {% include "front/report/m_malware_bazaar.html" with d=result %}
-        </div>
+        {% if timeline %}
+          {% include "front/report/m_timeline.html" %}
         {% endif %}
         {% if similar_samples %}
-        <div>
-          <h3>Similar samples</h3>
-          <p class="text-muted small">Information computed by <a class="" target="_blank"
-              href="https://github.com/pithus/bazaar">Pithus</a>.
-          </p>
-          {% include "front/report/m_similar_samples.html" %}
-        </div>
+          <div>
+            <h3>Similar samples</h3>
+            <p class="text-muted small">Information computed by <a class="" target="_blank"
+                href="https://github.com/pithus/bazaar">Pithus</a>.
+            </p>
+            {% include "front/report/m_similar_samples.html" %}
+          </div>
+        {% endif %}
+        {% if result.malware_bazaar or result.vt %}
+          <div>
+            {% include "front/report/m_malware_bazaar.html" with d=result %}
+          </div>
         {% endif %}
       </div>
 

@@ -1,6 +1,11 @@
+from datetime import datetime
 from tempfile import NamedTemporaryFile
 
 import dexofuzzy
+import pytz
+
+from django.utils.dateparse import parse_datetime
+
 
 from django.conf import settings
 from elasticsearch import Elasticsearch
@@ -141,3 +146,54 @@ def generate_world_map(domains, to_png=False, fp=None):
     else:
         return None
 
+
+def get_sample_timeline(sha256):
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    try:
+        sample = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
+        vt_report = es.get(index=settings.ELASTICSEARCH_VT_INDEX, id=sha256)['_source']
+
+        timeline = [
+            {
+                'id': 'pithus_upload',
+                'title': 'Upload on Pithus',
+                'date': parse_datetime(str(sample.get('uploaded_at'))).astimezone(pytz.UTC)
+            },
+            {
+                'id': 'cert_not_before',
+                'title': 'Certificate valid not before',
+                'date': parse_datetime(str(sample.get('certificates')[0].get('not_before'))).astimezone(pytz.UTC)
+            },
+            {
+                'id': 'cert_not_after',
+                'title': 'Certificate valid not after',
+                'date': parse_datetime(str(sample.get('certificates')[0].get('not_after'))).astimezone(pytz.UTC)
+            },
+            {
+                'id': 'vt_first_seen',
+                'title': 'First submission on VT',
+                'date': datetime.utcfromtimestamp(vt_report.get('attributes').get('first_submission_date')).astimezone(
+                    pytz.UTC)
+            },
+            {
+                'id': 'vt_last_seen',
+                'title': 'Last submission on VT',
+                'date': datetime.utcfromtimestamp(vt_report.get('attributes').get('last_submission_date')).astimezone(pytz.UTC)
+            },
+            {
+                'id': 'bundle_lowest_date',
+                'title': 'Oldest file found in APK',
+                'date': parse_datetime(str(vt_report.get('attributes').get('bundle_info').get('lowest_datetime'))).astimezone(pytz.UTC)
+            },
+            {
+                'id': 'bundle_highest_date',
+                'title': 'Latest file found in APK',
+                'date': parse_datetime(str(vt_report.get('attributes').get('bundle_info').get('highest_datetime'))).astimezone(pytz.UTC)
+            },
+        ]
+
+        timeline.sort(key = lambda x:x['date'])
+        return timeline
+
+    except Exception:
+        return None

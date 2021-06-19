@@ -25,7 +25,7 @@ from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzz
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status, generate_world_map, \
-    transform_hl_results
+    transform_hl_results, get_sample_timeline
 from .forms import YaraCreateForm
 
 
@@ -126,10 +126,17 @@ class ReportView(View):
             if not status['running']:
                 cache_retention_time = 600
 
+            # Get timeline
+            timeline = None
+            if not status['running']:
+                timeline = get_sample_timeline(sha)
+
+
             return render(request, 'front/report.html', {
                 'result': result,
                 'status': status,
                 'map': map_svg,
+                'timeline': timeline,
                 'hunting_matches': hunting_matches,
                 'similar_samples': similar_samples,
                 'cache_retention_time': cache_retention_time})

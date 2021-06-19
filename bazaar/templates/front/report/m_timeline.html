@@ -1,0 +1,13 @@
+{% if timeline %}
+
+<h3>Sample timeline</h3>
+
+<table class="table table-condensed table-sm">
+{% for element in timeline %}
+  <tr>
+    <td>{{ element.title }}</td>
+    <td>{{ element.date }}</td>
+  </tr>
+{% endfor %}
+</table>
+{% endif %}
