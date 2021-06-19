@@ -9,39 +9,27 @@
         <div class="col text-center">
           <img src="{% static 'images/logo.png' %}" width="200px">
         </div>
-      </div>
 
-      <div class="row justify-content-center">
         <div class="col-md-10">
-          <h3>Pithus, the opened pandora's box</h3>
-          <blockquote class="blockquote text-muted">
-            <p class="small">The Pandora myth is a kind of theodicy, addressing the question of why there is evil in the
-              world. According to this, Pandora opened a jar (pithos) (commonly referred to as "Pandora's box")
-              releasing
-              all the evils of humanity.</p>
-            <footer class="blockquote-footer mt-0 small">Wikipedia</footer>
-          </blockquote>
-        </div>
-      </div>
-
-      <div class="row justify-content-center">
-        <div class="col-md-10">
-          <h3>What Pithus is?</h3>
+          <h3>What is Pithus?</h3>
           <p>
             Pithus is a free and open-source mobile threat intelligence platform for activists,
             journalists, NGOs, researchers...
           </p>
           <p>
+            Pithus is the answer to the exponential growth of mobile threats. Malicious apps, fake apps, data laundering
+            are the main threats when it comes to mobile security. Their detection and analysis should be available for
+            all and not the property of a private company. Unlike some commercial solutions with exorbitant prices,
+            Pithus is a entirely open platform supported and maintained by the community.
+            Threats such as permanent tracking and data laundering are made possible by the total lack of transparency
+            and the lack of understanding around what and how data is gathered. Pithus brings transparency through clear
+            and structured reports. Activists, journalists, NGOs, and any other technical community can easily generate
+            these reports and leverage them to better understand the threat landscape.
+          </p>
+          <p>
             If you have any question, feel free to contact us at <kbd>pandora</kbd> [at] <kbd>pithus</kbd> [dot] <kbd>org</kbd>
             or file an
             issue on <a href="https://github.com/pithus/bazaar">Github</a>.
-          </p>
-        </div>
-        <div class="col-md-10">
-          <h3>Why Pithus?</h3>
-          <p>
-            Pithus is the answer to the exponential growth of mobile threats. Malicious apps, fake apps, data laundering are the main threats when it comes to mobile security. Their detection and analysis should be available for all and not the property of a private company. Unlike some commercial solutions with exorbitant prices, Pithus is a entirely open platform supported and maintained by the community.
-            Threats such as permanent tracking and data laundering are made possible by the total lack of transparency and the lack of understanding around what and how data is gathered. Pithus brings transparency through clear and structured reports. Activists, journalists, NGOs, and any other technical community can easily generate these reports and leverage them to better understand the threat landscape.
           </p>
         </div>
         <div class="col-md-10">
@@ -53,13 +41,320 @@
             <script src="https://liberapay.com/~17862/widgets/button.js"></script>
           </p>
         </div>
+      </div>
 
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <h3>General features</h3>
+          <ul>
+            <li>Domain names analysis: extract and analyze domain names from the apk</li>
+            <li>Permissions detection: get insights on permissions required by the application</li>
+            <li>Certificates information: get information on signing certificates</li>
+            <li>Activities, services, receivers, ...: identify the different entry points of the application</li>
+            <li>Download sample & export report: login and click on the buttons!</li>
+          </ul>
+        </div>
+        <div class="col-md-10 mb-5">
+          <div class="row align-content-center">
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/domain_map.png' %}" data-toggle="modal" data-target="#domain_map"
+                   class="img-thumbnail img-fluid">
+              <div class="modal" id="domain_map" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/domain_map.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/permission_analysis.png' %}" data-toggle="modal"
+                   data-target="#permission_analysis" class="img-thumbnail img-fluid">
+              <div class="modal" id="permission_analysis" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/permission_analysis.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/certificate_detail.png' %}" data-toggle="modal"
+                   data-target="#certificate_detail" class="img-thumbnail img-fluid">
+              <div class="modal" id="certificate_detail" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/certificate_detail.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/activities_services_receivers.png' %}" data-toggle="modal"
+                   data-target="#activities_services_receivers" class="img-thumbnail img-fluid">
+              <div class="modal" id="activities_services_receivers" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/activities_services_receivers.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <h3>Threat intel</h3>
+          <ul>
+            <li>Search: find samples by using Lucene query language</li>
+            <li>Fingerprints: search by SHA-x and pivot on UAID, ssdeep or dexofuzzy hashes</li>
+            <li>Hunt & Retro-hunt: import your rule sets to hunt malware</li>
+            <li>Pivot: quickly pivot on various indicators such as domain, certificate and more</li>
+            <li>VT & MalwareBazaar: get information from other threat intelligence providers</li>
+            <li>Sample life timeline: get insights on the sample lifespan, birth and death</li>
+            <li>Similar samples: find similar samples based on binary fuzzy hashing</li>
+          </ul>
+        </div>
+        <div class="col-md-10 mb-5">
+          <div class="row justify-content-center">
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/search.png' %}" data-toggle="modal" data-target="#search"
+                   class="img-thumbnail img-fluid">
+              <div class="modal" id="search" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/search.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/fingerprints.png' %}" data-toggle="modal"
+                   data-target="#fingerprints" class="img-thumbnail img-fluid">
+              <div class="modal" id="fingerprints" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/fingerprints.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/hunt_matches.png' %}" data-toggle="modal"
+                   data-target="#hunt_matches" class="img-thumbnail img-fluid">
+              <div class="modal" id="hunt_matches" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/hunt_matches.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/retrol_hunt.png' %}" data-toggle="modal"
+                   data-target="#retrol_hunt" class="img-thumbnail img-fluid">
+              <div class="modal" id="retrol_hunt" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/retrol_hunt.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/vt_malware_bazaar.png' %}" data-toggle="modal"
+                   data-target="#vt_malware_bazaar" class="img-thumbnail img-fluid">
+              <div class="modal" id="vt_malware_bazaar" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/vt_malware_bazaar.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/sample_life_timeline.png' %}" data-toggle="modal"
+                   data-target="#sample_life_timeline" class="img-thumbnail img-fluid">
+              <div class="modal" id="sample_life_timeline" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/sample_life_timeline.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/similar_sample.png' %}" data-toggle="modal"
+                   data-target="#similar_sample" class="img-thumbnail img-fluid">
+              <div class="modal" id="similar_sample" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/similar_sample.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <h3>Security And Privacy</h3>
+          <ul>
+            <li>Packer detection: identify compilers, packers, obfuscators and more</li>
+            <li>3rd-party tracking detection: identify 3rd-parties collecting data such as ads, analytics ans more</li>
+            <li>Manifest configuration analysis: detect potential vulnerabilities such as debug flag, tap-jacking and
+              more
+            </li>
+            <li>Network configuration analysis: detect common configuration issues such as clear traffic and more</li>
+            <li>Code analysis: detect common vulnerabilities found in source code</li>
+            <li>NIAP/OWASP analysis: detect vulnerabilities based on well-known standards</li>
+            <li>Behavior analysis: detect location of common code behaviors</li>
+          </ul>
+        </div>
+        <div class="col-md-10 mb-5">
+          <div class="row justify-content-center">
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/behavior_analysis.png' %}" data-toggle="modal"
+                   data-target="#behavior_analysis" class="img-thumbnail img-fluid">
+              <div class="modal" id="behavior_analysis" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/behavior_analysis.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/code_analysis.png' %}" data-toggle="modal"
+                   data-target="#code_analysis" class="img-thumbnail img-fluid">
+              <div class="modal" id="code_analysis" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/code_analysis.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/manifest_analysis.png' %}" data-toggle="modal"
+                   data-target="#manifest_analysis" class="img-thumbnail img-fluid">
+              <div class="modal" id="manifest_analysis" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/manifest_analysis.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/network_configuration_analysis.png' %}" data-toggle="modal"
+                   data-target="#network_configuration_analysis" class="img-thumbnail img-fluid">
+              <div class="modal" id="network_configuration_analysis" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/network_configuration_analysis.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/niap_owasp.png' %}" data-toggle="modal" data-target="#niap_owasp"
+                   class="img-thumbnail img-fluid">
+              <div class="modal" id="niap_owasp" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/niap_owasp.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/packer_detection.png' %}" data-toggle="modal"
+                   data-target="#packer_detection" class="img-thumbnail img-fluid">
+              <div class="modal" id="packer_detection" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/packer_detection.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <img src="{% static 'images/screenshots/tracking_detection.png' %}" data-toggle="modal"
+                   data-target="#tracking_detection" class="img-thumbnail img-fluid">
+              <div class="modal" id="tracking_detection" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <img src="{% static 'images/screenshots/tracking_detection.png' %}" class="img-fluid">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+
+      <div class="row justify-content-center">
         <div class="col-md-10">
           <h3>Limitations</h3>
           <p>
             Pithus is currently in beta and runs on a personal computer. The number of returned results is limited to
             50. Pithus only does static analysis.
           </p>
+        </div>
+
+        <div class="col-md-10">
+          <h3>Pithus, the opened pandora's box</h3>
+          <blockquote class="blockquote text-muted">
+            <p class="small">The Pandora myth is a kind of theodicy, addressing the question of why there is evil in
+              the
+              world. According to this, Pandora opened a jar (pithos) (commonly referred to as "Pandora's box")
+              releasing
+              all the evils of humanity.</p>
+            <footer class="blockquote-footer mt-0 small">Wikipedia</footer>
+          </blockquote>
         </div>
 
         <div class="col-md-10">
