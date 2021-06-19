@@ -131,7 +131,6 @@ class ReportView(View):
             if not status['running']:
                 timeline = get_sample_timeline(sha)
 
-
             return render(request, 'front/report.html', {
                 'result': result,
                 'status': status,

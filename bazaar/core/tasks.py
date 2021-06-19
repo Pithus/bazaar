@@ -649,8 +649,7 @@ def vt_analysis(sha256):
                       retry_on_conflict=5)
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'vt_analysis': 2}},
                   retry_on_conflict=5)
-    except Exception as e:
-        raise e
+    except Exception:
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'vt_analysis': -1}},
                   retry_on_conflict=5)
         return
