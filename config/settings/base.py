@@ -326,6 +326,7 @@ ELASTICSEARCH_HOST = env("ELASTICSEARCH_HOST", default="elasticsearch")
 ELASTICSEARCH_HOSTS = ["elasticsearch"]
 ELASTICSEARCH_APK_INDEX = 'apk_analysis'
 ELASTICSEARCH_TASKS_INDEX = 'analysis_tasks'
+ELASTICSEARCH_VT_INDEX = 'vt_reports'
 ELASTICSEARCH_GP_INDEX = 'google_play_details'
 ELASTICSEARCH_DEXOFUZZY_APK_INDEX = 'dexofuzzy_apk'
 ELASTICSEARCH_SSDEEP_APK_INDEX = 'ssdeep_apk'

@@ -6,15 +6,22 @@ from elasticsearch import Elasticsearch
 
 def init_es():
     es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
-    with open('bazaar/es_mappings/apk_analysis.json') as mapping:
-        apk_analysis_settings = json.load(mapping)
     try:
-        es.indices.create(index=settings.ELASTICSEARCH_GP_INDEX)
-        es.indices.create(index=settings.ELASTICSEARCH_TASKS_INDEX)
-        es.indices.create(index=settings.ELASTICSEARCH_APK_INDEX, body=apk_analysis_settings)
+        with open('bazaar/es_mappings/apk_analysis.json') as mapping:
+            apk_analysis_settings = json.load(mapping)
+        es.indices.create(index=settings.ELASTICSEARCH_APK_INDEX, body=apk_analysis_settings, ignore=400)
+        es.indices.create(index=settings.ELASTICSEARCH_GP_INDEX, ignore=400)
+        es.indices.create(index=settings.ELASTICSEARCH_TASKS_INDEX, ignore=400)
     except Exception as e:
         print(e)
         pass
+    try:
+        with open('bazaar/es_mappings/vt_mapping.json') as mapping:
+            vt_reports_settings = json.load(mapping)
+        es.indices.create(index=settings.ELASTICSEARCH_VT_INDEX, body=vt_reports_settings, ignore=400)
+    except Exception:
+        pass
+
 
 
 def init_fuzzy_match_es():
@@ -62,5 +69,4 @@ def init_fuzzy_match_es():
         es.indices.create(index=settings.ELASTICSEARCH_SSDEEP_APK_INDEX, body=index_settings)
         es.indices.create(index=settings.ELASTICSEARCH_SSDEEP_MANIFEST_INDEX, body=index_settings)
     except Exception as e:
-        print(e)
         pass

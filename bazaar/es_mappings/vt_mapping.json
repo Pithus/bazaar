@@ -1,0 +1,312 @@
+{
+  "settings": {
+    "index": {
+      "mapping": {
+        "total_fields": {
+          "limit": "65635000"
+        }
+      },
+      "highlight": {
+        "max_analyzed_offset": "60000000"
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "attributes": {
+        "properties": {
+          "androguard": {
+            "type": "object",
+            "enabled": false
+          },
+          "bundle_info": {
+            "type": "object",
+            "enabled": false
+          },
+          "first_submission_date": {
+            "type": "long"
+          },
+          "last_analysis_date": {
+            "type": "long"
+          },
+          "last_analysis_results": {
+            "type": "object",
+            "enabled": false
+          },
+          "last_analysis_stats": {
+            "properties": {
+              "confirmed-timeout": {
+                "type": "long"
+              },
+              "failure": {
+                "type": "long"
+              },
+              "harmless": {
+                "type": "long"
+              },
+              "malicious": {
+                "type": "long"
+              },
+              "suspicious": {
+                "type": "long"
+              },
+              "timeout": {
+                "type": "long"
+              },
+              "total": {
+                "type": "long"
+              },
+              "type-unsupported": {
+                "type": "long"
+              },
+              "undetected": {
+                "type": "long"
+              }
+            }
+          },
+          "last_modification_date": {
+            "type": "long"
+          },
+          "last_submission_date": {
+            "type": "long"
+          },
+          "magic": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "md5": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "meaningful_name": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "names": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "popular_threat_classification": {
+            "properties": {
+              "popular_threat_category": {
+                "properties": {
+                  "count": {
+                    "type": "long"
+                  },
+                  "value": {
+                    "type": "text",
+                    "fields": {
+                      "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                      }
+                    }
+                  }
+                }
+              },
+              "popular_threat_name": {
+                "properties": {
+                  "count": {
+                    "type": "long"
+                  },
+                  "value": {
+                    "type": "text",
+                    "fields": {
+                      "keyword": {
+                        "type": "keyword",
+                        "ignore_above": 256
+                      }
+                    }
+                  }
+                }
+              },
+              "suggested_threat_label": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              }
+            }
+          },
+          "reputation": {
+            "type": "long"
+          },
+          "sandbox_verdicts": {
+            "type": "object",
+            "enabled": false
+          },
+          "sha1": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "sha256": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "size": {
+            "type": "long"
+          },
+          "ssdeep": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "tags": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "times_submitted": {
+            "type": "long"
+          },
+          "tlsh": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "total_votes": {
+            "properties": {
+              "harmless": {
+                "type": "long"
+              },
+              "malicious": {
+                "type": "long"
+              }
+            }
+          },
+          "trid": {
+            "properties": {
+              "file_type": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                  }
+                }
+              },
+              "probability": {
+                "type": "float"
+              }
+            }
+          },
+          "type_description": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "type_extension": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "type_tag": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          },
+          "unique_sources": {
+            "type": "long"
+          },
+          "vhash": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "id": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "links": {
+        "properties": {
+          "self": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "type": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      }
+    }
+  }
+}

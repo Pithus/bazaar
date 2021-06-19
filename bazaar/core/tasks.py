@@ -639,16 +639,18 @@ def vt_analysis(sha256):
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'vt_analysis': 1}},
                   retry_on_conflict=5)
         client = vt.Client(settings.VT_API_KEY)
-        file = client.get_object(f'/files/{sha256}')
-        if file.last_analysis_stats:
-            d = file.last_analysis_stats
+        file = client.get_json(f'/files/{sha256}')['data']
+        if file['attributes']['last_analysis_stats']:
+            d = file['attributes']['last_analysis_stats']
             total = d['undetected'] + d['malicious']
             d['total'] = total
+            es.index(index=settings.ELASTICSEARCH_VT_INDEX, id=sha256, body=file)
             es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'vt': d}},
                       retry_on_conflict=5)
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'vt_analysis': 2}},
                   retry_on_conflict=5)
-    except Exception:
+    except Exception as e:
+        raise e
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'vt_analysis': -1}},
                   retry_on_conflict=5)
         return
