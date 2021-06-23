@@ -30,6 +30,7 @@
 
   <link href="{% static 'css/project.css' %}" rel="stylesheet">
   <link href="{% static 'fonts/font-awesome/css/all.css' %}" rel="stylesheet">
+  <link href="{% static 'css/nerd-fonts.min.css' %}" rel="stylesheet">
 
   {% endcompress %}
   {% endblock %}
@@ -63,17 +64,18 @@
           {% if request.user.is_authenticated %}
           </li>
           <li class="nav-item {% if request.path == my_rules_url %} active {%endif%}">
-            <a class="nav-link" href="{{ my_rules_url }}"><i class="fas fa-binoculars"></i> {% trans "My hunting" %}
+            <a class="nav-link" href="{{ my_rules_url }}"><i class="fas fa-binoculars"></i>
+              {% trans "My hunting" %}
             </a>
           </li>
           <li class="nav-item {% if request.path == account_logout_url %} active {%endif%}">
-            <a class="nav-link" href="{{ account_logout_url }}"><i class="fas fa-sign-out-alt"></i> {% trans "Sign Out"
-              %}</a>
+            <a class="nav-link" href="{{ account_logout_url }}"><i class="fas fa-sign-out-alt"></i>
+              {% trans "Sign Out" %}</a>
             {% else %}
           <li
             class="nav-item border rounded border-secondary {% if request.path == account_login_url %} active {%endif%}">
-            <a id="log-in-link" class="nav-link" href="{{ account_login_url }}"><i class="fas fa-sign-in-alt"></i> {%
-              trans "Sign In" %}</a>
+            <a id="log-in-link" class="nav-link" href="{{ account_login_url }}"><i class="fas fa-sign-in-alt"></i>
+              {% trans "Sign In" %}</a>
           </li>
           {% endif %}
         </ul>

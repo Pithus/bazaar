@@ -167,21 +167,21 @@
         </div>
         <div class="col-md-12">
           <h3>APKiD</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/rednaga/APKiD">APKiD</a>.
           </p>
           {% include "front/report/m_apkid.html" with d=result %}
         </div>
         <div class="col-md-12">
           <h3>SSdeep</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/DinoTools/python-ssdeep">ssdeep</a>.
           </p>
           {% include "front/report/m_ssdeep.html" with d=result %}
         </div>
         <div class="col-md-12">
           <h3>Dexofuzzy</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/ESTsecurity/Dexofuzzy">Dexofuzzy</a>.
           </p>
           {% include "front/report/m_dexofuzzy.html" with d=result %}
@@ -191,8 +191,8 @@
       <div class="tab-pane" role="tabpanel" aria-labelledby="apk_analysis-tab" id="apk_analysis">
         <div>
           <h3>APK details</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
-              href="https://github.com/androguard/androguard">AndroGuard</a> and <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/androguard/androguard">AndroGuard</a> and <a class="small" target="_blank"
               href="https://github.com/pithus/bazaar">Pithus</a>.
           </p>
           {% include "front/report/m_apk.html" with d=result %}
@@ -200,7 +200,7 @@
 
         <div>
           <h3>Certificate details</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/androguard/androguard">AndroGuard</a>.
           </p>
           {% include "front/report/m_certificate.html" with d=result %}
@@ -211,7 +211,7 @@
         {% if result.manifest_analysis %}
         <div>
           <h3>Manifest analysis</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
           {% include "front/report/m_manifest.html" with d=result %}
@@ -220,7 +220,7 @@
 
         {% if result.browsable_activities %}
         <h3>Browsable activities</h3>
-        <p class="text-muted small">Information computed with <a class="" target="_blank"
+        <p class="text-muted small">Information computed with <a class="small" target="_blank"
             href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
         </p>
         {% include "front/report/m_browsable_activities.html" with d=result %}
@@ -233,7 +233,7 @@
         {% if hunting_matches %}
           <div class="mb-4">
             <h3>Hunting matches</h3>
-            <p class="text-muted small">Information computed by <a class="" target="_blank"
+            <p class="text-muted small">Information computed by <a class="small" target="_blank"
                 href="https://github.com/pithus/bazaar">Pithus</a>.
             </p>
             {% include "front/report/m_hunting.html" %}
@@ -245,7 +245,7 @@
         {% if similar_samples %}
           <div>
             <h3>Similar samples</h3>
-            <p class="text-muted small">Information computed by <a class="" target="_blank"
+            <p class="text-muted small">Information computed by <a class="small" target="_blank"
                 href="https://github.com/pithus/bazaar">Pithus</a>.
             </p>
             {% include "front/report/m_similar_samples.html" %}
@@ -262,7 +262,7 @@
         {% if result.niap_analysis %}
         <div>
           <h3>NIAP analysis</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
           {% include "front/report/m_niap.html" with d=result %}
@@ -272,7 +272,7 @@
         {% if result.code_analysis %}
         <div>
           <h3>Code analysis</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
           {% include "front/report/m_code.html" with d=result %}
@@ -289,7 +289,7 @@
         {% if result.network_security %}
         <div>
           <h3>Network analysis</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
           {% include "front/report/m_network.html" with d=result %}
@@ -299,7 +299,7 @@
         {% if result.domains_analysis %}
         <div>
           <h3>Domains analysis</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
           {% include "front/report/m_domains.html" with d=result %}
@@ -309,7 +309,7 @@
         {% if result.url_analysis %}
         <div>
           <h3>URL analysis</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
           {% include "front/report/m_url.html" with d=result %}
@@ -321,7 +321,7 @@
         {% if result.detailed_permissions %}
         <div>
           <h3>Permissions analysis</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
           {% include "front/report/m_permissions.html" with d=result %}
@@ -331,7 +331,7 @@
         {% if result.trackers %}
         <div>
           <h3>Tracking analysis</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/Exodus-Privacy/exodus-core">Exodus-core</a>.
           </p>
           {% include "front/report/m_trackers.html" with d=result %}
@@ -341,7 +341,7 @@
         {% if result.quark.crimes %}
         <div>
           <h3>Threat analysis</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/quark-engine/quark-engine">Quark-Engine</a>.
           </p>
           {% include "front/report/m_quark.html" with d=result %}
@@ -351,7 +351,7 @@
         {% if result.android_api_analysis %}
         <div>
           <h3>Behavior analysis</h3>
-          <p class="text-muted small">Information computed with <a class="" target="_blank"
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
           {% include "front/report/m_api.html" with d=result %}

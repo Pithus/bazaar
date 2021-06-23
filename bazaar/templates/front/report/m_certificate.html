@@ -7,12 +7,11 @@
       <samp>{{ c.fingerprint_md5 }}</samp>
     </td>
     <td>
-      <a class="btn btn-link" href="{% url 'front:home' %}?q=handle:{{ d.handle }}" data-toggle="tooltip"
+      {% include "front/report/m_copy_to_clipboard.html" with data=c.fingerprint_md5 %}
+      <a class="btn btn-sm btn-link p-0" href="{% url 'front:home' %}?q=cert_md5:{{ c.fingerprint_md5 }}" data-toggle="tooltip"
         data-placement="top" title="Find similar samples">
-        <i class="fa fa-search"></i>
+        <i class="nf nf-oct-search"></i>
       </a>
-      <button class="btn btn-link" data-clipboard-text="{{ c.fingerprint_md5 }}"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
     </td>
   </tr>
   <tr>
@@ -21,12 +20,11 @@
       <samp>{{ c.fingerprint_sha1 }}</samp>
     </td>
     <td>
-      <a class="btn btn-link" href="{% url 'front:home' %}?q=handle:{{ d.handle }}" data-toggle="tooltip"
+      {% include "front/report/m_copy_to_clipboard.html" with data=c.fingerprint_sha1 %}
+      <a class="btn btn-sm btn-link p-0" href="{% url 'front:home' %}?q=cert_sha1:{{ c.fingerprint_sha1 }}" data-toggle="tooltip"
         data-placement="top" title="Find similar samples">
-        <i class="fa fa-search"></i>
+        <i class="nf nf-oct-search"></i>
       </a>
-      <button class="btn btn-link" data-clipboard-text="{{ c.fingerprint_sha1 }}"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
     </td>
   </tr>
   <tr>
@@ -35,31 +33,30 @@
       <samp>{{ c.fingerprint_sha256 }}</samp>
     </td>
     <td>
-      <a class="btn btn-link" href="{% url 'front:home' %}?q=handle:{{ d.handle }}" data-toggle="tooltip"
+      {% include "front/report/m_copy_to_clipboard.html" with data=c.fingerprint_sha256 %}
+      <a class="btn btn-sm btn-link p-0" href="{% url 'front:home' %}?q=cert_sha256:{{ c.fingerprint_sha256 }}" data-toggle="tooltip"
         data-placement="top" title="Find similar samples">
-        <i class="fa fa-search"></i>
+        <i class="nf nf-oct-search"></i>
       </a>
-      <button class="btn btn-link" data-clipboard-text="{{ c.fingerprint_sha256 }}"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
     </td>
   </tr>
   <tr>
     <td class="">Issuer</td>
     <td class=""><samp>{{ c.issuer }}</samp></td>
-    <td><button class="btn btn-link" data-clipboard-text="{{ c.issuer }}"><i data-toggle="tooltip" data-placement="top"
-          title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button></td>
+    <td>
+      {% include "front/report/m_copy_to_clipboard.html" with data=c.issuer %}
   </tr>
   <tr>
     <td class="">Not before</td>
     <td class=""><samp>{{ c.not_before }}</samp></td>
-    <td><button class="btn btn-link" data-clipboard-text="{{ c.net_before }}"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button></td>
+    <td>
+      {% include "front/report/m_copy_to_clipboard.html" with data=c.not_before %}
   </tr>
   <tr>
     <td class="">Not after</td>
     <td class=""><samp>{{ c.not_after }}</samp></td>
-    <td><button class="btn btn-link" data-clipboard-text="{{ c.not_after }}"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button></td>
+    <td>
+      {% include "front/report/m_copy_to_clipboard.html" with data=c.not_after %}
   </tr>
 </table>
 

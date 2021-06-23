@@ -2,15 +2,22 @@
 
 <table class="table table-condensed table-sm">
   {% for p in d.detailed_permissions|dictsort:"status" %}
-  <tr>
-    <td class="">{% include "front/report/m_severity.html" with s=p.status %}</td>
-    <td class=""><samp>{{ p|get:"_name"|truncatechars:90 }}</samp></td>
-    <td class="">
-      {% if p.info %}{{ p.info }}<br>{% endif %}
-      <span class="small">{{ p.description }}</span><br>
-    </td>
-    <td><button class="btn btn-link" data-clipboard-text="{{ p|get:"_name" }}"><i data-toggle="tooltip" data-placement="top"
-        title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button></td>
-  </tr>
+    <tr>
+      <td class="">{% include "front/report/m_severity.html" with s=p.status %}</td>
+      <td class=""><samp>{{ p|get:"_name"|truncatechars:90 }}</samp></td>
+      <td class="">
+        {% if p.info %}{{ p.info }}<br>{% endif %}
+        <span class="small">{{ p.description }}</span><br>
+      </td>
+      <td>
+        {% with p|get:"_name" as permission %}
+          {% include "front/report/m_copy_to_clipboard.html" with data=permission %}
+          <a class="btn btn-sm btn-link p-0" href="{% url 'front:home' %}?q=permissions:{{ permission }}"
+             data-toggle="tooltip"
+             data-placement="top" title="Find similar samples">
+            <i class="nf nf-oct-search"></i>
+          </a>
+        {% endwith %}
+    </tr>
   {% endfor %}
 </table>

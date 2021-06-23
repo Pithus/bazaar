@@ -5,71 +5,66 @@
       <samp>{{ d.handle }}</samp>
     </td>
     <td>
-      <a class="btn btn-link" href="{% url 'front:home' %}?q=handle:{{ d.handle }}" data-toggle="tooltip"
-        data-placement="top" title="Find similar samples">
-        <i class="fa fa-search"></i>
+      {% include "front/report/m_copy_to_clipboard.html" with data=d.handle %}
+      <a class="btn btn-sm btn-link p-0" href="{% url 'front:home' %}?q=handle:{{ d.handle }}" data-toggle="tooltip"
+         data-placement="top" title="Find similar samples">
+        <i class="nf nf-oct-search"></i>
       </a>
-      <button class="btn btn-link" data-clipboard-text="{{ d.handle }}"><i data-toggle="tooltip" data-placement="top"
-          title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
     </td>
   </tr>
   <tr>
     <td class="">App name</td>
     <td class=""><samp>{{ d.app_name }}</samp></td>
     <td>
-      <button class="btn btn-link" odata-clipboard-text="{{ d.app_name }}"><i data-toggle="tooltip" data-placement="top"
-          title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+      {% include "front/report/m_copy_to_clipboard.html" with data=d.app_name %}
     </td>
   </tr>
   <tr>
     <td class="">Version name</td>
     <td class=""><samp>{{ d.version_name }}</samp></td>
     <td>
-      <button class="btn btn-link" data-clipboard-text="{{ d.version_name }}"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+      {% include "front/report/m_copy_to_clipboard.html" with data=d.version_name %}
     </td>
   </tr>
   <tr>
     <td class="">Version code</td>
     <td class=""><samp>{{ d.version_code }}</samp></td>
     <td>
-      <button class="btn btn-link" data-clipboard-text="{{ d.version_code }}"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+      {% include "front/report/m_copy_to_clipboard.html" with data=d.version_code %}
     </td>
   </tr>
   <tr>
     <td class="">SDK</td>
     <td class=""><samp>{{ d.min_sdk_version }}</samp> - <samp>{{ d.target_sdk_version }}</samp></td>
+    <td></td>
   </tr>
   <tr>
     <td class="">UAID</td>
     <td class="">
       <samp>{{ d.uaid }}</samp>
     <td>
-      <a class="btn btn-link" href="{% url 'front:home' %}?q=handle:{{ d.uaid }}" data-toggle="tooltip"
-        data-placement="top" title="Find similar samples">
-        <i class="fa fa-search"></i>
+      {% include "front/report/m_copy_to_clipboard.html" with data=d.uaid %}
+      <a class="btn btn-sm btn-link p-0" href="{% url 'front:home' %}?q=handle:{{ d.uaid }}" data-toggle="tooltip"
+         data-placement="top" title="Find similar samples">
+        <i class="nf nf-oct-search"></i>
       </a>
-      <button class="btn btn-link" data-clipboard-text="{{ d.uaid }}"><i data-toggle="tooltip" data-placement="top"
-          title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
-    </td>
     </td>
   </tr>
   <tr>
     <td class="">Signature</td>
     <td class="">
       {% if not d.is_signed %}
-      <span class="badge badge-danger">Not signed</span>
+        <span class="badge badge-danger">Not signed</span>
       {% endif %}
 
       {% if d.is_signed_v1 %}
-      <span class="badge badge-success">Signature V1</span>
+        <span class="badge badge-success">Signature V1</span>
       {% endif %}
       {% if d.is_signed_v2 %}
-      <span class="badge badge-success">Signature V2</span>
+        <span class="badge badge-success">Signature V2</span>
       {% endif %}
       {% if d.is_signed_v3 %}
-      <span class="badge badge-success">Signature V3</span>
+        <span class="badge badge-success">Signature V3</span>
       {% endif %}
     <td class=""></td>
   </tr>
@@ -77,19 +72,19 @@
     <td class="">Frosting</td>
     <td>
       {% if d.frosting_data.is_frosted %}
-      <span class="badge badge-success">Frosted</span>
+        <span class="badge badge-success">Frosted</span>
       {% else %}
-      <span class="badge badge-danger">Not frosted</span>
+        <span class="badge badge-danger">Not frosted</span>
       {% endif %}
       {% if d.frosting_data.v2_signature_blocks|length > 0 %}
-      <div class="small">
-        Blocks found within V2 signature:
-        <ul class="list-unstyled mt-0">
-          {% for elt in d.frosting_data.v2_signature_blocks %}
-          <li><samp>{{ elt.value }}</samp>: {{ elt.comment }}</li>
-          {% endfor %}
-        </ul>
-      </div>
+        <div class="small">
+          Blocks found within V2 signature:
+          <ul class="list-unstyled mt-0">
+            {% for elt in d.frosting_data.v2_signature_blocks %}
+              <li><samp>{{ elt.value }}</samp>: {{ elt.comment }}</li>
+            {% endfor %}
+          </ul>
+        </div>
       {% endif %}
     </td>
     <td class=""></td>

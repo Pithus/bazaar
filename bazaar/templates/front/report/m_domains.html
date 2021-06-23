@@ -2,26 +2,27 @@
 
 <table class="table table-condensed table-sm">
   {% for p in d.domains_analysis %}
-  <tr>
-    <td>
-      {{ p.geolocation.country_short }}
-    </td>
-    <td class=""><samp>{{ p|get:"_name" }}</samp>
-    </td>
-    <td>
-      <a class="btn btn-link" href="{% url 'front:home' %}?q=domains:{{ p|get:" _name" }}" data-toggle="tooltip"
-        data-placement="top" title="Find similar samples">
-        <i class="fa fa-search"></i>
-      </a>
-      <button class="btn btn-link" data-clipboard-text="{{ p|get:" _name" }}"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
-    </td>
-    <td class=""><samp>{{ p.geolocation.ip }}</samp>
-    </td>
-    <td>
-      <button class="btn btn-link" data-clipboard-text="{{ p.geolocation.ip }}"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
-    </td>
-  </tr>
+    <tr>
+      <td>
+        {{ p.geolocation.country_short }}
+      </td>
+      <td class=""><samp>{{ p|get:"_name" }}</samp>
+      </td>
+      <td>
+        {% with p|get:"_name" as domain %}
+          <a class="btn btn-sm btn-link p-0" href="{% url 'front:home' %}?q=domains:{{ domain }}"
+             data-toggle="tooltip"
+             data-placement="top" title="Find similar samples">
+            <i class="nf nf-oct-search"></i>
+          </a>
+          {% include "front/report/m_copy_to_clipboard.html" with data=domain %}
+        {% endwith %}
+      </td>
+      <td class=""><samp>{{ p.geolocation.ip }}</samp>
+      </td>
+      <td>
+        {% include "front/report/m_copy_to_clipboard.html" with data=p.geolocation.ip %}
+      </td>
+    </tr>
   {% endfor %}
 </table>

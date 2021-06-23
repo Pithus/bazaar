@@ -8,12 +8,11 @@
       <samp>{{ d.dexofuzzy.apk|truncatechars:70}}</samp>
     </td>
     <td>
-      <a class="btn btn-link" href="{% url 'front:similarity_search' %}?hash={{ d.dexofuzzy.apk }}&algorithm=ssdeep"
+      {% include "front/report/m_copy_to_clipboard.html" with data=d.dexofuzzy.apk %}
+      <a class="btn btn-sm btn-link p-0" href="{% url 'front:similarity_search' %}?hash={{ d.dexofuzzy.apk }}&algorithm=ssdeep"
         data-toggle="tooltip" data-placement="top" title="Find similar samples">
-        <i class="fa fa-search"></i></a>
-      <button class="btn btn-link" data-clipboard-text="{{ d.dexofuzzy.apk }}"><i data-toggle="tooltip"
-          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
-
+        <i class="nf nf-oct-search"></i>
+      </a>
     </td>
   </tr>
   {% endif %}
@@ -24,8 +23,7 @@
       <samp>{{ p.hash|truncatechars:70 }}</samp>
     </td>
     <td>
-      <button class="btn btn-link" data-clipboard-text="{{ p.hash }}"><i data-toggle="tooltip" data-placement="top"
-          title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+      {% include "front/report/m_copy_to_clipboard.html" with data=p.hash %}
     </td>
   </tr>
   {% endfor %}
