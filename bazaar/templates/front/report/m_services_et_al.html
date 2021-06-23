@@ -1,20 +1,51 @@
 {% if d.activities %}
-  <h3>Activities</h3>
-  <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                           href="https://github.com/androguard/androguard">AndroGuard</a>.
-  <pre><code>{% for s in d.activities %}{{ s }}<br>{% endfor %}</code></pre>
+<h3>Activities</h3>
+<p class="text-muted small">Information computed with <a class="" target="_blank"
+    href="https://github.com/androguard/androguard">AndroGuard</a>.
+
+<table class="table table-condensed table-sm">
+  <tr>
+    <td>
+      <pre><code>{% for s in d.activities %}{{ s }}<br>{% endfor %}
+<code></pre>
+    </td>
+    <td><button class="btn btn-link" data-clipboard-text="{{ d.activities }}"><i data-toggle="tooltip"
+          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+    </td>
+  </tr>
+</table>
 {% endif %}
 
-{% if d.receivers %}
-  <h3>Receivers</h3>
-  <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                           href="https://github.com/androguard/androguard">AndroGuard</a>.
-  <pre><code>{% for s in d.receivers %}{{ s }}<br>{% endfor %}</code></pre>
+{% if d.receivers %} <h3>Receivers</h3>
+<p class="text-muted small">Information computed with <a class="" target="_blank"
+    href="https://github.com/androguard/androguard">AndroGuard</a>.
+
+<table class="table table-condensed table-sm">
+  <tr>
+    <td>
+      <pre><code>{% for s in d.receivers %}{{ s }}<br>{% endfor %}</code></pre>
+    </td>
+    <td><button class="btn btn-link" data-clipboard-text="{{ d.receivers }}"><i data-toggle="tooltip"
+          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+    </td>
+  </tr>
+</table>
 {% endif %}
 
 {% if d.services %}
-  <h3>Services</h3>
-  <p class="text-muted small">Information computed with <a class="" target="_blank"
-                                                           href="https://github.com/androguard/androguard">AndroGuard</a>.
-  <pre><code>{% for s in d.services %}{{ s }}<br>{% endfor %}</code></pre>
+<h3>Services</h3>
+<p class="text-muted small">Information computed with <a class="" target="_blank"
+    href="https://github.com/androguard/androguard">AndroGuard</a>.
+
+<table class="table table-condensed table-sm">
+  <tr>
+    <td>
+      <pre><code>{% for s in d.services %}{{ s }}<br>{% endfor %}</code></pre>
+    </td>
+    <td><button class="btn btn-link" data-clipboard-text="{{ d.services }}"><i data-toggle="tooltip"
+          data-placement="top" title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button>
+    </td>
+  </tr>
+</table>
+
 {% endif %}

@@ -2,7 +2,7 @@
 {% load comma_to_br %}
 
 <table class="table table-condensed table-sm">
-  {%  for p in d.niap_analysis %}
+  {% for p in d.niap_analysis %}
   <tr>
     <td class="">{{ p|get:"_name"|comma_to_br }}</td>
     <td class="">{{ p.choice }}<br>

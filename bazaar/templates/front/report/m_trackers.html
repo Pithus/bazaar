@@ -2,12 +2,12 @@
 
 <table class="table table-condensed table-sm">
   {% for p in d.trackers|dictsort:"name" %}
-    <tr>
-      <td class="">{{ p.name }}</td>
-      <td class=""><a href="https://reports.exodus-privacy.eu.org/fr/trackers/{{ p.id }}/" target="_blank">
+  <tr>
+    <td class="">{{ p.name }}</td>
+    <td class=""><a href="https://reports.exodus-privacy.eu.org/fr/trackers/{{ p.id }}/" target="_blank">
         <i class="fas fa-external-link-alt fa-xs"></i> https://reports.exodus-privacy.eu.org/fr/trackers/{{ p.id }}
       </a>
-      </td>
-    </tr>
+    </td>
+  </tr>
   {% endfor %}
 </table>

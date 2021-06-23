@@ -9,6 +9,8 @@
       {% if p.info %}{{ p.info }}<br>{% endif %}
       <span class="small">{{ p.description }}</span><br>
     </td>
+    <td><button class="btn btn-link" data-clipboard-text="{{ p|get:"_name" }}"><i data-toggle="tooltip" data-placement="top"
+        title="Copy to clipboard" class="fa fa-clipboard" aria-hidden="true"></i></button></td>
   </tr>
   {% endfor %}
 </table>

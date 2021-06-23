@@ -2,17 +2,38 @@
   <tr>
     <td class="">MD5</td>
     <td class=""><samp>{{ d.md5 }}</samp></td>
+    <td><button data-toggle="tooltip" data-placement="top" title="Copy to clipboard" class="btn btn-link"
+        data-clipboard-text="{{ d.md5 }}"><i class="fa fa-clipboard" aria-hidden="true"></i>
+      </button>
+    </td>
   </tr>
   <tr>
     <td class="">SHA1</td>
     <td class=""><samp>{{ d.sha1 }}</samp></td>
+    <td>
+      <button data-toggle="tooltip" data-placement="top" title="Copy to clipboard" class="btn btn-link"
+        data-clipboard-text="{{ d.sha1 }}"><i class="fa fa-clipboard" aria-hidden="true"></i>
+      </button>
+    </td>
   </tr>
   <tr>
     <td class="">SHA256</td>
     <td class=""><samp>{{ d.apk_hash }}</samp></td>
+    <td>
+      <button data-toggle="tooltip" data-placement="top" title="Copy to clipboard" class="btn btn-link"
+        data-clipboard-text="{{ d.apk_hash }}"><i class="fa fa-clipboard" aria-hidden="true"></i>
+      </button>
+    </td>
   </tr>
   <tr>
     <td class="">Size</td>
     <td class=""><samp>{{ d.size }}</samp></td>
+    <td>
+      {% if d.size|length != 0 %}
+      <button data-toggle="tooltip" data-placement="top" title="Copy to clipboard" class="btn btn-link"
+        data-clipboard-text="{{ d.size }}"><i class="fa fa-clipboard" aria-hidden="true"></i>
+      </button>
+      {% endif %}
+    </td>
   </tr>
 </table>
