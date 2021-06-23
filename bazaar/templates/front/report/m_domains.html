@@ -16,12 +16,15 @@
             <i class="nf nf-oct-search"></i>
           </a>
           {% include "front/report/m_copy_to_clipboard.html" with data=domain %}
+          {% include "front/report/m_google_search.html" with data=domain %}
+          </a>
         {% endwith %}
       </td>
       <td class=""><samp>{{ p.geolocation.ip }}</samp>
       </td>
       <td>
         {% include "front/report/m_copy_to_clipboard.html" with data=p.geolocation.ip %}
+        {% include "front/report/m_google_search.html" with data=p.geolocation.ip %}
       </td>
     </tr>
   {% endfor %}
