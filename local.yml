@@ -5,6 +5,8 @@ volumes:
   local_postgres_data_backups: {}
   local_elasticsearch_data: {}
   local_minio_data: {}
+  local_prometheus_data: {}
+  local_grafana_data: {}
 
 services:
   django: &django
@@ -14,7 +16,6 @@ services:
     image: bazaar_local_django
     depends_on:
       - postgres
-      - mailhog
       - redis
       - elasticsearch
       - minio
@@ -53,10 +54,10 @@ services:
     env_file:
       - ./.envs/.local/.postgres
 
-  mailhog:
-    image: mailhog/mailhog:v1.0.0
-    ports:
-      - "8025:8025"
+#  mailhog:
+#    image: mailhog/mailhog:v1.0.0
+#    ports:
+#      - "8025:8025"
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
@@ -105,3 +106,25 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - local_prometheus_data:/prometheus
+      - ./config/prometheus.conf:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - '3000:3000'
+    volumes:
+      - local_grafana_data:/var/lib/grafana:rw
+    environment:
+      GF_SECURITY_ADMIN_USER: 'admin'
+      GF_SECURITY_ADMIN_PASSWORD: 'rootme'
+      GF_USERS_ALLOW_SIGN_UP: 'false'

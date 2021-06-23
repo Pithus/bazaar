@@ -1,6 +1,11 @@
 log:
   level: INFO
 
+accessLog:
+  filePath: "/tmp/access.log"
+  fields:
+    defaultMode: keep
+
 entryPoints:
   web:
     # http
@@ -9,6 +14,9 @@ entryPoints:
   web-secure:
     # https
     address: ":443"
+
+  metrics:
+    address: ":8000"
 
 certificatesResolvers:
   letsencrypt:
@@ -24,22 +32,42 @@ http:
   routers:
     web-router:
       rule: "Host(`beta.pithus.org`)"
-
       entryPoints:
         - web
       middlewares:
         - redirect
         - csrf
+        - metrics-replacepathregex
       service: django
 
     web-secure-router:
       rule: "Host(`beta.pithus.org`)"
-
       entryPoints:
         - web-secure
       middlewares:
         - csrf
+        - metrics-replacepathregex
       service: django
+      tls:
+        # https://docs.traefik.io/master/routing/routers/#certresolver
+        certResolver: letsencrypt
+
+    dashboard-router:
+      rule: "Host(`dash.pithus.org`)"
+      entryPoints:
+        - web
+      middlewares:
+        - redirect
+        - csrf
+      service: grafana
+
+    dashboard-secure-router:
+      rule: "Host(`dash.pithus.org`)"
+      entryPoints:
+        - web-secure
+      middlewares:
+        - csrf
+      service: grafana
       tls:
         # https://docs.traefik.io/master/routing/routers/#certresolver
         certResolver: letsencrypt
@@ -55,6 +83,10 @@ http:
       # https://docs.djangoproject.com/en/dev/ref/csrf/#ajax
       headers:
         hostsProxyHeaders: ["X-CSRFToken"]
+    metrics-replacepathregex:
+      replacePathRegex:
+        regex: "^/metrics.*"
+        replacement: "/"
 
   services:
     django:
@@ -62,8 +94,24 @@ http:
         servers:
           - url: http://django:5000
 
+    grafana:
+      loadBalancer:
+        servers:
+          - url: http://grafana:3000
+
 providers:
   # https://docs.traefik.io/master/providers/file/
   file:
     filename: /etc/traefik/traefik.yml
     watch: true
+
+metrics:
+  prometheus:
+    entryPoint: metrics
+    buckets:
+      - 0.1
+      - 0.3
+      - 1.2
+      - 5.0
+    addEntryPointsLabels: true
+    addServicesLabels: true

@@ -110,7 +110,9 @@ def extract_ioc(sha256):
     return {'status': 'success', 'info': ''}
 
 
-def execute_single_yara_rule(rule, sha256):
+def execute_single_yara_rule(rule_id, sha256):
+    rule = Yara.objects.get(id=rule_id)
+
     if not default_storage.exists(sha256):
         reason = f'{sha256} not found, unable to analyze'
         logging.error(reason)
@@ -193,11 +195,10 @@ def execute_single_yara_rule(rule, sha256):
 def yara_analysis(sha256, rule_id=-1):
     if rule_id == -1:
         for rule in Yara.objects.all():
-            execute_single_yara_rule(rule, sha256)
+            execute_single_yara_rule(rule.id, sha256)
     else:
         # TODO: handle missing yara rule
-        rule = Yara.objects.get(id=rule_id)
-        execute_single_yara_rule(rule, sha256)
+        execute_single_yara_rule(rule_id, sha256)
 
     # TODO
     del rule
@@ -215,7 +216,7 @@ def retrohunt(rule_id):
 
     _, hashes = default_storage.listdir('.')
     for h in hashes:
-        execute_single_yara_rule(rule, h)
+        execute_single_yara_rule(rule.id, h)
 
     del rule, hashes
     gc.collect()
@@ -457,6 +458,7 @@ def mobsf_analysis(sha256):
             f.write(default_storage.open(sha256).read())
             f.seek(0)
             response = mobsf.upload(f'{sha256}.apk', f)
+            to_store = None
             if response:
                 mobsf.scan(response)
                 report = mobsf.report_json(response)

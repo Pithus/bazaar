@@ -74,12 +74,12 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "django_q",
     "minio_storage",
+    "django_prometheus",
 ]
 
 LOCAL_APPS = [
     "bazaar.users.apps.UsersConfig",
     "bazaar.core",
-
     "bazaar.front",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -128,6 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = [
+    'django_prometheus.middleware.PrometheusBeforeMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -139,6 +140,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'django_prometheus.middleware.PrometheusAfterMiddleware',
 ]
 
 # STATIC
@@ -351,3 +353,6 @@ Q_CLUSTER = {
 
 VT_API_KEY = env("VT_API_KEY", default="None")
 MALWARE_BAZAAR_API_KEY = env("MALWARE_BAZAAR_API_KEY", default="None")
+
+# Monitoring
+PROMETHEUS_EXPORT_MIGRATIONS = False

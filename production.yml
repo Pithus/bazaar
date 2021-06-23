@@ -4,8 +4,11 @@ volumes:
   production_postgres_data: {}
   production_postgres_data_backups: {}
   production_traefik: {}
+  production_traefik_logs: {}
   production_elasticsearch_data: {}
   production_minio_data: {}
+  production_prometheus_data: {}
+  production_grafana_data: {}
 
 services:
   django: &django
@@ -55,6 +58,7 @@ services:
       - django
     volumes:
       - production_traefik:/etc/traefik/acme:z
+      - production_traefik_logs:/tmp/
     ports:
       - "0.0.0.0:80:80"
       - "0.0.0.0:443:443"
@@ -91,3 +95,18 @@ services:
       timeout: 20s
       retries: 3
 
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - production_prometheus_data:/prometheus
+      - ./config/prometheus.conf:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - production_grafana_data:/var/lib/grafana:rw
+    env_file:
+      - ./.envs/.production/.grafana
