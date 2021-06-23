@@ -8,7 +8,7 @@
     </td>
     <td>
       {% include "front/report/m_copy_to_clipboard.html" with data=c.fingerprint_md5 %}
-      <a class="btn btn-sm btn-link p-0" href="{% url 'front:home' %}?q=cert_md5:{{ c.fingerprint_md5 }}" data-toggle="tooltip"
+      <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:home' %}?q=cert_md5:{{ c.fingerprint_md5 }}" data-toggle="tooltip"
         data-placement="top" title="Find similar samples">
         <i class="nf nf-oct-search"></i>
       </a>
@@ -21,7 +21,7 @@
     </td>
     <td>
       {% include "front/report/m_copy_to_clipboard.html" with data=c.fingerprint_sha1 %}
-      <a class="btn btn-sm btn-link p-0" href="{% url 'front:home' %}?q=cert_sha1:{{ c.fingerprint_sha1 }}" data-toggle="tooltip"
+      <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:home' %}?q=cert_sha1:{{ c.fingerprint_sha1 }}" data-toggle="tooltip"
         data-placement="top" title="Find similar samples">
         <i class="nf nf-oct-search"></i>
       </a>
@@ -34,7 +34,7 @@
     </td>
     <td>
       {% include "front/report/m_copy_to_clipboard.html" with data=c.fingerprint_sha256 %}
-      <a class="btn btn-sm btn-link p-0" href="{% url 'front:home' %}?q=cert_sha256:{{ c.fingerprint_sha256 }}" data-toggle="tooltip"
+      <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:home' %}?q=cert_sha256:{{ c.fingerprint_sha256 }}" data-toggle="tooltip"
         data-placement="top" title="Find similar samples">
         <i class="nf nf-oct-search"></i>
       </a>

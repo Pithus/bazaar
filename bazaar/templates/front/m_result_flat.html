@@ -57,9 +57,9 @@
               {% if user.is_authenticated %}
                 <div class="text-right">
                   <a href="{% url 'front:download_sample' result.source.apk_hash %}" class="" data-toggle="tooltip"
-                     data-placement="top" title="Download the sample"><i class="fas fa-download"></i></a>
+                     data-placement="top" title="Download the sample"><i class="nf nf-oct-cloud_download"></i></a>
                   <a href="{% url 'front:export_report' result.source.apk_hash %}" class="" data-toggle="tooltip"
-                     data-placement="top" title="Export the report in JSON"><i class="fas fa-file-export"></i></a>
+                     data-placement="top" title="Export the report in JSON"><i class="nf nf-mdi-export"></i></a>
                 </div>
               {% endif %}
             </div>

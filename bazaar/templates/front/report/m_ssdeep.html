@@ -11,7 +11,7 @@
     <td>
       <div>
         {% include "front/report/m_copy_to_clipboard.html" with data=d.ssdeep.apk %}
-        <a class="btn btn-sm btn-link p-0" href="{% url 'front:similarity_search' %}?hash={{ d.ssdeep.apk }}&algorithm=ssdeep"
+        <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:similarity_search' %}?hash={{ d.ssdeep.apk }}&algorithm=ssdeep"
           data-toggle="tooltip" data-placement="top" title="Find similar samples">
           <i class="nf nf-oct-search"></i>
         </a>

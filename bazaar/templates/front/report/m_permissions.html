@@ -12,7 +12,7 @@
       <td>
         {% with p|get:"_name" as permission %}
           {% include "front/report/m_copy_to_clipboard.html" with data=permission %}
-          <a class="btn btn-sm btn-link p-0" href="{% url 'front:home' %}?q=permissions:{{ permission }}"
+          <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:home' %}?q=permissions:{{ permission }}"
              data-toggle="tooltip"
              data-placement="top" title="Find similar samples">
             <i class="nf nf-oct-search"></i>

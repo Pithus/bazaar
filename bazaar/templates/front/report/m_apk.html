@@ -6,7 +6,7 @@
     </td>
     <td>
       {% include "front/report/m_copy_to_clipboard.html" with data=d.handle %}
-      <a class="btn btn-sm btn-link p-0" href="{% url 'front:home' %}?q=handle:{{ d.handle }}" data-toggle="tooltip"
+      <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:home' %}?q=handle:{{ d.handle }}" data-toggle="tooltip"
          data-placement="top" title="Find similar samples">
         <i class="nf nf-oct-search"></i>
       </a>
@@ -44,7 +44,7 @@
       <samp>{{ d.uaid }}</samp>
     <td>
       {% include "front/report/m_copy_to_clipboard.html" with data=d.uaid %}
-      <a class="btn btn-sm btn-link p-0" href="{% url 'front:home' %}?q=handle:{{ d.uaid }}" data-toggle="tooltip"
+      <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:home' %}?q=handle:{{ d.uaid }}" data-toggle="tooltip"
          data-placement="top" title="Find similar samples">
         <i class="nf nf-oct-search"></i>
       </a>

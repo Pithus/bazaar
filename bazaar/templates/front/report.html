@@ -33,12 +33,12 @@
           </div>
           {% if user.is_authenticated %}
           <div>
-            <a href="{% url 'front:download_sample' result.apk_hash %}" class="btn btn-primary btn-sm"
-              data-toggle="tooltip" data-placement="top" title="Download the sample"><i class="fas fa-download"></i>
-              sample</a>
-            <a href="{% url 'front:export_report' result.apk_hash %}" class="btn btn-primary btn-sm"
-              data-toggle="tooltip" data-placement="top" title="Export the report in JSON"><i
-                class="fas fa-file-export"></i> report</a>
+            <a href="{% url 'front:download_sample' result.apk_hash %}" class="h5 text-decoration-none"
+              data-toggle="tooltip" data-placement="top" title="Download the sample">
+              <i class="nf nf-oct-cloud_download"></i></a>
+            <a href="{% url 'front:export_report' result.apk_hash %}" class="h5 text-decoration-none"
+              data-toggle="tooltip" data-placement="top" title="Export the report in JSON">
+              <i class="nf nf-mdi-export"></i></a>
           </div>
           {% endif %}
         </div>
