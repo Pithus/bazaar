@@ -591,6 +591,10 @@
         "type": "object",
         "enabled": false
       },
+      "andro_cfg": {
+        "type": "object",
+        "enabled": false
+      },
       "vt": {
         "properties": {
           "confirmed-timeout": {

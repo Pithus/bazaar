@@ -2,7 +2,7 @@ from django import forms
 from django.conf import settings
 from elasticsearch import Elasticsearch
 
-from bazaar.core.utils import get_matching_items_by_dexofuzzy, get_matching_items_by_ssdeep
+from bazaar.core.utils import get_matching_items_by_dexofuzzy, get_matching_items_by_ssdeep, compute_genetic_analysis
 from bazaar.front.utils import transform_results, transform_hl_results, append_dexofuzzy_similarity, get_aggregations
 
 from django.forms import ModelForm
@@ -86,7 +86,7 @@ class SearchForm(forms.Form):
             "sort": {"analysis_date": "desc"},
             "_source": ["apk_hash", "sha256", "uploaded_at", "icon_base64", "handle", "app_name",
                         "version_code", "size", "dexofuzzy.apk", "quark.threat_level", "vt", "malware_bazaar",
-                        "is_signed", "frosting_data.is_frosted", "features"],
+                        "is_signed", "frosting_data.is_frosted", "features", "andro_cfg.genom"],
             "size": 50,
         }
         es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
@@ -94,9 +94,10 @@ class SearchForm(forms.Form):
             raw_results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
             results = transform_hl_results(raw_results)
             results = append_dexofuzzy_similarity(results, 'sim', 30)
-            return results, get_aggregations(raw_results)
+            genetic_analysis = compute_genetic_analysis(results)
+            return results, get_aggregations(raw_results), genetic_analysis
         except Exception as e:
-            return [], []
+            return [], [], None
 
 
 class BasicUploadForm(forms.Form):

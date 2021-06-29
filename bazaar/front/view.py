@@ -25,7 +25,7 @@ from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzz
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status, generate_world_map, \
-    transform_hl_results, get_sample_timeline
+    transform_hl_results, get_sample_timeline, get_andro_cfg_storage_path
 from .forms import YaraCreateForm
 
 
@@ -55,13 +55,14 @@ class HomeView(View):
         results = None
         list_results = False
         aggregations = []
+        genetic_analysis = None
 
         f = SearchForm(request.GET)
         form_to_show = f
         if not request.GET:
             form_to_show = SearchForm()
         if f.is_valid():
-            results, aggregations = f.do_search()
+            results, aggregations, genetic_analysis = f.do_search()
             list_results = True
             q = f.cleaned_data['q']
             matrix = get_similarity_matrix(results)
@@ -72,6 +73,7 @@ class HomeView(View):
                           'form': form_to_show,
                           'results': results,
                           'aggregations': aggregations,
+                          'genetic_analysis': genetic_analysis,
                           'upload_form': BasicUploadForm(),
                           'list_results': list_results,
                           'report_example': report_example,
@@ -397,3 +399,8 @@ def my_retrohunt_view(request, uuid):
         logging.exception(e)
 
     return redirect(reverse_lazy('front:my_rules'))
+
+
+def get_andgrocfg_code(request, sha256, foo):
+    storage_path = get_andro_cfg_storage_path(sha256)
+    return HttpResponse(default_storage.open(f'{storage_path}/{foo}').read(), content_type='image/bmp')

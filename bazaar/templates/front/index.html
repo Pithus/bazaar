@@ -4,6 +4,7 @@
 
 {% block whole_content %}
   {{ aggregations|json_script:"aggregations-data" }}
+  {{ genetic_analysis|json_script:"genetic_analysis-data" }}
   <div class="bg-secondary pb-2">
     <div class="container-fluid">
       {# Header #}
@@ -31,7 +32,7 @@
             <div class="control-group mt-1">
               <div class="controls">
                 {% include "front/m_search_help.html" %}
-                {% if request.user.is_authenticated and q|length > 0 and false%}
+                {% if request.user.is_authenticated and q|length > 0 and false %}
                   {% include "front/m_search_save.html" %}
                 {% endif %}
               </div>
@@ -59,11 +60,11 @@
         </div>
       </div>
 
-        <div class="row justify-content-center">
-          <div class="col text-center">
-            Search by  <a class="" href="{% url 'front:similarity_search' %}">fuzzy hash</a>
-          </div>
+      <div class="row justify-content-center">
+        <div class="col text-center">
+          Search by <a class="" href="{% url 'front:similarity_search' %}">fuzzy hash</a>
         </div>
+      </div>
       {# Example of report #}
       {% if report_example %}
         <div class="row justify-content-center">
@@ -72,42 +73,49 @@
           </div>
         </div>
       {% endif %}
-  </div>
+    </div>
   </div>
 
   <div class="container-fluid">
     {% if list_results %}
       <div class="row justify-content-center mt-2">
-        <div class="col-md-12">
-          {% if results %}
-            <h2>Results</h2>
+        {% if results %}
+          <h2>Results</h2>
+          <div class="col-md-12 mb-2">
+            <ul class="nav nav-pills justify-content-center" id="overviewTab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="genetic_analysis-tab" data-toggle="tab"
+                   href="#genetic_analysis" role="tab"
+                   aria-controls="genetic_analysis"
+                   aria-selected="true">Genetic Analysis</a>
+              </li>
+              {% for key, agg in aggregations.items %}
+                <li class="nav-item">
+                  <a class="nav-link" id="{{ key }}-tab" data-toggle="tab"
+                     href="#{{ key }}" role="tab"
+                     aria-controls="{{ key }}"
+                     aria-selected="true">{{ agg.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
 
-            <div class="col-md-12 mb-2">
-              <ul class="nav nav-pills justify-content-center" id="overviewTab" role="tablist">
-                {% for key, agg in aggregations.items %}
-                  <li class="nav-item">
-                    <a class="nav-link {% if forloop.first %}active{% endif %}" id="{{ key }}-tab" data-toggle="tab"
-                       href="#{{ key }}" role="tab"
-                       aria-controls="{{ key }}"
-                       aria-selected="true">{{ agg.title }}</a>
-                  </li>
-                {% endfor %}
-              </ul>
-
-              <div class="tab-content" id="overviewTabContent">
-                {% for key, agg in aggregations.items %}
-                  <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" id="{{ key }}" role="tabpanel"
-                       aria-labelledby="{{ key }}-tab">
-                    {% include "front/m_bar_graph.html" with graphname=key %}
-                  </div>
-                {% endfor %}
+            <div class="tab-content" id="overviewTabContent">
+              <div class="tab-pane fade show active" id="genetic_analysis" role="tabpanel"
+                   aria-labelledby="genetic_analysis-tab">
+                {% include "front/m_dendrogram.html" %}
               </div>
+              {% for key, agg in aggregations.items %}
+                <div class="tab-pane fade" id="{{ key }}" role="tabpanel"
+                     aria-labelledby="{{ key }}-tab">
+                  {% include "front/m_bar_graph.html" with graphname=key %}
+                </div>
+              {% endfor %}
             </div>
-            {% include "front/m_results_flat.html" with results=results %}
-          {% else %}
-            <h2>No results</h2>
-          {% endif %}
-        </div>
+          </div>
+          {% include "front/m_results_flat.html" with results=results %}
+        {% else %}
+          <h2>No results</h2>
+        {% endif %}
       </div>
     {% endif %}
   </div>

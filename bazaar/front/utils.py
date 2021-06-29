@@ -212,3 +212,7 @@ def get_sample_timeline(sha256):
 
     except Exception:
         return None
+
+
+def get_andro_cfg_storage_path(sha256):
+    return f'andro_cfg_{sha256}'

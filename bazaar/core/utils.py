@@ -1,6 +1,7 @@
 import hashlib
 import json
 import re
+import logging
 
 import dexofuzzy
 from django.utils import timezone
@@ -16,8 +17,10 @@ from django.utils.html import escape
 from django_q.models import Schedule
 from django_q.tasks import schedule
 from elasticsearch import Elasticsearch
-
-from bazaar.core.models import Yara
+import numpy
+from scipy.cluster.hierarchy import dendrogram, linkage, to_tree
+from scipy.spatial.distance import pdist
+import pandas as pd
 
 
 def get_sha256_of_file_path(file_path):
@@ -293,3 +296,37 @@ def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha
 
     return sha256_list_to_return
 
+def compute_genetic_analysis(results):
+    try:
+        def normalize(data):
+            d_prime = []
+            for i in data:
+                d_prime.append((100 * i) / max(data))
+            return d_prime
+
+        with NamedTemporaryFile(mode='w') as tmp_csv:
+            for r in results:
+                try:
+                    sha256 = r.get('source').get('sha256')
+                    genom = r.get('source').get('andro_cfg').get('genom')
+                    if genom:
+                        tmp_csv.write(f'{sha256},{genom}\n')
+                except Exception as e:
+                    logging.error(e)
+
+            csv_data = pd.read_csv(tmp_csv.name, delimiter=',', header=None)
+        labels = csv_data.pop(0)
+        distances = pdist(csv_data)  # compute distance over all dimensions
+        normalized_dist = normalize(distances)
+        z = linkage(normalized_dist)
+        x = dendrogram(z, orientation='top', no_labels=True, labels=list(labels))
+
+        # Add a few more data to help the JS
+        x["max_x"] = numpy.amax(x["icoord"])
+        x["max_y"] = numpy.amax(x["dcoord"])
+        x["labels"] = list(labels)
+
+        return x
+    except Exception as e:
+        logging.error(e)
+        return None

@@ -35,7 +35,11 @@ google-play-scraper
 gpapi
 requests
 dexofuzzy
+git+https://github.com/U039b/AndroCFG.git
 vt-py
+scipy
+numpy
+pandas
 
 # Map
 pygal_maps_world

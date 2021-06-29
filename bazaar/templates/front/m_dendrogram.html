@@ -1,0 +1,105 @@
+<div class="row justify-content-center">
+  <div class="col-md-6 text-center">
+    <div id="genetic_analysis_dataviz"></div>
+  </div>
+</div>
+
+<script>
+  {
+    let data = JSON.parse(document.getElementById('genetic_analysis-data').textContent);
+    var coeff_x = 2;
+    var coeff_y = 4;
+
+    var svg = d3.select("#genetic_analysis_dataviz")
+            .append("svg")
+            .attr("width", 840)
+            .attr("height", 40 + 10 * coeff_x * data['labels'].length)
+            .append("g")
+            .attr("transform", "rotate(90, 0, " + data.max_y * coeff_y + ") translate(" +
+                    -data.max_y * coeff_y + ", -20)");
+
+    var links = []
+    for (var i = 0; i < data.icoord.length; i++) {
+      links[i] = {
+        "x": data.icoord[i],
+        "y": data.dcoord[i]
+      };
+    }
+
+    var labels = [];
+    for (var i = 0; i < data.ivl.length; i++) {
+      labels[i] = {
+        "y": 0,
+        "x": (5 + i * 10) * coeff_x,
+        "label": data.labels[data.leaves[i]]
+      };
+    }
+
+    svg.selectAll('path')
+            .data(links)
+            .enter()
+            .append('path')
+            .attr("d", function (d) {
+              return "M" + d.x[0] *
+                      coeff_x + "," + d.y[0] * coeff_y +
+                      "L" + d.x[1] * coeff_x + "," + d.y[1] * coeff_y +
+                      "L" + d.x[2] * coeff_x + "," + d.y[2] * coeff_y +
+                      "L" + d.x[3] * coeff_x + "," + d.y[3] * coeff_y;
+
+            })
+            .style("fill", 'none')
+            .attr("stroke", '#593196')
+
+
+    count = 0
+    svg.selectAll('text')
+            .data(labels)
+            .enter()
+            .append("a")
+            .attr("xlink:href", function (d) {
+              return "/report/" + d.label;
+            })
+            .append('text')
+            .text(function (d) {
+              return d.label;
+            })
+            .attr("transform", function (d) {
+              return "rotate(-90, " + d.x + "," + d.y + ") translate(10, 0)";
+            })
+            .attr("x", function (d) {
+              return d.x
+            })
+            .attr("y", function (d) {
+              return d.y + 4
+            })
+            .style("font", '10px SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace')
+            .style('fill', '#593196')
+
+    svg.selectAll('circle')
+            .data(labels)
+            .enter()
+            .append('circle')
+            .attr('r', 3)
+            .attr('cx', function (d) {
+              return d.x
+            })
+            .attr('cy', function (d) {
+              return d.y
+            })
+            .style("fill", "#ae7bbe")
+    var scale = d3.scaleLinear()
+            .domain([0, data.max_y])
+            .range([data.max_y * coeff_y, 0]);
+
+    var axis = d3.axisBottom()
+            .scale(scale)
+            .tickFormat(d => d + '%')
+
+    var translate_y = ((data.max_y * coeff_y) - (data.max_x * coeff_x) - 20).toString()
+
+    svg.append('g')
+            .attr('transform', 'rotate(-90, ' + data.max_y * coeff_y + ',0) translate(0, -' + translate_y + ')')
+            .call(axis)
+  }
+
+</script>

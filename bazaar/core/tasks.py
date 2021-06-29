@@ -16,12 +16,14 @@ import requests
 import ssdeep
 import vt
 import yara
+from androcfg.call_graph_extractor import CFG
 from androguard.core.bytecodes.apk import APK
 from androguard.misc import AnalyzeAPK
 from apkid.apkid import Scanner, Options
 from apkid.output import OutputFormatter
 from apkid.rules import RulesManager
 from django.conf import settings
+from django.core.files import File
 from django.core.files.storage import default_storage
 from django.utils import timezone
 from django_q.tasks import async_task
@@ -35,6 +37,7 @@ from bazaar.core.fingerprinting import ApplicationSignature
 from bazaar.core.mobsf import MobSF
 from bazaar.core.models import Yara
 from bazaar.core.utils import strings_from_apk, upload_sample_to_malware_bazaar, insert_fuzzy_hash
+from bazaar.front.utils import get_andro_cfg_storage_path
 
 es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, timeout=30, max_retries=5, retry_on_timeout=True)
 
@@ -636,6 +639,28 @@ def malware_bazaar_analysis(sha256):
     return
 
 
+def andro_cfg(sha256):
+    if default_storage.size(sha256) > 10485760:
+        return
+    with NamedTemporaryFile() as f:
+        f.write(default_storage.open(sha256).read())
+        f.seek(0)
+        with TemporaryDirectory() as output_dir:
+            cfg = CFG(f.name, output_dir)
+            cfg.compute_rules()
+            report = cfg.generate_json_report()
+            es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'andro_cfg': report}},
+                      retry_on_conflict=5)
+            output_path = get_andro_cfg_storage_path(sha256)
+            files_to_upload = glob.glob(f'{output_dir}/**/*.bmp', recursive=True)
+            files_to_upload.extend(glob.glob(f'{output_dir}/**/*.png', recursive=True))
+            for img in files_to_upload:
+                img_path = img.replace(output_dir, '')
+                print(f'{output_path}{img_path}')
+                print(img)
+                default_storage.save(f'{output_path}{img_path}', File(open(img, mode='rb')))
+
+
 def vt_analysis(sha256):
     try:
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'vt_analysis': 1}},
@@ -680,6 +705,7 @@ def analyze(sha256, force=False):
         async_task(quark_analysis, sha256)
         async_task(get_google_play_info, package)
         async_task(yara_analysis, sha256)
+        async_task(andro_cfg, sha256)
 
     gc.collect()
 

@@ -1,6 +1,7 @@
 from time import sleep
 import logging
 from django.core.management.base import BaseCommand, CommandError
+from elasticsearch.helpers.actions import scan
 
 from bazaar.core.tasks import *
 
@@ -17,9 +18,15 @@ class Command(BaseCommand):
         tasks = options['tasks']
 
         if '*' in sha256:
-            _, hashes = default_storage.listdir('.')
-            for h in hashes:
-                self._handle_sample(h, tasks)
+            for report in scan(es,
+                                  query={"query": {"match_all": {}}},
+                                  index=settings.ELASTICSEARCH_APK_INDEX,
+                                  ):
+                _id = report.get('_source').get('sha256')
+                try:
+                    self._handle_sample(_id, tasks)
+                except Exception as e:
+                    print(e)
         else:
             self._handle_sample(sha256, tasks)
 
@@ -50,6 +57,9 @@ class Command(BaseCommand):
             if 'q' in tasks:
                 print(f'Start quark_analysis for {sha256}')
                 async_task(quark_analysis, sha256)
+            if 'g' in tasks:
+                print(f'Start andro_cfg for {sha256}')
+                andro_cfg(sha256)
             if 'y' in tasks:
                 print(f'Start yara_analysis for {sha256}')
                 yara_analysis(sha256)
