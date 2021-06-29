@@ -58,20 +58,7 @@ class SearchForm(forms.Form):
     q = forms.CharField(max_length=128)
 
     def do_search(self):
-        mapping = {
-            'cert_md5': 'certificates.fingerprint_md5',
-            'cert_sha1': 'certificates.fingerprint_sha1',
-            'cert_sha256': 'certificates.fingerprint_sha256',
-            'tracker': 'trackers.name',
-            'domains': 'domains_analysis._name',
-            'features': 'features',
-            'cert_issuer': 'certificates.issuer',
-        }
         q = self.cleaned_data['q']
-
-        for k, v in mapping.items():
-            if k in q:
-                q = q.replace(k, v)
 
         query = {
             "query": {

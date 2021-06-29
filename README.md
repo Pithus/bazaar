@@ -45,7 +45,7 @@ It is possible to run the entire development environment in a Docker container. 
 * Install the [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) and the [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extensions.
 * Open the command palette and look for the option: "Remote Containers: Attach to running container".
 * Choose `bazaar_local_django`.
-* VSCode will restart and you will be presented with a new window of VSCode.
+* VSCode will restart, and you will be presented with a new window of VSCode.
 * Open the file explorer and open the folder `/app`, the code is there.
 * You are all set up!
 
@@ -58,3 +58,13 @@ To apply SASS file changes, just run the following command:
 ```
 sassc bazaar/static/front/sass/project.scss backend/static/front/css/project.css
 ``` 
+## Reindex after adding a new field
+```python
+from django.conf import settings
+from elasticsearch import Elasticsearch
+import json
+
+es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+mapping = json.load(open('bazaar/es_mappings/apk_analysis.json'))
+es.indices.put_mapping(index=settings.ELASTICSEARCH_APK_INDEX, body=mapping.get('mappings'))
+```

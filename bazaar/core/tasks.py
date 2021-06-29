@@ -646,8 +646,8 @@ def vt_analysis(sha256):
             d = file['attributes']['last_analysis_stats']
             total = d['undetected'] + d['malicious']
             d['total'] = total
-            es.index(index=settings.ELASTICSEARCH_VT_INDEX, id=sha256, body=file)
-            es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'vt': d}},
+            # es.index(index=settings.ELASTICSEARCH_VT_INDEX, id=sha256, body=file)
+            es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'vt': d, 'vt_report': file}},
                       retry_on_conflict=5)
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'vt_analysis': 2}},
                   retry_on_conflict=5)
