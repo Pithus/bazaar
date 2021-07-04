@@ -14,10 +14,10 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
-from elasticsearch import Elasticsearch
-from rest_framework.reverse import reverse_lazy
-
 from django_q.tasks import async_task
+from elasticsearch import Elasticsearch
+from elasticsearch.helpers.actions import scan
+from rest_framework.reverse import reverse_lazy
 
 from bazaar.core.models import Yara
 from bazaar.core.tasks import analyze, retrohunt
@@ -129,9 +129,7 @@ class ReportView(View):
                 cache_retention_time = 600
 
             # Get timeline
-            timeline = None
-            if not status['running']:
-                timeline = get_sample_timeline(sha)
+            timeline = get_sample_timeline(sha)
 
             return render(request, 'front/report.html', {
                 'result': result,
@@ -404,3 +402,27 @@ def my_retrohunt_view(request, uuid):
 def get_andgrocfg_code(request, sha256, foo):
     storage_path = get_andro_cfg_storage_path(sha256)
     return HttpResponse(default_storage.open(f'{storage_path}/{foo}').read(), content_type='image/bmp')
+
+
+def get_genom(request):
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    entire_genom = []
+    for report in scan(
+        es,
+        query={"query": {"match_all": {}}},
+        index=settings.ELASTICSEARCH_APK_INDEX,
+    ):
+        sha256 = report.get('_source').get('sha256')
+        genom = None
+        threat = 'unknown'
+        try:
+            genom = report.get('_source').get('andro_cfg').get('genom')
+            threat = report.get('_source').get('vt_report').get('attributes').get('popular_threat_classification').get('suggested_threat_label')
+        except Exception:
+            pass
+        if genom:
+            entire_genom.append(f'{sha256}-{threat},{genom}')
+
+    response = HttpResponse('\n'.join(entire_genom), content_type='text/csv')
+    response['Content-Disposition'] = f'inline; filename=pithus_genom.csv'
+    return response

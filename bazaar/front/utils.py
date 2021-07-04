@@ -151,7 +151,6 @@ def get_sample_timeline(sha256):
     es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
     try:
         sample = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
-        vt_report = es.get(index=settings.ELASTICSEARCH_VT_INDEX, id=sha256)['_source']
         # parse_datetime(str(sample.get('uploaded_at'))).astimezone(pytz.UTC)
         timeline = [
             {
@@ -172,13 +171,13 @@ def get_sample_timeline(sha256):
             {
                 'id': 'vt_first_seen',
                 'title': 'First submission on VT',
-                'date': datetime.utcfromtimestamp(vt_report.get('attributes').get('first_submission_date')).astimezone(
+                'date': datetime.utcfromtimestamp(sample.get('vt_report').get('attributes').get('first_submission_date')).astimezone(
                     pytz.UTC)
             },
             {
                 'id': 'vt_last_seen',
                 'title': 'Last submission on VT',
-                'date': datetime.utcfromtimestamp(vt_report.get('attributes').get('last_submission_date')).astimezone(pytz.UTC)
+                'date': datetime.utcfromtimestamp(sample.get('vt_report').get('attributes').get('last_submission_date')).astimezone(pytz.UTC)
             }
         ]
 
@@ -188,7 +187,7 @@ def get_sample_timeline(sha256):
                     'id': 'bundle_lowest_date',
                     'title': 'Oldest file found in APK',
                     'date': parse_datetime(
-                        str(vt_report.get('attributes').get('bundle_info').get('lowest_datetime'))).astimezone(pytz.UTC)
+                        str(sample.get('vt_report').get('attributes').get('bundle_info').get('lowest_datetime'))).astimezone(pytz.UTC)
                 }
             )
         except Exception:
@@ -200,7 +199,7 @@ def get_sample_timeline(sha256):
                     'id': 'bundle_highest_date',
                     'title': 'Latest file found in APK',
                     'date': parse_datetime(
-                        str(vt_report.get('attributes').get('bundle_info').get('highest_datetime'))).astimezone(
+                        str(sample.get('vt_report').get('attributes').get('bundle_info').get('highest_datetime'))).astimezone(
                         pytz.UTC)
                 }
             )

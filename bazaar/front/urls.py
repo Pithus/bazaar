@@ -2,7 +2,7 @@ from django.urls import path
 
 from bazaar.front.view import HomeView, ReportView, basic_upload_view, similarity_search_view, export_report_view, \
     download_sample_view, my_rules_view, my_rule_edit_view, my_rule_create_view, my_rule_delete_view, og_card_view, \
-    my_retrohunt_view, get_andgrocfg_code
+    my_retrohunt_view, get_andgrocfg_code, get_genom
 
 app_name = "front"
 urlpatterns = [
@@ -18,5 +18,6 @@ urlpatterns = [
     path("rules/<str:uuid>/edit", view=my_rule_edit_view, name="my_rule_edit"),
     path("rules/<str:uuid>/delete", view=my_rule_delete_view, name="my_rule_delete"),
     path("rules/<str:uuid>/retro", view=my_retrohunt_view, name="my_rule_retro"),
-    path("androcfg/<str:sha256>/<path:foo>", view=get_andgrocfg_code, name="get_andgrocfg_code")
+    path("androcfg/<str:sha256>/<path:foo>", view=get_andgrocfg_code, name="get_andgrocfg_code"),
+    path("androcfg/all", view=get_genom, name="get_genom")
 ]

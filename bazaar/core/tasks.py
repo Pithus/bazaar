@@ -639,26 +639,36 @@ def malware_bazaar_analysis(sha256):
     return
 
 
-def andro_cfg(sha256):
-    if default_storage.size(sha256) > 10485760:
+def andro_cfg(sha256, force=False):
+    if default_storage.size(sha256) > 3*10485760:
         return
+
+    try:
+        result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
+        if result.get('andro_cfg') is not None and not force:
+            return
+    except Exception:
+        return
+
     with NamedTemporaryFile() as f:
         f.write(default_storage.open(sha256).read())
         f.seek(0)
         with TemporaryDirectory() as output_dir:
-            cfg = CFG(f.name, output_dir)
-            cfg.compute_rules()
-            report = cfg.generate_json_report()
-            es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'andro_cfg': report}},
-                      retry_on_conflict=5)
-            output_path = get_andro_cfg_storage_path(sha256)
-            files_to_upload = glob.glob(f'{output_dir}/**/*.bmp', recursive=True)
-            files_to_upload.extend(glob.glob(f'{output_dir}/**/*.png', recursive=True))
-            for img in files_to_upload:
-                img_path = img.replace(output_dir, '')
-                print(f'{output_path}{img_path}')
-                print(img)
-                default_storage.save(f'{output_path}{img_path}', File(open(img, mode='rb')))
+            try:
+                cfg = CFG(f.name, output_dir)
+                cfg.compute_rules()
+                report = cfg.generate_json_report()
+                es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'andro_cfg': report}},
+                          retry_on_conflict=5)
+                output_path = get_andro_cfg_storage_path(sha256)
+                files_to_upload = glob.glob(f'{output_dir}/**/*.bmp', recursive=True)
+                files_to_upload.extend(glob.glob(f'{output_dir}/**/*.png', recursive=True))
+                for img in files_to_upload:
+                    img_path = img.replace(output_dir, '')
+                    print(f'{output_path}{img_path}')
+                    default_storage.save(f'{output_path}{img_path}', File(open(img, mode='rb')))
+            except Exception as e:
+                logging.error(e)
 
 
 def vt_analysis(sha256):

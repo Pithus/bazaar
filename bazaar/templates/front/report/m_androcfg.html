@@ -1,5 +1,8 @@
 {% if andro_cfg %}
   <h3>Control flow graphs analysis</h3>
+  <p class="text-muted small">Information computed by
+    <a class="small" target="_blank" href="https://github.com/pithus/bazaar">Pithus</a>.
+  </p>
   {% for rule in andro_cfg.rules %}
     <div class="row">
       <div class="col-md-12">
@@ -20,7 +23,7 @@
           </div>
           <div class="col-md-5 text-center">
             <a class="btn btn-sm btn-link p-0 text-decoration-none" target="_blank"
-              href="{% url "front:get_andgrocfg_code" sha256 rule.cfg_file %}.png">
+               href="{% url "front:get_andgrocfg_code" sha256 rule.cfg_file %}.png">
               <img src="{% url "front:get_andgrocfg_code" sha256 rule.cfg_file %}.png" class="img-fluid mb-4"
                    style="max-height: 8em;">
             </a>

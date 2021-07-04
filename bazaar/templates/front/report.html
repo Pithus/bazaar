@@ -147,13 +147,15 @@
                 <p>Behavior analysis</p>
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#cfg_analysis" role="tab"
-                 id="behavior_analysis-tab" aria-controls="cfg_analysis" aria-selected="false">
-                <i class="nf nf-dev-git_branch"></i>
-                <p>Control flow analysis</p>
-              </a>
-            </li>
+            {% if result.andro_cfg %}
+              <li class="nav-item">
+                <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#cfg_analysis" role="tab"
+                   id="cfg_analysis-tab" aria-controls="cfg_analysis" aria-selected="false">
+                  <i class="nf nf-dev-git_branch"></i>
+                  <p>Control flow analysis</p>
+                </a>
+              </li>
+            {% endif %}
             <li class="nav-item">
               <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#network_analysis" role="tab"
                  id="network_analysis-tab" aria-controls="network_analysis" aria-selected="false">
@@ -368,13 +370,13 @@
             {% endif %}
           </div>
 
-          <div class="tab-pane" role="tabpanel" aria-labelledby="cfg_analysis-tab" id="cfg_analysis">
-            {% if result.andro_cfg %}
+          {% if result.andro_cfg %}
+            <div class="tab-pane" role="tabpanel" aria-labelledby="cfg_analysis-tab" id="cfg_analysis">
               <div>
                 {% include "front/report/m_androcfg.html" with andro_cfg=result.andro_cfg sha256=result.sha256 %}
               </div>
-            {% endif %}
-          </div>
+            </div>
+          {% endif %}
         </div>
       </div>
     {% endcache %}

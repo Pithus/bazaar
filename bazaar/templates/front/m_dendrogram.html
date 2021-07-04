@@ -87,6 +87,7 @@
               return d.y
             })
             .style("fill", "#ae7bbe")
+
     var scale = d3.scaleLinear()
             .domain([0, data.max_y])
             .range([data.max_y * coeff_y, 0]);
@@ -96,9 +97,10 @@
             .tickFormat(d => d + '%')
 
     var translate_y = ((data.max_y * coeff_y) - (data.max_x * coeff_x) - 20).toString()
+    translate_y = -translate_y;
 
     svg.append('g')
-            .attr('transform', 'rotate(-90, ' + data.max_y * coeff_y + ',0) translate(0, -' + translate_y + ')')
+            .attr('transform', 'rotate(-90, ' + data.max_y * coeff_y + ',0) translate(0, ' + translate_y + ')')
             .call(axis)
   }
 
