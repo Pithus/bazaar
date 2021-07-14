@@ -414,12 +414,16 @@ def ssdeep_analysis(sha256):
                     try:
                         apk.extract(member, tmp_dir)
                     except Exception as e:
-                        logging.error('Can not extract member: %s due to error %s', member, e)
+                        logging.error('Can not extract member: %s due to an error %s', member, e)
 
             logging.info('Extracted %s .dex files', len(dex_files))
 
-            apk.extract('AndroidManifest.xml')
-            apk.extract('resources.arsc')
+            try:
+                apk.extract('AndroidManifest.xml', tmp_dir)
+                apk.extract('resources.arsc', tmp_dir)
+            except Exception as e:
+                logging.error(
+                    'Can not extract "AndroidManifest.xml" or "resources.arsc" due to an error %s', e)
 
             try:
                 doc['ssdeep']['manifest'] = ssdeep.hash_from_file(f'{tmp_dir}/AndroidManifest.xml')
