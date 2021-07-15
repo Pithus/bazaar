@@ -85,7 +85,7 @@ class SearchForm(forms.Form):
             },
             "sort": {"analysis_date": "desc"},
             "_source": ["apk_hash", "sha256", "uploaded_at", "icon_base64", "handle", "app_name",
-                        "version_code", "size", "dexofuzzy.apk", "quark.threat_level", "vt", "malware_bazaar",
+                        "version_code", "size", "dexofuzzy.apk", "quark.threat_level", "vt", "vt_report", "malware_bazaar",
                         "is_signed", "frosting_data.is_frosted", "features", "andro_cfg.genom"],
             "size": 50,
         }
