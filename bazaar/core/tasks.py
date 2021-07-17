@@ -405,7 +405,25 @@ def ssdeep_analysis(sha256):
 
         with TemporaryDirectory() as tmp_dir:
             apk = zipfile.ZipFile(f)
-            apk.extractall(tmp_dir)
+
+            file_list = apk.namelist()
+            dex_files = []
+            for member in file_list:
+                if member.endswith('.dex'):
+                    dex_files.append(member)
+                    try:
+                        apk.extract(member, tmp_dir)
+                    except Exception as e:
+                        logging.error('Can not extract member: %s due to an error %s', member, e)
+
+            logging.info('Extracted %s .dex files', len(dex_files))
+
+            try:
+                apk.extract('AndroidManifest.xml', tmp_dir)
+                apk.extract('resources.arsc', tmp_dir)
+            except Exception as e:
+                logging.error(
+                    'Can not extract "AndroidManifest.xml" or "resources.arsc" due to an error %s', e)
 
             try:
                 doc['ssdeep']['manifest'] = ssdeep.hash_from_file(f'{tmp_dir}/AndroidManifest.xml')
@@ -413,22 +431,22 @@ def ssdeep_analysis(sha256):
             except Exception:
                 pass
 
-            for file in glob.glob(f'{tmp_dir}/*.dex'):
+            for file in dex_files:
                 try:
                     doc['ssdeep']['dex'].append({
                         'file': file.replace(f'{tmp_dir}/', ''),
-                        'hash': ssdeep.hash_from_file(file)
+                        'hash': ssdeep.hash_from_file(f'{tmp_dir}/{file}')
                     })
-                except Exception:
-                    pass
+                except Exception as e:
+                    logging.error('Got an error %s', e)
 
                 try:
                     doc['dexofuzzy']['dex'].append({
                         'file': file.replace(f'{tmp_dir}/', ''),
-                        'hash': dexofuzzy.hash_from_file(file)
+                        'hash': dexofuzzy.hash_from_file(f'{tmp_dir}/{file}')
                     })
-                except Exception:
-                    pass
+                except Exception as e:
+                    logging.error('Got an error %s', e)
 
         es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': doc}, retry_on_conflict=5)
 
