@@ -68,3 +68,6 @@ es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
 mapping = json.load(open('bazaar/es_mappings/apk_analysis.json'))
 es.indices.put_mapping(index=settings.ELASTICSEARCH_APK_INDEX, body=mapping.get('mappings'))
 ```
+# Community
+
+Do you have questions? Do you want to chat with us? Come join us on our discord: [https://discord.gg/aZkRNWQ9](https://discord.gg/aZkRNWQ9)
