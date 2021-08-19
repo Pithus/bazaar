@@ -72,7 +72,7 @@ def extract_attributes(sha256):
         sign['activities'] = a.get_activities()
         sign['features'] = a.get_features()
         sign['libraries'] = a.get_libraries()
-        sign['main_activity'] = a.get_activities()
+        sign['main_activity'] = a.get_main_activity()
         sign['min_sdk_version'] = a.get_min_sdk_version()
         sign['max_sdk_version'] = a.get_max_sdk_version()
         sign['target_sdk_version'] = a.get_target_sdk_version()
