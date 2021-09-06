@@ -1,3 +1,21 @@
+{% if d.main_activity %}
+<h3>Main Activity</h3>
+<p class="text-muted small">Information computed with <a class="small" target="_blank"
+    href="https://github.com/androguard/androguard">AndroGuard</a>.
+
+<table class="table table-condensed table-sm">
+  <tr>
+    <td>
+      <pre><code>{{ d.main_activity }}</code></pre>
+    </td>
+    <td>
+      {% include "front/report/m_copy_to_clipboard.html" with data=d.main_activity %}
+    </td>
+  </tr>
+</table>
+{% endif %}
+
+
 {% if d.activities %}
 <h3>Activities</h3>
 <p class="text-muted small">Information computed with <a class="small" target="_blank"
@@ -16,7 +34,8 @@
 </table>
 {% endif %}
 
-{% if d.receivers %} <h3>Receivers</h3>
+{% if d.receivers %}
+<h3>Receivers</h3>
 <p class="text-muted small">Information computed with <a class="small" target="_blank"
     href="https://github.com/androguard/androguard">AndroGuard</a>.
 

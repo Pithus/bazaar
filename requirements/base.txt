@@ -40,6 +40,7 @@ vt-py
 scipy
 numpy
 pandas
+tld
 
 # Map
 pygal_maps_world
