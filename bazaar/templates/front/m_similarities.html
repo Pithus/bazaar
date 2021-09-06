@@ -7,6 +7,7 @@
   </thead>
   <tbody>
   {% for hash, score in results %}
+    {% if hash != result.sha256 %}
     <tr>
       <td>
         <a href="{% url 'front:report' hash %}">
@@ -22,6 +23,7 @@
         </div>
       </td>
     </tr>
+    {% endif %}
   {% endfor %}
   </tbody>
 </table>
