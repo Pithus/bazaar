@@ -19,7 +19,7 @@ import yara
 from androcfg.call_graph_extractor import CFG
 from androguard.core.bytecodes.apk import APK
 from androguard.misc import AnalyzeAPK
-from apkid.apkid import Scanner, Options
+from apkid.apkid import Options, Scanner
 from apkid.output import OutputFormatter
 from apkid.rules import RulesManager
 from django.conf import settings
@@ -31,12 +31,17 @@ from elasticsearch import Elasticsearch
 from google_play_scraper import app
 from quark.Objects.quark import Quark
 from quark.Objects.quarkrule import QuarkRule
+from tld import get_tld, is_tld
 from tqdm import tqdm
 
 from bazaar.core.fingerprinting import ApplicationSignature
 from bazaar.core.mobsf import MobSF
 from bazaar.core.models import Yara
-from bazaar.core.utils import strings_from_apk, upload_sample_to_malware_bazaar, insert_fuzzy_hash
+from bazaar.core.utils import (
+    insert_fuzzy_hash,
+    strings_from_apk,
+    upload_sample_to_malware_bazaar,
+)
 from bazaar.front.utils import get_andro_cfg_storage_path
 
 es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, timeout=30, max_retries=5, retry_on_timeout=True)
@@ -466,6 +471,37 @@ def _dict_to_list(d):
         ret.append(v)
     return ret
 
+def _check_tld(d):
+    res = []
+    for v in d:
+        try:
+            tld_try = get_tld(v['_name'], fix_protocol=True)
+
+            if tld_try and is_tld(tld_try):
+                res.append(v)
+            else:
+                continue
+        except:
+            continue
+    
+    return res 
+
+def _check_urls(d):
+    res = []
+    for i in d:
+        for u in i['urls']:
+            try:
+                tld_try = get_tld(u)
+                if tld_try and is_tld(tld_try):
+                    res.append(i)
+                else:
+                    continue
+            except:
+                continue
+   
+    return res
+
+
 
 def mobsf_analysis(sha256):
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': 1}},
@@ -498,7 +534,7 @@ def mobsf_analysis(sha256):
                     'network_security': report['network_security'],
                     'file_analysis': report['file_analysis'],
                     # 'binary_analysis': report['binary_analysis'],
-                    'url_analysis': report['urls'],
+                    'url_analysis': _check_urls(report['urls']),
                     'email_analysis': report['emails'],
                     'secrets': report['secrets'],
                     'firebase_urls': report['firebase_urls'],
@@ -508,7 +544,7 @@ def mobsf_analysis(sha256):
                     'android_api_analysis': _dict_to_list(report['android_api']),
                     'code_analysis': _dict_to_list(report['code_analysis']),
                     'niap_analysis': _dict_to_list(report['niap_analysis']),
-                    'domains_analysis': _dict_to_list(report['domains']),
+                    'domains_analysis': _check_tld(_dict_to_list(report['domains'])),
                 }
 
                 es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': to_store},
