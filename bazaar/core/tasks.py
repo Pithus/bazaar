@@ -28,6 +28,7 @@ from django.core.files.storage import default_storage
 from django.utils import timezone
 from django_q.tasks import async_task
 from elasticsearch import Elasticsearch
+from elasticsearch.helpers.actions import scan
 from google_play_scraper import app
 from quark.Objects.quark import Quark
 from quark.Objects.quarkrule import QuarkRule
@@ -217,11 +218,18 @@ def retrohunt(rule_id):
         logging.exception(e)
         return
 
-    _, hashes = default_storage.listdir('.')
-    for h in hashes:
-        execute_single_yara_rule(rule.id, h)
+    for report in scan(es, query={"query": {"match_all": {}}},
+                               index=settings.ELASTICSEARCH_APK_INDEX,
+                               ):
+        _id = report.get('_source').get('sha256')
+        execute_single_yara_rule(rule.id, _id)
 
-    del rule, hashes
+
+#    _, hashes = default_storage.listdir('.')
+#    for h in hashes:
+#        execute_single_yara_rule(rule.id, h)
+
+    del rule
     gc.collect()
 
     return {'status': 'success', 'info': ''}
