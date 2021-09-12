@@ -253,6 +253,7 @@
               {% include "front/report/m_timeline.html" %}
             {% endif %}
             {% if similar_samples %}
+            {% if similar_samples|length > 1 %}
               <div>
                 <h3>Similar samples</h3>
                 <p class="text-muted small">Information computed by <a class="small" target="_blank"
@@ -260,6 +261,7 @@
                 </p>
                 {% include "front/report/m_similar_samples.html" %}
               </div>
+            {% endif %}
             {% endif %}
             {% if result.malware_bazaar or result.vt %}
               <div>
