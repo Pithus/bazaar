@@ -116,7 +116,7 @@ class ReportView(View):
                     similar_samples = get_matching_items_by_dexofuzzy(
                         dexofuzzy_hash,
                         25,
-                        settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, '')
+                        settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, sha)
             except Exception:
                 pass
 
@@ -174,12 +174,12 @@ def basic_upload_view(request):
     return redirect(reverse_lazy('front:home'))
 
 
-def similarity_search_view(request):
+def similarity_search_view(request, sha256=''):
     if request.method == 'GET':
         form = SimilaritySearchForm(request.GET)
         results = None
         if form.is_valid():
-            results = form.do_search()
+            results = form.do_search(sha256)
         return render(request, 'front/similarity_search.html', {'form': form, 'results': results})
 
 

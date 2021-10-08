@@ -37,16 +37,16 @@ class SimilaritySearchForm(forms.Form):
     hash = forms.CharField(max_length=128)
     algorithm = forms.ChoiceField(choices=[('ssdeep', 'ssdeep'), ('dexofuzzy', 'dexofuzzy')])
 
-    def do_search(self):
+    def do_search(self, sha=''):
         print(self.cleaned_data)
         results = []
         algorithm = self.cleaned_data['algorithm']
         hash = self.cleaned_data['hash'].strip()
         try:
             if algorithm == 'dexofuzzy':
-                results = get_matching_items_by_dexofuzzy(hash, 25, settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, '')
+                results = get_matching_items_by_dexofuzzy(hash, 25, settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, sha)
             if algorithm == 'ssdeep':
-                results = get_matching_items_by_ssdeep(hash, 25, settings.ELASTICSEARCH_SSDEEP_APK_INDEX, '')
+                results = get_matching_items_by_ssdeep(hash, 25, settings.ELASTICSEARCH_SSDEEP_APK_INDEX, sha)
 
         except Exception as e:
             print(e)
