@@ -291,7 +291,7 @@ def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha
             record_dexofuzzy = f'{chunk_size}:{chunk}:{double_chunk}'
             dexofuzzy_grade = dexofuzzy.compare(record_dexofuzzy, dexofuzzy_value)
 
-            if dexofuzzy_grade >= threshold_grade:
+            if dexofuzzy_grade >= threshold_grade and dexofuzzy_grade < 100:
                 sha256_list_to_return.append((record['_source']['sha256'], dexofuzzy_grade))
 
     return sha256_list_to_return
