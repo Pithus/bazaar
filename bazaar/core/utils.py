@@ -234,7 +234,7 @@ def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
             record_ssdeep = f'{chunk_size}:{chunk}:{double_chunk}'
             ssdeep_grade = ssdeep.compare(record_ssdeep, ssdeep_value)
 
-            if ssdeep_grade >= threshold_grade:
+            if ssdeep_grade >= threshold_grade and ssdeep_grade < 100:
                 sha256_list_to_return.append((record['_source']['sha256'], ssdeep_grade))
 
     return sha256_list_to_return
