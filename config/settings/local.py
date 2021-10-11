@@ -62,3 +62,4 @@ INSTALLED_APPS += ["django_extensions"]  # noqa F405
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+X_FRAME_OPTIONS = 'SAMEORIGIN'

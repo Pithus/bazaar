@@ -18,6 +18,11 @@ from django_q.tasks import async_task
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers.actions import scan
 from rest_framework.reverse import reverse_lazy
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
+from pygments.lexers.jvm import JavaLexer
+from androcfg.code_style import U39bStyle
+
 
 from bazaar.core.models import Yara
 from bazaar.core.tasks import analyze, retrohunt
@@ -401,7 +406,17 @@ def my_retrohunt_view(request, uuid):
 
 def get_andgrocfg_code(request, sha256, foo):
     storage_path = get_andro_cfg_storage_path(sha256)
-    return HttpResponse(default_storage.open(f'{storage_path}/{foo}').read(), content_type='image/bmp')
+
+    out = default_storage.open(f'{storage_path}/{foo}').read()
+
+    if f'{storage_path}/{foo}'.endswith('.raw'):
+        out_formatted = highlight(out,JavaLexer(), HtmlFormatter(style=U39bStyle, noclasses=True))
+        return HttpResponse(out_formatted, content_type="text/html")
+    elif f'{storage_path}/{foo}'.endswith('.png'):
+        return HttpResponse(out, content_type='image/bmp')
+    else: 
+        return HttpResponse(out, content_type="image/bmp")
+
 
 
 def get_genom(request):
