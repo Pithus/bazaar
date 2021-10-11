@@ -717,7 +717,7 @@ def andro_cfg(sha256, force=False):
         f.seek(0)
         with TemporaryDirectory() as output_dir:
             try:
-                cfg = CFG(f.name, output_dir)
+                cfg = CFG(f.name, output_dir, 'raw')
                 cfg.compute_rules()
                 report = cfg.generate_json_report()
                 es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'andro_cfg': report}},
@@ -725,6 +725,7 @@ def andro_cfg(sha256, force=False):
                 output_path = get_andro_cfg_storage_path(sha256)
                 files_to_upload = glob.glob(f'{output_dir}/**/*.bmp', recursive=True)
                 files_to_upload.extend(glob.glob(f'{output_dir}/**/*.png', recursive=True))
+                files_to_upload.extend(glob.glob(f'{output_dir}/**/*.raw', recursive=True))
                 for img in files_to_upload:
                     img_path = img.replace(output_dir, '')
                     print(f'{output_path}{img_path}')

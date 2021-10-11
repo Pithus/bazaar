@@ -13,6 +13,7 @@ urlpatterns = [
     path("apk/", view=basic_upload_view, name="basic_upload"),
     path("apk/<str:sha256>", view=download_sample_view, name="download_sample"),
     path("similar/", view=similarity_search_view, name="similarity_search"),
+    path("similar/<str:sha256>", view=similarity_search_view, name="similarity_search"),
     path("rules/", view=my_rules_view, name="my_rules"),
     path("rules/new", view=my_rule_create_view, name="my_rule_create"),
     path("rules/<str:uuid>/edit", view=my_rule_edit_view, name="my_rule_edit"),

@@ -9,7 +9,7 @@
     </td>
     <td>
       {% include "front/report/m_copy_to_clipboard.html" with data=d.dexofuzzy.apk %}
-      <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:similarity_search' %}?hash={{ d.dexofuzzy.apk }}&algorithm=dexofuzzy"
+      <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:similarity_search' %}{{ d.sha256 }}?hash={{ d.dexofuzzy.apk }}&algorithm=dexofuzzy"
         data-toggle="tooltip" data-placement="top" title="Find similar samples">
         <i class="nf nf-oct-search"></i>
       </a>
