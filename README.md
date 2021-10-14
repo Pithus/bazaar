@@ -36,7 +36,9 @@ docker-compose -f local.yml up
 
 Then browse to [http://localhost:8001] and enjoy Pithus!
 
-*Note*: It is possible that you might have an error for a missing index while browsing to the address the first time. It is probable that Django hasn't been properly loaded. To fix that, add a blank line in any of the Django file, save it and refresh the page in the browser. 
+⚠️**Important**⚠️:
+
+It is possible that you might have an error for a missing index while browsing to the address the first time. It is probable that Django hasn't been properly loaded. To fix that, add a blank line in any of the Django file, save it and refresh the page in the browser.
 
 ## Set up the internal Python interpreter with Visual Studio Code
 
