@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+{% load static %}
+{% load cache %}
+
+{% block content %}
+<div class="d-flex align-items-start">
+  <nav class="col-md-3 d-none d-md-block sidebar">
+    <div class="sidebar-header mb-5 mt-3">
+      <h3>Workspace</h3>
+      <div class="">Get all the tools and information you need here!</div>
+    </div>
+
+    <div class="sidebar-sticky">
+      <ul class="nav flex-column flex-shrink-0 nav-pills" id="sidebar-tabs" role="tablist" aria-orientation="vertical">
+        <li class="nav-item">
+          <a class="nav-link active mr-1 mb-1 btn btn-outline-primary" data-toggle="pill" href="#dashboard" role="tab"
+            id="dashboard_tab" aria-controls="dashboard_tab" aria-selected="true">
+            <i class="nf nf-fa-dashboard"></i>
+            <p>Dashboard</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mb-1 mr-1 btn btn-outline-primary" data-toggle="pill" href="#bookmarks" role="tab"
+            id="bookmarks_tab" aria-controls="bookmarks_tab" aria-selected="false">
+            <i class="nf nf-fa-bookmark"></i>
+            <p>Bookmarks</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mb-1 mr-1 btn btn-outline-primary" data-toggle="pill" href="#hunting" role="tab"
+            id="hunting_tab" aria-controls="hunting_tab" aria-selected="false">
+            <i class="nf nf-fa-binoculars"></i>
+            <p>Yara hunting</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link mb-1 mr-1 btn btn-outline-primary" data-toggle="pill" href="#trends" role="tab"
+            id="trends_tab" aria-controls="trends_tab" aria-selected="false">
+            <i class="nf nf-oct-graph"></i>
+            <p>Trends</p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#api" class="nav-link mb-1 mr-1 btn btn-outline-primary" data-toggle="pill" role="tab" id="api_tab"
+            aria-controls="api_tab" aria-selected="false">
+
+            <i class="nf nf-fa-key"></i>
+            <p>API key</p>
+          </a>
+        </li>
+      </ul>
+  </nav>
+
+  <div class="col-md-6 justify-content mt-5 ml-4 mt-4 mb-5 tab-content">
+    <div class="tab-pane fade show active" role="tabpanel" aria-labelledby="dashboard_tab" id="dashboard">
+      <h2>Dashboard</h2>
+      <div class="jumbotron">
+        <h4>Total of samples on this instance</h4>
+        <h1>{{count.apks}} samples</h1>
+        <h1>{{count.malicious}} malicious samples</h1>
+      </div>
+    </div>
+
+
+    <div class="tab-pane fade" role="tabpanel" aria-labelledby="bookmarks_tab" id="bookmarks">
+      <h3>Bookmarks</h3>
+      <table class="table table-condensed table-sm">
+        {% for results in bookmarked_samples %}
+        {% for result in results %}
+        <tr>
+          {% include "front/m_result_flat.html" with result=result %}
+        </tr>
+        {% endfor %}
+        {% endfor %}
+      </table>
+    </div>
+
+    <div class="tab-pane fade" role="tabpanel" aria-labelledby="hunting_tab" id="hunting">
+      <div class="col-md-12">
+        <h2>Yara hunting
+          <a href="{% url 'front:my_rule_create' %}" class="btn btn-primary">
+            <span class="huge"><i class="fas fa-plus"></i></span>
+            <br>
+            New rule
+          </a>
+        </h2>
+      </div>
+      <div class="accordion" id="accordionExample">
+        {% for rule in my_rules %}
+        <div class="card">
+          <div class="card-header" id="heading-{{ rule.rule.id }}">
+            <div class="row">
+              <div class="col">
+                <button class="btn btn-primary mr-4" data-toggle="collapse" data-target="#collapse-{{ rule.rule.id }}"
+                  aria-expanded="true" aria-controls="collapse-{{ rule.rule.id }}">
+                  <i class="fas fa-binoculars text-white"></i>&nbsp;
+                  <span class="">
+                    {{ rule.matches|length }}
+                  </span>
+                </button>
+                <span class="h6">{{ rule.rule.title }}</span>
+              </div>
+              <div class="col-md-2 text-right h4">
+                <a href="#" data-toggle="modal" data-target="#ruleModal-{{ rule.rule.id }}"
+                  class="mr-1 text-decoration-none">
+                  <i class="nf nf-mdi-eye_outline h5" data-toggle="tooltip" data-placement="top"
+                    title="View the ruleset"></i>
+                </a>
+                <a href="{% url 'front:my_rule_edit' rule.rule.id %}" class="mr-1 text-decoration-none">
+                  <i class="nf nf-fa-edit h5" data-toggle="tooltip" data-placement="top" title="Edit the ruleset"></i>
+                </a>
+                <a href="{% url 'front:my_rule_retro' rule.rule.id %}" class="mr-1 text-decoration-none">
+                  <i class="nf nf-mdi-history h5" data-toggle="tooltip" data-placement="top"
+                    title="Launch retro-hunt"></i>
+                </a>
+              </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="ruleModal-{{ rule.rule.id }}" tabindex="-1" role="dialog"
+              aria-labelledby="ruleModalLabel">
+              <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <div class="modal-title" id="title">
+                      {{ rule.rule.title }}
+                      <a href="{% url 'front:my_rule_delete' rule.rule.id %}" data-toggle="tooltip"
+                        data-placement="bottom" title="Delete this rule and its history"><i
+                          class="fas fa-trash"></i></a>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                  </div>
+                  <div class="modal-body">
+                    <pre id="content">{{ rule.rule.content }}</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="collapse-{{ rule.rule.id }}" class="collapse " aria-labelledby="heading-{{ rule.rule.id }}"
+            data-parent="#accordionExample">
+            <div class="card-body">
+              {% if rule.matches|length == 0 %}
+              <p>No matches</p>
+              {% endif %}
+
+              {% for m in rule.matches %}
+              <div class="row mb-4">
+                <div class="col-md-4">
+                  <div class="card m-1 shadow-sm border-secondary">
+                    <div class="card-header bg-secondary-light">
+                      Hunting information:
+                    </div>
+                    <div class="card-body p-2">
+                      {% if m.matches.inner_rules %}
+                      <i class="fas fa-tags"></i>
+                      {% endif %}
+                      {% for ir in m.matches.inner_rules %}
+                      <span class="badge badge-secondary text-white">{{ ir }}</span>
+                      {% endfor %}
+                      <br>
+                      {% if m.matches.matching_files %}
+                      <br><i class="fas fa-file-alt"></i> matching files:<br>
+                      {% endif %}
+                      {% for f in m.matches.matching_files %}
+                      <samp class="small">{{ f }}</samp><br>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-8">
+                  {% for result in m.sample %}
+                  {% include "front/m_result_flat.html" %}
+                  {% endfor %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="tab-pane fade" role="tabpanel" aria-labelledby="trends_tab" id="trends">
+      <h3>Trends</h3>
+      <p>What is going on on Pithus? Get the latest happenings!</p>
+
+      <table class="table table-condensend table-sm">
+        <tr>
+          <th>
+            <h4>Lastest samples</h4>
+          </th>
+        </tr>
+
+        {% for sample in trends.samples %}
+        <tr>
+          <td>
+            <a href="/report/{{sample.sha256}}" target="_blank">
+              {{sample.handle}}
+            </a>
+          </td>
+
+          {% endfor %}
+      </table>
+
+      <table class="table table-condensend table-sm">
+        <tr>
+          <th>
+            <h4>Highest matching Yara rules</h4>
+          </th>
+        </tr>
+
+        {% for rule in trends.rules %}
+        <tr>
+          <td>
+            {{rule.rule.title}} -
+            {{rule.matches|length}} matches
+          </td>
+        </tr>
+
+        {% endfor %}
+      </table>
+      <table class="table table-condensend table-sm">
+        <tr>
+
+          <th>
+            <h4>Trending malwares</h4>
+          </th>
+        </tr>
+
+        {% for malware in trends.trending_malwares %}
+        <tr>
+
+          <td>{{malware.0}}</td>
+        </tr>
+
+        {% endfor %}
+      </table>
+    </div>
+
+
+    <div class="tab-pane fade" role="tabpanel" aria-labelledby="api_tab" id="api">
+      <div class="mt-1">
+        <div class="alert alert-info">
+          Your API key: <code>{{ my_token }}</code>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- tab content -->
+</div>
+
+<!-- d-flex -->
+</div>
+<!-- row -->
+</div>
+
+{% endblock %}
