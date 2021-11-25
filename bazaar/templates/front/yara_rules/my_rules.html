@@ -18,19 +18,16 @@
   </div>
 </div>
 <div class="container-fluid">
-  <div class="row justify-content-center mt-4">
     <div class="col-md-12">
       <div class="accordion" id="accordionExample">
+        <h3>Yara matches</h3>
         {% for rule in my_rules %}
         <div class="card">
           <div class="card-header" id="heading-{{ rule.rule.id }}">
             <div class="row">
               <div class="col">
-                <button class="btn btn-primary mr-4"
-                        data-toggle="collapse"
-                        data-target="#collapse-{{ rule.rule.id }}"
-                        aria-expanded="true"
-                        aria-controls="collapse-{{ rule.rule.id }}">
+                <button class="btn btn-primary mr-4" data-toggle="collapse" data-target="#collapse-{{ rule.rule.id }}"
+                  aria-expanded="true" aria-controls="collapse-{{ rule.rule.id }}">
                   <i class="fas fa-binoculars text-white"></i>&nbsp;
                   <span class="">
                     {{ rule.matches|length }}
@@ -39,14 +36,17 @@
                 <span class="h6">{{ rule.rule.title }}</span>
               </div>
               <div class="col-md-2 text-right h4">
-                <a href="#" data-toggle="modal" data-target="#ruleModal-{{ rule.rule.id }}" class="mr-1 text-decoration-none">
-                  <i class="nf nf-mdi-eye_outline h5" data-toggle="tooltip" data-placement="top" title="View the ruleset"></i>
+                <a href="#" data-toggle="modal" data-target="#ruleModal-{{ rule.rule.id }}"
+                  class="mr-1 text-decoration-none">
+                  <i class="nf nf-mdi-eye_outline h5" data-toggle="tooltip" data-placement="top"
+                    title="View the ruleset"></i>
                 </a>
                 <a href="{% url "front:my_rule_edit" rule.rule.id %}" class="mr-1 text-decoration-none">
                   <i class="nf nf-fa-edit h5" data-toggle="tooltip" data-placement="top" title="Edit the ruleset"></i>
                 </a>
                 <a href="{% url "front:my_rule_retro" rule.rule.id %}" class="mr-1 text-decoration-none">
-                  <i class="nf nf-mdi-history h5" data-toggle="tooltip" data-placement="top" title="Launch retro-hunt"></i>
+                  <i class="nf nf-mdi-history h5" data-toggle="tooltip" data-placement="top"
+                    title="Launch retro-hunt"></i>
                 </a>
               </div>
             </div>
