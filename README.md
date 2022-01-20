@@ -72,4 +72,6 @@ es.indices.put_mapping(index=settings.ELASTICSEARCH_APK_INDEX, body=mapping.get(
 ```
 # Community
 
-Do you have questions? Do you want to chat with us? Come join us on our discord: [https://discord.gg/PgdKfp4VMQ](https://discord.gg/PgdKfp4VMQ)
+Do you have questions? Do you want to chat with us? Come join us on our discord: [https://discord.gg/PgdKfp4VMQ](https://discord.gg/PgdKfp4VMQ).
+
+You can also preview some features, explore the tools and our work process on TryHackMe with our own featured room! [https://tryhackme.com/room/androidmalwareanalysis](https://tryhackme.com/room/androidmalwareanalysis)
