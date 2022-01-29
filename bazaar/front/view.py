@@ -260,7 +260,7 @@ def get_user_bookmark_by_hash(request, sha):
     return bookmark
 
 
-def bookmark_sample_view(request, sha256):
+def add_bookmark_sample_view(request, sha256):
     if not request.user.is_authenticated:
         return redirect(reverse_lazy('front:home'))
 
@@ -296,10 +296,12 @@ def my_rules_view(request):
         return redirect(reverse_lazy('front:home'))
 
     my_rules = None
+    my_bookmarks = None
     if request.method == 'GET':
         my_rules = get_rules(request)
+        my_bookmarks = get_user_bookmarks(request)
 
-    return render(request, 'front/yara_rules/my_rules.html', context={'my_rules': my_rules})
+    return render(request, 'front/yara_rules/my_rules.html', context={'my_rules': my_rules, 'bookmarked_samples': my_bookmarks})
 
 
 def my_rule_create_view(request):
