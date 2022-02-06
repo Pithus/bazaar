@@ -3,27 +3,33 @@
 {% load cache %}
 
 {% block content %}
-<div class="container-fluid">
-  <div class="col-md-12 mt-2 mb-3">
-
-    <h1>Workspace</h1>
-
-    <div class="justify-content-center mt-4 mb-5">
-      <div class="col-md-12">
-        <h2>Bookmarked samples</h2>
-      </div>
-      {% for b in bookmarked_samples %}
-      <ul>
-        <li>
-          <a href="{% url 'front:report' b.sample %}">{{b.sample}}</a>
-        </li>
-      </ul>
-      {% endfor %}
-    </div>
-  </div>
-
+<div class="container">
 
   <div class="row justify-content-center mt-4 mb-5">
+    <div class="col-md-12">
+      <h1>Workspace</h1>
+
+      <p>The workspace is a collection of tools and statistics to power you hunting, analysis and reporting on Pithus.
+        This
+        section in under development, expect many changes.</p>
+
+      <p>If you feel some parts aren't right or you'd like to see some features, feel free to reach the team!</p>
+    </div>
+
+    <div class="m-5 col-md-12">
+      <h2>Bookmarked samples</h2>
+      {% for b in bookmarked_samples %}
+      <table class="table table-condensed table-sm">
+        <tr>
+          <td class="">
+            <a href="{% url 'front:report' b.sample %}">{{b.sample}}</a>
+          </td>
+        </tr>
+      </table>
+      {% endfor %}
+    </div>
+
+
     <div class="col-md-6">
       <h2>Yara hunting</h2>
     </div>

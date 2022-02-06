@@ -72,14 +72,6 @@ class HomeView(View):
         f = SearchForm(request.GET)
         form_to_show = f
 
-        # Get bookmarks for connected users
-        user_bookmarks = []
-        if request.user.is_authenticated:
-            bookmarks = get_user_bookmarks(request)
-            for bookmark in bookmarks:
-                report_sample = get_sample_light(bookmark.sample)
-                user_bookmarks.append(report_sample)
-        
         if not request.GET:
             form_to_show = SearchForm()
         if f.is_valid():
@@ -100,7 +92,6 @@ class HomeView(View):
                           'report_example': report_example,
                           'q': q, 'matrix': matrix,
                           'max_size': settings.MAX_APK_UPLOAD_SIZE,
-                          'bookmarked_samples': user_bookmarks
                       })
 
 
@@ -291,7 +282,7 @@ def remove_bookmark_sample_view(request, sha256):
     return redirect(reverse_lazy('front:report', [sha256]))
 
 
-def my_rules_view(request):
+def workspace_view(request):
     if not request.user.is_authenticated:
         return redirect(reverse_lazy('front:home'))
 
@@ -301,7 +292,7 @@ def my_rules_view(request):
         my_rules = get_rules(request)
         my_bookmarks = get_user_bookmarks(request)
 
-    return render(request, 'front/yara_rules/my_rules.html', context={'my_rules': my_rules, 'bookmarked_samples': my_bookmarks})
+    return render(request, 'front/workspace/workspace_base.html', context={'my_rules': my_rules, 'bookmarked_samples': my_bookmarks})
 
 
 def my_rule_create_view(request):
@@ -319,10 +310,10 @@ def my_rule_create_view(request):
             new_rule.save()
             messages.success(request, 'Your rule has been created!')
         except Exception:
-            return render(request, 'front/yara_rules/my_rule_edit.html', {'form': new_rule})
-        return redirect(reverse_lazy('front:my_rules'))
+            return render(request, 'front/workspace/my_rule_edit.html', {'form': new_rule})
+        return redirect(reverse_lazy('front:workspace'))
 
-    return render(request, 'front/yara_rules/my_rule_edit.html', {'form': new_rule})
+    return render(request, 'front/workspace/my_rule_edit.html', {'form': new_rule})
 
 
 def my_rule_edit_view(request, uuid):
@@ -332,7 +323,7 @@ def my_rule_edit_view(request, uuid):
     if request.method == 'GET':
         rule = Yara.objects.get(id=uuid)
         new_rule = YaraCreateForm(instance=rule)
-        return render(request, 'front/yara_rules/my_rule_edit.html', {'form': new_rule, 'edit': True})
+        return render(request, 'front/workspace/my_rule_edit.html', {'form': new_rule, 'edit': True})
 
     elif request.method == 'POST':
         rule = Yara.objects.get(id=uuid)
@@ -345,8 +336,8 @@ def my_rule_edit_view(request, uuid):
             delete_es_matches(request, rule)
             messages.success(request, 'Your rule has been updated!')
         except Exception:
-            return render(request, 'front/yara_rules/my_rule_edit.html', {'form': new_rule})
-        return redirect(reverse_lazy('front:my_rules'))
+            return render(request, 'front/workspace/my_rule_edit.html', {'form': new_rule})
+        return redirect(reverse_lazy('front:workspace'))
     else:
         return HttpResponseBadRequest()
 
@@ -361,10 +352,10 @@ def my_rule_delete_view(request, uuid=None):
             delete_es_matches(request, rule)
             rule.delete()
             messages.success(request, 'Your rule has been deleted.')
-            return redirect(reverse_lazy('front:my_rules'))
+            return redirect(reverse_lazy('front:workspace'))
         except Exception as e:
             logging.exception(e)
-            return redirect(reverse_lazy('front:my_rules'))
+            return redirect(reverse_lazy('front:workspace'))
 
 
 def delete_es_matches(request, rule):
@@ -468,7 +459,7 @@ def my_retrohunt_view(request, uuid):
     except Exception as e:
         logging.exception(e)
 
-    return redirect(reverse_lazy('front:my_rules'))
+    return redirect(reverse_lazy('front:workspace'))
 
 
 def get_andgrocfg_code(request, sha256, foo):

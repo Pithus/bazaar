@@ -14,7 +14,7 @@ from bazaar.front.view import (
     my_rule_create_view,
     my_rule_delete_view,
     my_rule_edit_view,
-    my_rules_view,
+    workspace_view,
     og_card_view,
     similarity_search_view,
 )
@@ -29,7 +29,7 @@ urlpatterns = [
     path("apk/<str:sha256>", view=download_sample_view, name="download_sample"),
     path("similar/", view=similarity_search_view, name="similarity_search"),
     path("similar/<str:sha256>", view=similarity_search_view, name="similarity_search"),
-    path("rules/", view=my_rules_view, name="my_rules"),
+    path("workspace/", view=workspace_view, name="workspace"),
     path("rules/new", view=my_rule_create_view, name="my_rule_create"),
     path("rules/<str:uuid>/edit", view=my_rule_edit_view, name="my_rule_edit"),
     path("rules/<str:uuid>/delete", view=my_rule_delete_view, name="my_rule_delete"),
