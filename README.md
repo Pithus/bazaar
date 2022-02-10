@@ -41,7 +41,7 @@ docker-compose -f local.yml up
 docker-compose -f local.yml up -d
 ```
 
-Then browse to [http://localhost:8001](localhost:8001) and enjoy Pithus!
+Then browse to [http://localhost:8001](http://localhost:8001) and enjoy Pithus!
 
 ⚠️**Important**⚠️:
 
