@@ -21,11 +21,14 @@ COPY ./requirements /requirements
 RUN pip install --upgrade pip
 RUN pip install -r /requirements/local.txt
 
-# Install APKid
-RUN pip install --upgrade wheel
-RUN pip wheel --wheel-dir=/tmp/yara-python --build-option="build" --build-option="--enable-dex" git+https://github.com/VirusTotal/yara-python.git@v3.11.0
-RUN pip install --no-index --find-links=/tmp/yara-python yara-python
-RUN pip install apkid
+# Install APKiD https://github.com/rednaga/APKiD/blob/master/Dockerfile
+RUN git clone https://github.com/rednaga/APKiD.git && \
+    cd APKiD && \
+    git checkout f8720b7a371c31a694d45591af0b023f040febdd && \
+    rm -rf .git && \
+    python prep-release.py && \
+    python setup.py install && \
+    cd ..
 
 COPY ./compose/production/django/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
