@@ -32,7 +32,8 @@ RUN git clone https://github.com/rednaga/APKiD.git && \
     rm -rf .git && \
     python prep-release.py && \
     python setup.py install && \
-    cd ..
+    cd .. && \
+    rm -rf APKiD
 
 COPY ./compose/production/django/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
