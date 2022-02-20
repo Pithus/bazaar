@@ -25,7 +25,6 @@ RUN pip install -r /requirements/local.txt
 RUN git clone https://github.com/rednaga/APKiD.git && \
     cd APKiD && \
     git checkout f8720b7a371c31a694d45591af0b023f040febdd && \
-    rm -rf .git && \
     python prep-release.py && \
     python setup.py install && \
     cd .. && \
