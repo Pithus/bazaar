@@ -21,7 +21,7 @@ jobs:
     steps:
 
       - name: Checkout Code Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Set up Python 3.8
         uses: actions/setup-python@v2
@@ -39,7 +39,7 @@ jobs:
 #  build:
 #    runs-on: ubuntu-latest
 #    steps:
-#      - uses: actions/checkout@v2
+#      - uses: actions/checkout@v3
 #      - name: Build the Pithus-core Docker image
 #        run: docker build . --file compose/production/django/Dockerfile
 #      - name: Build the Pithus-db Docker image
@@ -55,7 +55,7 @@ jobs:
     if: github.event_name == 'push'
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Build image
         run: docker build . --file compose/production/django/Dockerfile --tag $IMAGE_NAME
@@ -87,7 +87,7 @@ jobs:
     if: github.event_name == 'push'
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Build image
         run: docker build . --file compose/production/postgres/Dockerfile --tag $IMAGE_NAME
@@ -119,7 +119,7 @@ jobs:
     if: github.event_name == 'push'
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Build image
         run: docker build . --file compose/production/traefik/Dockerfile --tag $IMAGE_NAME
@@ -150,7 +150,7 @@ jobs:
 #    steps:
 #
 #      - name: Checkout Code Repository
-#        uses: actions/checkout@v2
+#        uses: actions/checkout@v3
 #      - name: Build the Stack
 #        run:  docker-compose -f local.yml build
 #
