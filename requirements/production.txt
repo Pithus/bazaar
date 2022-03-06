@@ -12,4 +12,4 @@ django-anymail==8.1  # https://github.com/anymail/django-anymail
 
 # APKiD
 # ------------------------------------------------------------------------------
-yara-python-dex>=1.0.1  # https://github.com/MobSF/yara-python-dex
+# yara-python-dex>=1.0.1  # https://github.com/MobSF/yara-python-dex

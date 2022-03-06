@@ -19,6 +19,7 @@ import yara
 from androcfg.call_graph_extractor import CFG
 from androguard.core.bytecodes.apk import APK
 from androguard.misc import AnalyzeAPK
+from androguard.session import Session
 from apkid.apkid import Options, Scanner
 from apkid.output import OutputFormatter
 from apkid.rules import RulesManager
