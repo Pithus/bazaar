@@ -42,21 +42,23 @@ RUN pip install -r /requirements/local.txt
 # RUN make install
 # RUN echo "Done installing yara"
 # WORKDIR /
-# RUN git clone --recursive https://github.com/evilcel3ri/yara-python.git
-# WORKDIR yara-python
-# RUN python setup.py build
-# RUN python setup.py install
-RUN pip wheel --wheel-dir=yara-python-dex git+https://github.com/evilcel3ri/yara-python-dex.git
-RUN pip install --no-index --find-links=yara-python-dex yara-python-dex
+RUN git clone --recursive https://github.com/Pithus/yara-python.git
+WORKDIR yara-python/yara
+RUN git checkout master
+WORKDIR ..
+RUN python setup.py build --enable-dex --enable-cuckoo
+RUN pip install .
 
 # Install APKiD https://github.com/rednaga/APKiD/blob/master/Dockerfile
-RUN git clone https://github.com/evilcel3ri/APKiD.git && \
+RUN git clone https://github.com/rednaga/APKiD.git && \
     cd APKiD && \
-    git checkout f8720b7a371c31a694d45591af0b023f040febdd && \
-    python prep-release.py && \
-    python setup.py install && \
-    cd .. && \
-    rm -rf APKiD
+    git checkout f8720b7a371c31a694d45591af0b023f040febdd
+RUN sed -i s/\'yara-python-dex\>\=1\.0\.1\'//g setup.py
+WORKDIR APKiD
+RUN python prep-release.py
+RUN python setup.py install
+WORKDIR ..
+RUN rm -rf APKiD
 
 COPY ./compose/production/django/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
