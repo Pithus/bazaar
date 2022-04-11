@@ -120,7 +120,9 @@
           </div>
           {% include "front/m_results_flat.html" with results=results %}
         {% else %}
-          <h2>No results</h2>
+          <h2>No results, please try another search.</h2>
+          <p>Having issues? Check out our documentation:</p>
+        {% include "front/m_search_help.html" %}
         {% endif %}
       </div>
     {% endif %}

@@ -316,6 +316,10 @@
                 </p>
                 {% include "front/report/m_domains.html" with d=result %}
               </div>
+              {% else %}
+            <div>
+              <h3>No domains found.</h3>
+            </div>
             {% endif %}
 
             {% if result.url_analysis %}
@@ -326,6 +330,10 @@
                 </p>
                 {% include "front/report/m_url.html" with d=result %}
               </div>
+              {% else %}
+            <div>
+              <h3>No URLs found.</h3>
+            </div>
             {% endif %}
           </div>
 
