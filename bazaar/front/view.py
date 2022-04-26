@@ -17,6 +17,7 @@ from django.views.generic import View
 from django_q.tasks import async_task
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers.actions import scan
+from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse_lazy
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
@@ -234,7 +235,11 @@ def my_rules_view(request):
     if request.method == 'GET':
         my_rules = get_rules(request)
 
-    return render(request, 'front/yara_rules/my_rules.html', context={'my_rules': my_rules})
+    owner = request.user
+    token, _ = Token.objects.get_or_create(user=owner)
+    print(token.key)
+
+    return render(request, 'front/yara_rules/my_rules.html', context={'my_rules': my_rules, 'my_token': token.key})
 
 
 def my_rule_create_view(request):
@@ -414,7 +419,7 @@ def get_andgrocfg_code(request, sha256, foo):
         return HttpResponse(out_formatted, content_type="text/html")
     elif f'{storage_path}/{foo}'.endswith('.png'):
         return HttpResponse(out, content_type='image/bmp')
-    else: 
+    else:
         return HttpResponse(out, content_type="image/bmp")
 
 

@@ -76,7 +76,7 @@ services:
       - production_elasticsearch_data:/usr/share/elasticsearch/data
 
   mobsf:
-    image: opensecurity/mobile-security-framework-mobsf:latest
+    image: opensecurity/mobile-security-framework-mobsf:v3.4.6
     hostname: mobsf
     environment:
       - "MOBSF_API_ONLY=1"

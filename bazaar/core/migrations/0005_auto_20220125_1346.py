@@ -8,6 +8,9 @@ from django.contrib.auth import get_user_model
 
 
 def create_superuser(apps, schema_editor):
+    if 'DJANGO_SUPERUSER_USERNAME' not in os.environ:
+        return
+
     superuser = get_user_model()(
         is_active=True,
         is_superuser=True,
@@ -15,7 +18,7 @@ def create_superuser(apps, schema_editor):
         username=os.environ['DJANGO_SUPERUSER_USERNAME'],
         email=os.environ['DJANGO_SUPERUSER_EMAIL'],
         last_login=timezone.now(),
-        
+
     )
     os.environ['DJANGO_SUPERUSER_PASSWORD'] = secrets.token_hex(16)
     superuser.set_password(os.environ['DJANGO_SUPERUSER_PASSWORD'])
