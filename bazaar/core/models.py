@@ -13,11 +13,6 @@ class Bookmark(models.Model):
     sample = models.CharField(max_length=256)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
-    @staticmethod
-    def get_es_index(user):
-        es_index = f'bookmark_user_{user.id}'
-        return es_index
-
 
 def check_yara_rule(rule):
     try:

@@ -39,7 +39,7 @@
 
 {% url 'front:home' as home_url %}
 {% url 'about' as about_url %}
-{% url 'front:my_rules' as my_rules_url %}
+{% url 'front:workspace' as workspace_url %}
 {% url 'account_logout' as account_logout_url %}
 {% url 'account_login' as account_login_url %}
 
@@ -63,9 +63,9 @@
           </li>
           {% if request.user.is_authenticated %}
           </li>
-          <li class="nav-item {% if request.path == my_rules_url %} active {%endif%}">
-            <a class="nav-link" href="{{ my_rules_url }}"><i class="fas fa-binoculars"></i>
-              {% trans "My hunting" %}
+          <li class="nav-item {% if request.path == workspace_url %} active {%endif%}">
+            <a class="nav-link" href="{{ workspace_url }}"><i class="fas fa-binoculars"></i>
+              {% trans "Workspace" %}
             </a>
           </li>
           <li class="nav-item {% if request.path == account_logout_url %} active {%endif%}">
