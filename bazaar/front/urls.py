@@ -4,7 +4,7 @@ from bazaar.front.view import (
     HomeView,
     ReportView,
     basic_upload_view,
-    bookmark_sample_view,
+    add_bookmark_sample_view,
     remove_bookmark_sample_view,
     download_sample_view,
     export_report_view,
@@ -36,6 +36,6 @@ urlpatterns = [
     path("rules/<str:uuid>/retro", view=my_retrohunt_view, name="my_rule_retro"),
     path("androcfg/<str:sha256>/<path:foo>", view=get_andgrocfg_code, name="get_andgrocfg_code"),
     path("androcfg/all", view=get_genom, name="get_genom"),
-    path("apk/<str:sha256>/bookmark", view=bookmark_sample_view, name="bookmark_sample"),
+    path("apk/<str:sha256>/bookmark", view=add_bookmark_sample_view, name="bookmark_sample"),
     path("apk/<str:sha256>/bookmark/remove", view=remove_bookmark_sample_view, name="remove_bookmark_sample")
 ]
