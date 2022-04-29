@@ -39,6 +39,15 @@
                 <a href="{% url 'front:export_report' result.apk_hash %}" class="h5 text-decoration-none"
                    data-toggle="tooltip" data-placement="top" title="Export the report in JSON">
                   <i class="nf nf-mdi-export"></i></a>
+                {% if is_bookmarked %}
+                <a href="{% url 'front:remove_bookmark_sample' result.apk_hash %}" class=" text-decoration-none"
+                   data-toggle="tooltip" data-placement="top" title="Remove bookmark">
+                  <i class="nf nf-fa-bookmark"></i></a>
+                {% else %}
+                <a href="{% url 'front:bookmark_sample' result.apk_hash %}" class=" text-decoration-none"
+                   data-toggle="tooltip" data-placement="top" title="Bookmark the sample">
+                  <i class="nf nf-fa-bookmark_o"></i></a>
+                {% endif %}
               </div>
             {% endif %}
           </div>
