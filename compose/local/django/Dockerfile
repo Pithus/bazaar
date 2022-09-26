@@ -24,7 +24,7 @@ RUN pip install -r /requirements/local.txt
 # Install APKiD https://github.com/rednaga/APKiD/blob/master/Dockerfile
 RUN git clone https://github.com/rednaga/APKiD.git && \
     cd APKiD && \
-    git checkout f8720b7a371c31a694d45591af0b023f040febdd && \
+    git checkout 9abdce7c4fb0408ae9b00bd6cd25daaa96f57068 && \
     python prep-release.py && \
     python setup.py install && \
     cd .. && \
