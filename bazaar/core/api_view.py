@@ -2,10 +2,12 @@ import logging
 
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.http import JsonResponse
+from rest_framework.reverse import reverse_lazy
 from elasticsearch import Elasticsearch
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view, authentication_classes, permission_classes, throttle_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.throttling import UserRateThrottle
 
@@ -104,3 +106,28 @@ def search(request):
         return Response(results)
     except Exception as e:
         return Response([])
+
+
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def sample_exists(request, sha256):
+    if not sha256:
+        return Response({
+            'ret_code': -1,
+            'requested_hash': sha256,
+            'message': 'Parameter sha256 not specified'
+        })
+    if default_storage.exists(sha256):
+        return Response({
+            'ret_code': 0,
+            'requested_hash': sha256,
+            'message': 'A sample with the same sha256 already exists',
+            'report_url': reverse_lazy('front:report', [sha256]),
+        })
+    else:
+        return Response({
+            'ret_code': -2,
+            'requested_hash': sha256,
+            'message': 'Sample not found'
+        })

@@ -43,25 +43,29 @@
           <form class="form-horizontal text-center" method="post" action="{% url "front:basic_upload" %}"
                 enctype="multipart/form-data">{% csrf_token %}
             <div class="custom-file ">
-              <input type="file" class="custom-file-input" id="customFile" name="apk">
-              <label class="custom-file-label" for="customFile">APK to be analyzed ({{ max_size|filesizeformat }}
+              <input type="file" class="custom-file-input" id="file_upload_selector" oncchange="javascript:hashfile();" name="apk">
+              <label class="custom-file-label" for="file_upload_selector">APK to be analyzed ({{ max_size|filesizeformat }}
                 max.)</label>
             </div>
             <div class="control-group mt-1">
               <div class="controls">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" id="upload_btn" style="display: none">
                   Upload
                 </button>
+                <a href="#" id="show_report_btn" style="display: none" class="btn btn-primary">
+                  Show report
+                </a>
               </div>
             </div>
           </form>
         </div>
       </div>
 
-      
+
       <div class="row justify-content-center">
         <div class="col text-center">
-            Try a real life example of Pithus on TryHackMe: <a href="https://tryhackme.com/room/androidmalwareanalysis">Android Malware Analysis</a>
+          Try a real life example of Pithus on TryHackMe: <a href="https://tryhackme.com/room/androidmalwareanalysis">Android
+          Malware Analysis</a>
         </div>
       </div>
       <div class="row justify-content-center">
