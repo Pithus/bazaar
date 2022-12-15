@@ -104,6 +104,10 @@ class BasicUploadForm(forms.Form):
     apk = forms.FileField()
 
 
+class BasicUrlDownloadForm(forms.Form):
+    url = forms.URLField()
+
+
 class YaraCreateForm(ModelForm):
     class Meta:
         model = Yara

@@ -1,4 +1,6 @@
 import logging
+import hashlib
+import requests
 
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -14,6 +16,9 @@ from rest_framework.throttling import UserRateThrottle
 from bazaar.core.tasks import analyze
 from bazaar.core.utils import get_sha256_of_file
 from bazaar.front.utils import transform_hl_results
+
+from androguard.core.androconf import is_android
+from tempfile import NamedTemporaryFile
 
 
 @api_view(['GET', 'POST'])
@@ -35,6 +40,38 @@ def apk_upload(request):
         default_storage.save(sha256, file_obj)
         analyze(sha256)
         return Response({"file_sha256": sha256})
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def url_download(request):
+    if not request.user.is_authenticated:
+        return Response({"user": "is_authenticated"})
+    else:
+        res = requests.get(request.data['url'])
+
+        if res.status_code not in [200, 301, 302]:
+            return Response({"url": "URL is not available."})
+
+        sha256_hash = hashlib.sha256()
+        with NamedTemporaryFile() as tmp:
+            for chunk in res.iter_content(chunk_size=16 * 1024):
+                tmp.write(chunk)
+                sha256_hash.update(chunk)
+
+            sha256 = str(sha256_hash.hexdigest()).lower()
+            if is_android(tmp.name) != 'APK':
+                return Response({"apk": "not a valid APK"})
+
+            sha256 = get_sha256_of_file(tmp)
+            if default_storage.exists(sha256):
+                # analyze(sha256, force=True)
+                return Response({"file_sha256": sha256})
+            else:
+                default_storage.save(sha256, tmp)
+                analyze(sha256)
+                return Response({"file_sha256": sha256})
 
 
 @api_view(['GET'])

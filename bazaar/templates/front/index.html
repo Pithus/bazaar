@@ -17,7 +17,7 @@
 
       {# Search form #}
       <div class="row justify-content-center mt-2">
-        <div class="col-md-6 mt-2 mb-2">
+        <div class="col-md-12 mt-2 mb-2">
           <form class="form-horizontal text-center" method="get">
             <div class="input-group">
               {% if q %}
@@ -39,6 +39,8 @@
             </div>
           </form>
         </div>
+      </div>
+      <div class="row justify-content-center mt-2">
         <div class="col-md-6 mt-2 mb-2">
           <form class="form-horizontal text-center" method="post" action="{% url "front:basic_upload" %}"
                 enctype="multipart/form-data">{% csrf_token %}
@@ -58,6 +60,25 @@
               </div>
             </div>
           </form>
+        </div>
+        <div class="row justify-content-center mt-2">
+          <div class="col-md-6 mt-2 mb-2">
+            <form class="form-horizontal text-center" method="post" action="{% url "front:basic_url_download" %}" 
+                  enctype="multipart/form-data">{% csrf_token %}
+              <div class="custom-url">
+                <input type="text"  id="url" name="url">
+                <label for="url">URL to the APK</label>
+              </div>
+              <div class="control-group mt-1">
+                <div class="controls">
+                  <button type="submit" class="btn btn-primary">
+                    Analyze
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        
         </div>
       </div>
 
