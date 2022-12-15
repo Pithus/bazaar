@@ -1,5 +1,7 @@
 import logging
 from tempfile import NamedTemporaryFile
+import requests
+import hashlib
 
 from androguard.core.androconf import is_android
 from django.conf import settings
@@ -28,7 +30,7 @@ from androcfg.code_style import U39bStyle
 from bazaar.core.models import Yara
 from bazaar.core.tasks import analyze, retrohunt
 from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
-from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm
+from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status, generate_world_map, \
     transform_hl_results, get_sample_timeline, get_andro_cfg_storage_path
@@ -148,6 +150,37 @@ class ReportView(View):
         except Exception as e:
             logging.exception(e)
             return redirect(reverse_lazy('front:home'))
+
+
+def basic_url_download_view(request):
+    if request.method == 'POST':
+        form = BasicUrlDownloadForm(request.POST)
+        if form.is_valid():
+            url = form.cleaned_data.get('url')
+            res = requests.get(url, stream=True)
+
+            if res.status_code not in [200, 301, 302]:
+                messages.warning(request, 'URL is not available.')
+                return redirect(reverse_lazy('front:home'))
+
+            sha256_hash = hashlib.sha256()
+            with NamedTemporaryFile() as tmp:
+                for chunk in res.iter_content(chunk_size=16 * 1024):
+                    tmp.write(chunk)
+                    sha256_hash.update(chunk)
+
+                sha256 = str(sha256_hash.hexdigest()).lower()
+                if is_android(tmp.name) != 'APK':
+                    messages.warning(request, 'Submitted file is not a valid APK.')
+
+                if default_storage.exists(sha256):
+                    return redirect(reverse_lazy('front:report', [sha256]))
+                else:
+                    default_storage.save(sha256, tmp)
+                    analyze(sha256)
+                    return redirect(reverse_lazy('front:report', [sha256]))
+
+    return redirect(reverse_lazy('front:home'))
 
 
 def basic_upload_view(request):
@@ -414,13 +447,12 @@ def get_andgrocfg_code(request, sha256, foo):
     out = default_storage.open(f'{storage_path}/{foo}').read()
 
     if f'{storage_path}/{foo}'.endswith('.raw'):
-        out_formatted = highlight(out,JavaLexer(), HtmlFormatter(style=U39bStyle, noclasses=True))
+        out_formatted = highlight(out, JavaLexer(), HtmlFormatter(style=U39bStyle, noclasses=True))
         return HttpResponse(out_formatted, content_type="text/html")
     elif f'{storage_path}/{foo}'.endswith('.png'):
         return HttpResponse(out, content_type='image/bmp')
     else:
         return HttpResponse(out, content_type="image/bmp")
-
 
 
 def get_genom(request):
@@ -436,7 +468,8 @@ def get_genom(request):
         threat = 'unknown'
         try:
             genom = report.get('_source').get('andro_cfg').get('genom')
-            threat = report.get('_source').get('vt_report').get('attributes').get('popular_threat_classification').get('suggested_threat_label')
+            threat = report.get('_source').get('vt_report').get('attributes').get(
+                'popular_threat_classification').get('suggested_threat_label')
         except Exception:
             pass
         if genom:
