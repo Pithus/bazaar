@@ -20,7 +20,7 @@ function hashfile(file_selector, upload_btn, report_btn) {
     return readbinaryfile(file_selector.files[0])
         .then(function (result) {
             result = new Uint8Array(result);
-            return window.crypto.subtle.digest('SHA-256', result);
+            return crypto.subtle.digest('SHA-256', result);
         }).then(function (result) {
             result = new Uint8Array(result);
             const hash = Uint8ArrayToHexString(result);
