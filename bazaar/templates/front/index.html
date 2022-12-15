@@ -43,7 +43,7 @@
           <form class="form-horizontal text-center" method="post" action="{% url "front:basic_upload" %}"
                 enctype="multipart/form-data">{% csrf_token %}
             <div class="custom-file ">
-              <input type="file" class="custom-file-input" id="file_upload_selector" oncchange="javascript:hashfile();" name="apk">
+              <input type="file" class="custom-file-input" id="file_upload_selector" name="apk">
               <label class="custom-file-label" for="file_upload_selector">APK to be analyzed ({{ max_size|filesizeformat }}
                 max.)</label>
             </div>
