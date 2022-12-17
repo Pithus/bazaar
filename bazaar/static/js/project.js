@@ -6,6 +6,7 @@ $(function () {
         $(this).tab('show')
     })
     $('#menu-tabs a[href="#fingerprints"]').tab('show')
+    $('#menu-tabs a[href="#search"]').tab('show')
     $('#file_upload_selector').change(function () {
         const upload_btn = $('#upload_btn')
         const show_report_btn = $('#show_report_btn')
