@@ -1,29 +1,46 @@
 <table class="table table-condensed">
   <thead>
-  <tr>
-    <th>SHA256</th>
-    <th>Similarity</th>
-  </tr>
+    <tr>
+      <th>App Name</th>
+      <th>Package Name</th>
+      <th>SHA256</th>
+      <th>VirusTotal Score</th>
+      <th>Similarity</th>
+    </tr>
   </thead>
   <tbody>
-  {% for hash, score in results %}
+    {% for app_name, package_name, hash, vt_score, score in results %}
     {% if hash != result.sha256 %}
     <tr>
+      <td>
+        <p>{{ app_name }}</p>
+      </td>
+      <td>
+        <p>{{ package_name }}</p>
+      </td>
       <td>
         <a href="{% url 'front:report' hash %}">
           <code>{{ hash }}</code>
         </a>
       </td>
       <td>
+        <p>
+          {% if vt_score %}
+          <span class="badge badge-danger">{{ vt_score.malicious }} / {{ vt_score.total }}</span>
+          {% else %}
+          Unknown
+          {% endif %}
+        </p>
+      </td>
+      <td>
         <div class="progress">
           <div class="progress-bar progress-bar-striped bg-secondary" role="progressbar" style="width: {{ score }}%"
-               aria-valuenow="{{ score }}"
-               aria-valuemin="0" aria-valuemax="100">{{ score }}%
+            aria-valuenow="{{ score }}" aria-valuemin="0" aria-valuemax="100">{{ score }}%
           </div>
         </div>
       </td>
     </tr>
     {% endif %}
-  {% endfor %}
+    {% endfor %}
   </tbody>
 </table>

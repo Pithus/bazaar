@@ -118,6 +118,7 @@ class ReportView(View):
 
             # Find similar sample based on dexofuzzy
             similar_samples = None
+            similar_samples_extended = None
             try:
                 dexofuzzy_hash = result['dexofuzzy']['apk']
                 if dexofuzzy_hash:
@@ -127,6 +128,18 @@ class ReportView(View):
                         settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, sha)
             except Exception:
                 pass
+
+            if similar_samples:
+                res = []
+                for sha256, score in similar_samples:
+                    apk = get_sample_light(sha256)
+                    try:
+                        vt = apk[0]['source']['vt']
+                    except:
+                        vt = None
+                    res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
+
+                    similar_samples_extended = res
 
             # Find public hunting results
             hunting_matches = Yara.find_public_hunting_matches(sha)
@@ -145,7 +158,7 @@ class ReportView(View):
                 'map': map_svg,
                 'timeline': timeline,
                 'hunting_matches': hunting_matches,
-                'similar_samples': similar_samples,
+                'similar_samples': similar_samples_extended,
                 'cache_retention_time': cache_retention_time})
         except Exception as e:
             logging.exception(e)
