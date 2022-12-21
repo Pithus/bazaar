@@ -230,8 +230,20 @@ def similarity_search_view(request, sha256=''):
     if request.method == 'GET':
         form = SimilaritySearchForm(request.GET)
         results = None
+        res = []
         if form.is_valid():
             results = form.do_search(sha256)
+            for sha256, score in results:
+                apk = get_sample_light(sha256)
+                try:
+                    vt = apk[0]['source']['vt']
+                except:
+                    vt = None
+
+                res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
+
+            results = res
+
         return render(request, 'front/similarity_search.html', {'form': form, 'results': results})
 
 
