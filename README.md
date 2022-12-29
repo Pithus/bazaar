@@ -14,7 +14,7 @@ Analyses, which we want to be as comprehensive as possible, rely on multiple wel
 * [MobSF](https://github.com/MobSF/Mobile-Security-Framework-MobSF)
 * [Exodus-core](https://github.com/Exodus-Privacy/exodus-core)
 
-When an APK is submitted, it is analyzed by the different tools listed above. Each report is stored in [ElasticSearch](https://www.elastic.co/). Analysis steps are defined in [tasks.py](https://github.com/Pithus/bazaar/blob/master/bazaar/core/tasks.py) file. 
+When an APK is submitted, it is analyzed by the different tools listed above. Each report is stored in [ElasticSearch](https://www.elastic.co/). Analysis steps are defined in [tasks.py](https://github.com/Pithus/bazaar/blob/master/bazaar/core/tasks.py) file.
 
 The beta version is available at [beta.pithus.org](https://beta.pithus.org/).
 
@@ -66,7 +66,7 @@ More information on developping in a container in the Visual Studio Code [docume
 To apply SASS file changes, just run the following command:
 ```
 sassc bazaar/static/front/sass/project.scss backend/static/front/css/project.css
-``` 
+```
 ## Reindex after adding a new field
 ```python
 from django.conf import settings
@@ -99,4 +99,4 @@ docker-compose -f local.yml run django python manage.py update_reports HASH [mbf
 # logs
 docker-compose -f local.yml logs
 docker-compose -f local.yml logs -f django
-
+```

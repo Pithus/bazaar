@@ -240,6 +240,46 @@ def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
     return sha256_list_to_return
 
 
+def get_matching_items_by_ssdeep_func(ssdeep_input, threshold_grade, index, sha256):
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    ssdeep_value = ssdeep_input.split("=")[-1]
+    query = {
+        "query": {
+            "bool": {
+                "filter": [
+                    {
+                        "bool": {
+                            "should": [
+                                {
+                                    "match_phrase": {
+                                        "andro_cfg.rules.findings.ssdeep_hash": ssdeep_value
+                                    }
+                                }
+                            ],
+                            "minimum_should_match": 1
+                        }
+                    }
+                ],
+            }
+        }
+    }
+
+    results = es.search(index=index, body=query)
+    sha256_list_to_return = []
+
+    for record in results['hits']['hits']:
+        if record['_source']['sha256'] != sha256:
+            for rule in record['_source']['andro_cfg']['rules']:
+                ssdeep_grade_final = []
+                for find in rule['findings']:
+                    ssdeep_grade = ssdeep.compare(find['ssdeep_hash'], ssdeep_value)
+                    ssdeep_grade_final.append(ssdeep_grade)
+
+            sha256_list_to_return.append((record['_source']['sha256'], 100))
+
+    return sha256_list_to_return
+
+
 def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha256):
     chunksize, chunk, double_chunk = dexofuzzy_value.split(':')
     chunksize = int(chunksize)

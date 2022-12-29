@@ -125,7 +125,7 @@ def execute_single_yara_rule(rule_id, sha256):
     if not default_storage.exists(sha256):
         reason = f'{sha256} not found, unable to analyze'
         logging.error(reason)
-        return { 'status': 'error', 'info': ''}
+        return {'status': 'error', 'info': ''}
 
     es_index = rule.get_es_index_name()
 
@@ -138,7 +138,7 @@ def execute_single_yara_rule(rule_id, sha256):
         yara_rule = yara.compile(source=rule.content)
     except Exception as e:
         logging.error(e)
-        return { 'status': 'error', 'info': ''}
+        return {'status': 'error', 'info': ''}
 
     document_uuid = uuid.uuid4()
     res_struct = {
@@ -224,8 +224,8 @@ def retrohunt(rule_id):
         return
 
     for report in scan(es, query={"query": {"match_all": {}}},
-                               index=settings.ELASTICSEARCH_APK_INDEX,
-                               ):
+                       index=settings.ELASTICSEARCH_APK_INDEX,
+                       ):
         _id = report.get('_source').get('sha256')
         execute_single_yara_rule(rule.id, _id)
 
@@ -479,6 +479,7 @@ def _dict_to_list(d):
         ret.append(v)
     return ret
 
+
 def _check_tld(d):
     res = []
     for v in d:
@@ -491,8 +492,9 @@ def _check_tld(d):
                 continue
         except:
             continue
-    
-    return res 
+
+    return res
+
 
 def _check_urls(d):
     res = []
@@ -506,9 +508,8 @@ def _check_urls(d):
                     continue
             except:
                 continue
-   
-    return res
 
+    return res
 
 
 def mobsf_analysis(sha256):
@@ -702,7 +703,7 @@ def malware_bazaar_analysis(sha256):
 
 
 def andro_cfg(sha256, force=False):
-    if default_storage.size(sha256) > 3*10485760:
+    if default_storage.size(sha256) > 3 * 10485760:
         return
 
     try:

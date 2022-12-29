@@ -2,7 +2,7 @@ from django import forms
 from django.conf import settings
 from elasticsearch import Elasticsearch
 
-from bazaar.core.utils import get_matching_items_by_dexofuzzy, get_matching_items_by_ssdeep, compute_genetic_analysis
+from bazaar.core.utils import get_matching_items_by_dexofuzzy, get_matching_items_by_ssdeep, compute_genetic_analysis, get_matching_items_by_ssdeep_func
 from bazaar.front.utils import transform_results, transform_hl_results, append_dexofuzzy_similarity, get_aggregations
 
 from django.forms import ModelForm
@@ -35,7 +35,8 @@ class BasicSearchForm(forms.Form):
 
 class SimilaritySearchForm(forms.Form):
     hash = forms.CharField(max_length=128)
-    algorithm = forms.ChoiceField(choices=[('ssdeep', 'ssdeep'), ('dexofuzzy', 'dexofuzzy')])
+    algorithm = forms.ChoiceField(
+        choices=[('ssdeep', 'ssdeep'), ('dexofuzzy', 'dexofuzzy'), ('func_hash', 'func_hash')])
 
     def do_search(self, sha=''):
         results = []
@@ -46,6 +47,8 @@ class SimilaritySearchForm(forms.Form):
                 results = get_matching_items_by_dexofuzzy(hash, 25, settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, sha)
             if algorithm == 'ssdeep':
                 results = get_matching_items_by_ssdeep(hash, 25, settings.ELASTICSEARCH_SSDEEP_APK_INDEX, sha)
+            if algorithm == 'func_hash':
+                results = get_matching_items_by_ssdeep_func(hash, 25, settings.ELASTICSEARCH_APK_INDEX, sha)
 
         except Exception as e:
             print(e)

@@ -19,16 +19,16 @@ RUN apt-get update \
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
 RUN pip install --upgrade pip
-RUN pip install -r /requirements/local.txt
+RUN pip install -r /requirements/local.txt 
 
 # Install APKiD https://github.com/rednaga/APKiD/blob/master/Dockerfile
 RUN git clone https://github.com/rednaga/APKiD.git && \
-    cd APKiD && \
-    git checkout 9abdce7c4fb0408ae9b00bd6cd25daaa96f57068 && \
-    python prep-release.py && \
-    python setup.py install && \
-    cd .. && \
-    rm -rf APKiD
+  cd APKiD && \
+  git checkout 9abdce7c4fb0408ae9b00bd6cd25daaa96f57068 && \
+  python prep-release.py && \
+  python setup.py install && \
+  cd .. && \
+  rm -rf APKiD
 
 COPY ./compose/production/django/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
