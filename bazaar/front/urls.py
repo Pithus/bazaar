@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.generic.base import TemplateView
 
 from bazaar.front.view import HomeView, ReportView, basic_upload_view, similarity_search_view, export_report_view, \
     download_sample_view, my_rules_view, my_rule_edit_view, my_rule_create_view, my_rule_delete_view, og_card_view, \
@@ -7,6 +8,7 @@ from bazaar.front.view import HomeView, ReportView, basic_upload_view, similarit
 app_name = "front"
 urlpatterns = [
     path("", view=HomeView.as_view(), name="home"),
+    path("robots.txt", TemplateView.as_view(template_name="robots.txt", content_type="text/plain")),
     path("report/<str:sha256>", view=ReportView.as_view(), name="report"),
     path("report/<str:sha256>/json", view=export_report_view, name="export_report"),
     path("report/<str:sha256>/card", view=og_card_view, name="og_card"),
