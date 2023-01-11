@@ -31,12 +31,14 @@
                 File
               </a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link text-white" data-toggle="pill" href="#url_download" role="tab"
-                 id="url_download-tab" aria-controls="url_download" aria-selected="true">
-                URL
-              </a>
-            </li>
+            {% if request.user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link text-white" data-toggle="pill" href="#url_download" role="tab"
+                   id="url_download-tab" aria-controls="url_download" aria-selected="true">
+                  URL
+                </a>
+              </li>
+            {% endif %}
           </ul>
           <div class="row justify-content-center">
             <div class="col-md-12 tab-content">
@@ -83,16 +85,18 @@
                   </div>
                 </form>
               </div>
-              <div class="tab-pane" role="tabpanel" aria-labelledby="url_download-tab" id="url_download">
-                <form class="form text-center" method="post" action="{% url "front:basic_url_download" %}"
-                      enctype="multipart/form-data">
-                  {% csrf_token %}
-                  <input class="form-control" type="text" id="url" name="url" placeholder="URL to be downloaded">
-                  <button type="submit" class="btn btn-primary mt-1">
-                    Download and analyze
-                  </button>
-                </form>
-              </div>
+              {% if request.user.is_authenticated %}
+                <div class="tab-pane" role="tabpanel" aria-labelledby="url_download-tab" id="url_download">
+                  <form class="form text-center" method="post" action="{% url "front:basic_url_download" %}"
+                        enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input class="form-control" type="text" id="url" name="url" placeholder="URL to be downloaded">
+                    <button type="submit" class="btn btn-primary mt-1">
+                      Download and analyze
+                    </button>
+                  </form>
+                </div>
+              {% endif %}
             </div>
           </div>
         </div>
