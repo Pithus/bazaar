@@ -65,7 +65,7 @@
     </div>
   </div>
 
-  {% cache cache_retention_time report result.sha256 %}
+  {% cache cache_retention_time report result.sha256 request.user.is_authenticated %}
   <div class="row justify-content-center">
     <div class="col mb-4">
       <div class="card text-white bg-secondary">
@@ -147,14 +147,17 @@
             <p>Behavior analysis</p>
           </a>
         </li>
-        {% if result.andro_cfg %}
-        <li class="nav-item">
-          <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#cfg_analysis" role="tab"
-            id="cfg_analysis-tab" aria-controls="cfg_analysis" aria-selected="false">
-            <i class="nf nf-dev-git_branch"></i>
-            <p>Control flow analysis</p>
-          </a>
-        </li>
+
+        {% if request.user.is_authenticated %}
+          {% if result.andro_cfg %}
+          <li class="nav-item">
+            <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#cfg_analysis" role="tab"
+              id="cfg_analysis-tab" aria-controls="cfg_analysis" aria-selected="false">
+              <i class="nf nf-dev-git_branch"></i>
+              <p>Control flow analysis</p>
+            </a>
+          </li>
+          {% endif %}
         {% endif %}
         <li class="nav-item">
           <a class="nav-link mr-1 btn btn-outline-primary" data-toggle="pill" href="#network_analysis" role="tab"
@@ -261,9 +264,9 @@
           </p>
           <div class="alert alert-info">
             <p>The following samples have traits that are similar to the one displayed. This
-              might indicate a proximity in use or, if those samples are different in appearance, it might indicated a
+              might indicate a proximity in use or, if those samples are different in appearance, it might indicate a
               possible malicious application.</p>
-            <p>High similarity and different apparent names indicate that those application are suspicious.</p>
+            <p>High similarity and different apparent names indicate that those applications are suspicious.</p>
           </div>
           {% include "front/report/m_similar_samples.html" %}
         </div>
@@ -378,15 +381,18 @@
         {% endif %}
       </div>
 
-      {% if result.andro_cfg %}
-      <div class="tab-pane" role="tabpanel" aria-labelledby="cfg_analysis-tab" id="cfg_analysis">
-        <div>
-          {% include "front/report/m_androcfg.html" with andro_cfg=result.andro_cfg sha256=result.sha256 %}
+      {% if request.user.is_authenticated %}
+        {% if result.andro_cfg %}
+        <div class="tab-pane" role="tabpanel" aria-labelledby="cfg_analysis-tab" id="cfg_analysis">
+          <div>
+            {% include "front/report/m_androcfg.html" with andro_cfg=result.andro_cfg sha256=result.sha256 %}
+          </div>
         </div>
-      </div>
+        {% endif %}
       {% endif %}
     </div>
   </div>
   {% endcache %}
+
 </div>
 {% endblock content %}
