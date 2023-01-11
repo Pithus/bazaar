@@ -98,6 +98,8 @@ class ReportView(View):
 
         sha = kwargs['sha256']
         cache_key = f'html_report_{sha}'
+        if request.user.is_authenticated:
+            cache_key = f'html_report_{sha}_authenticated'
 
         # First, check if the report is already in cache
         cached_report = cache.get(cache_key)
@@ -157,6 +159,7 @@ class ReportView(View):
                 'status': status,
                 'map': map_svg,
                 'timeline': timeline,
+                'cache_key': f'{cache_key}_tpl',
                 'hunting_matches': hunting_matches,
                 'similar_samples': similar_samples_extended,
                 'cache_retention_time': cache_retention_time})
@@ -166,6 +169,8 @@ class ReportView(View):
 
 
 def basic_url_download_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
     if request.method == 'POST':
         form = BasicUrlDownloadForm(request.POST)
         if form.is_valid():
@@ -467,6 +472,9 @@ def my_retrohunt_view(request, uuid):
 
 
 def get_andgrocfg_code(request, sha256, foo):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+
     storage_path = get_andro_cfg_storage_path(sha256)
 
     out = default_storage.open(f'{storage_path}/{foo}').read()
