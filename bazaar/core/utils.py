@@ -314,7 +314,7 @@ def compute_genetic_analysis(results):
                     if genom:
                         tmp_csv.write(f'{sha256},{genom}\n')
                 except Exception as e:
-                    logging.error(e)
+                    pass
 
             csv_data = pd.read_csv(tmp_csv.name, delimiter=',', header=None)
         labels = csv_data.pop(0)
@@ -330,5 +330,5 @@ def compute_genetic_analysis(results):
 
         return x
     except Exception as e:
-        logging.error(e)
+        pass
         return None
