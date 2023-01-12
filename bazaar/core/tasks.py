@@ -30,8 +30,8 @@ from django_q.tasks import async_task
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers.actions import scan
 from google_play_scraper import app
-from quark.Objects.quark import Quark
-from quark.Objects.quarkrule import QuarkRule
+from quark.core.quark import Quark
+from quark.core.struct.ruleobject import RuleObject as QuarkRule
 from tld import get_tld, is_tld
 from tqdm import tqdm
 

@@ -25,7 +25,7 @@ django-cors-headers==3.5.0 # https://github.com/adamchainz/django-cors-headers
 django-q
 elasticsearch
 elasticsearch-dsl
-quark-engine==21.3.3
+quark-engine==22.12.1
 androguard==3.4.0a1
 django-minio-storage
 dhash
