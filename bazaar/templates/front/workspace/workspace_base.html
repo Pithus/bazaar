@@ -3,56 +3,58 @@
 {% load cache %}
 
 {% block content %}
-<div class="d-flex align-items-start">
+<div class="d-flex align-items-start ">
   <nav class="col-md-3 d-none d-md-block sidebar">
     <div class="sidebar-header mb-5 mt-3">
-      <h3>Workspace</h3>
-      <div class="">Get all the tools and information you need here!</div>
+      <h3>Workspace </h3>
     </div>
-
+    <hr>
     <div class="sidebar-sticky">
-      <ul class="nav flex-column flex-shrink-0 nav-pills" id="sidebar-tabs" role="tablist" aria-orientation="vertical">
-        <li class="nav-item">
-          <a class="nav-link active mr-1 mb-1 btn btn-outline-primary" data-toggle="pill" href="#dashboard" role="tab"
-            id="dashboard_tab" aria-controls="dashboard_tab" aria-selected="true">
-            <i class="nf nf-fa-dashboard"></i>
-            <p>Dashboard</p>
-          </a>
-        </li>
+      <div class="nav d-flex flex-column flex-shrink-0 nav-pills p-0 bg-light" id="sidebar-tabs" role="tablist"
+        aria-orientation="vertical">
+        <ul class="nav nav-pills flex-column mb-auto">
+          <li class="nav-item">
+            <a class="nav-link active mr-1 mb-1 " data-toggle="pill" href="#dashboard" role="tab" id="dashboard_tab"
+              aria-controls="dashboard_tab" aria-selected="true">
+              <i class="nf nf-fa-dashboard"></i>
+              Dashboard
+            </a>
+          </li>
 
-        <li class="nav-item">
-          <a class="nav-link mb-1 mr-1 btn btn-outline-primary" data-toggle="pill" href="#bookmarks" role="tab"
-            id="bookmarks_tab" aria-controls="bookmarks_tab" aria-selected="false">
-            <i class="nf nf-fa-bookmark"></i>
-            <p>Bookmarks</p>
-          </a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link mb-1 mr-1" data-toggle="pill" href="#bookmarks" role="tab" id="bookmarks_tab"
+              aria-controls="bookmarks_tab" aria-selected="false">
+              <i class="nf nf-fa-bookmark"></i>
+              Bookmarks
+            </a>
+          </li>
 
-        <li class="nav-item">
-          <a class="nav-link mb-1 mr-1 btn btn-outline-primary" data-toggle="pill" href="#hunting" role="tab"
-            id="hunting_tab" aria-controls="hunting_tab" aria-selected="false">
-            <i class="nf nf-fa-binoculars"></i>
-            <p>Yara hunting</p>
-          </a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link mb-1 mr-1" data-toggle="pill" href="#hunting" role="tab" id="hunting_tab"
+              aria-controls="hunting_tab" aria-selected="false">
+              <i class="nf nf-fa-binoculars"></i>
+              Yara hunting
+            </a>
+          </li>
 
-        <li class="nav-item">
-          <a class="nav-link mb-1 mr-1 btn btn-outline-primary" data-toggle="pill" href="#trends" role="tab"
-            id="trends_tab" aria-controls="trends_tab" aria-selected="false">
-            <i class="nf nf-oct-graph"></i>
-            <p>Trends</p>
-          </a>
-        </li>
+          <li class="nav-item">
+            <a class="nav-link mb-1 mr-1" data-toggle="pill" href="#trends" role="tab" id="trends_tab"
+              aria-controls="trends_tab" aria-selected="false">
+              <i class="nf nf-oct-graph"></i>
+              Trends
+            </a>
+          </li>
 
-        <li class="nav-item">
-          <a href="#api" class="nav-link mb-1 mr-1 btn btn-outline-primary" data-toggle="pill" role="tab" id="api_tab"
-            aria-controls="api_tab" aria-selected="false">
+          <li class="nav-item">
+            <a href="#api" class="nav-link mb-1 mr-1" data-toggle="pill" role="tab" id="api_tab" aria-controls="api_tab"
+              aria-selected="false">
 
-            <i class="nf nf-fa-key"></i>
-            <p>API key</p>
-          </a>
-        </li>
-      </ul>
+              <i class="nf nf-fa-key"></i>
+              API key
+            </a>
+          </li>
+        </ul>
+      </div>
   </nav>
 
   <div class="col-md-6 justify-content mt-5 ml-4 mt-4 mb-5 tab-content">
@@ -212,7 +214,7 @@
       <table class="table table-condensend table-sm">
         <tr>
           <th>
-            <h4>Highest matching Yara rules</h4>
+            <h4>Highest matching public Yara rules</h4>
           </th>
         </tr>
 
