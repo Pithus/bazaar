@@ -535,7 +535,7 @@ def mobsf_analysis(sha256):
                 to_store = {
                     'analysis_date': report['timestamp'],
                     'average_cvss': report['average_cvss'],
-                    'security_score': report['security_score'],
+                    'security_score': report['appsec']['security_score'],
                     'size': report['size'],
                     'md5': report['md5'],
                     'sha1': report['sha1'],
