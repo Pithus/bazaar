@@ -202,6 +202,7 @@ def execute_single_yara_rule(rule_id, sha256):
 
 
 def yara_analysis(sha256, rule_id=-1):
+    rule = None
     if rule_id == -1:
         for rule in Yara.objects.all():
             execute_single_yara_rule(rule.id, sha256)
@@ -217,6 +218,7 @@ def yara_analysis(sha256, rule_id=-1):
 
 
 def retrohunt(rule_id):
+    rule = None
     try:
         rule = Yara.objects.get(id=rule_id)
     except Exception as e:
