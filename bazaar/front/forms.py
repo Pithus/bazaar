@@ -38,7 +38,6 @@ class SimilaritySearchForm(forms.Form):
     algorithm = forms.ChoiceField(choices=[('ssdeep', 'ssdeep'), ('dexofuzzy', 'dexofuzzy')])
 
     def do_search(self, sha=''):
-        print(self.cleaned_data)
         results = []
         algorithm = self.cleaned_data['algorithm']
         hash = self.cleaned_data['hash'].strip()
@@ -102,6 +101,10 @@ class SearchForm(forms.Form):
 
 class BasicUploadForm(forms.Form):
     apk = forms.FileField()
+
+
+class BasicUrlDownloadForm(forms.Form):
+    url = forms.URLField()
 
 
 class YaraCreateForm(ModelForm):

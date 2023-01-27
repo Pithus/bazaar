@@ -70,7 +70,7 @@
           </li>
           <li class="nav-item {% if request.path == account_logout_url %} active {%endif%}">
             <a class="nav-link" href="{{ account_logout_url }}"><i class="fas fa-sign-out-alt"></i>
-              {% trans "Sign Out" %}</a>
+              {% trans "Logout" %}</a>
             {% else %}
           <li
             class="nav-item border rounded border-secondary {% if request.path == account_login_url %} active {%endif%}">
@@ -112,6 +112,7 @@
 
 
   <!-- Your stuff: Third-party javascript libraries go here -->
+  <script defer data-domain="beta.pithus.org" src="https://plausible.io/js/script.js"></script>
 
 
   <!-- place project specific Javascript in this file -->
@@ -125,6 +126,8 @@
   <script src="{% static 'js/clipboard.js' %}"></script>
   {% endcompress %}
   {% endblock javascript %}
+  {% block inline_js %}
+  {% endblock inline_js %}
 </body>
 
 </html>

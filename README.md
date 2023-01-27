@@ -45,7 +45,7 @@ Then browse to [http://localhost:8001](http://localhost:8001) and enjoy Pithus!
 
 ⚠️**Important**⚠️:
 
-It is possible that you might have an error for a missing index while browsing to the address the first time. It is probable that Django hasn't been properly loaded. To fix that, add a blank line in any of the Django file, save it and refresh the page in the browser.
+It is possible that you might have an error for a missing index while browsing to the address the first time. It is probable that Django hasn't been properly loaded. To fix that, add a blank line in any of the Django files, save it and refresh the page in the browser.
 
 ## Set up the internal Python interpreter with Visual Studio Code
 
@@ -82,3 +82,21 @@ es.indices.put_mapping(index=settings.ELASTICSEARCH_APK_INDEX, body=mapping.get(
 Do you have questions? Do you want to chat with us? Come join us on our discord: [https://discord.gg/PgdKfp4VMQ](https://discord.gg/PgdKfp4VMQ).
 
 You can also preview some features, explore the tools and our work process on TryHackMe with our own featured room! [https://tryhackme.com/room/androidmalwareanalysis](https://tryhackme.com/room/androidmalwareanalysis)
+
+# Useful commands
+
+```
+# have a logged user while running a local instance
+docker-compose -f local.yml run --rm django python manage.py createsuperuser
+# login on http://localhost:8001/admin
+
+# help on manage.py
+docker-compose -f local.yml run django python manage.py -h
+
+# update reports, see tasks.py for reference
+docker-compose -f local.yml run django python manage.py update_reports HASH [mbfvascqgy]
+
+# logs
+docker-compose -f local.yml logs
+docker-compose -f local.yml logs -f django
+

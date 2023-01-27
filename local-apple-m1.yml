@@ -1,0 +1,131 @@
+version: '3'
+
+volumes:
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+  local_elasticsearch_data: {}
+  local_minio_data: {}
+  local_prometheus_data: {}
+  local_grafana_data: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: bazaar_local_django
+    depends_on:
+      - postgres
+      - redis
+      - elasticsearch
+      - minio
+      - mobsf
+    volumes:
+      - .:/app:z
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+    ports:
+      - "8001:8000"
+    command: /start
+
+  redis:
+    image: redis:5.0
+
+  worker:
+    <<: *django
+    image: backend_local_worker
+    platform: linux/amd64
+    depends_on:
+      - redis
+      - postgres
+      - elasticsearch
+      - minio
+    ports: []
+    command: /start-worker
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: bazaar_production_postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data:Z
+      - local_postgres_data_backups:/backups:z
+    env_file:
+      - ./.envs/.local/.postgres
+
+#  mailhog:
+#    image: mailhog/mailhog:v1.0.0
+#    ports:
+#      - "8025:8025"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2-arm64
+    hostname: elasticsearch
+    environment:
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms2000m -Xmx2000m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - local_elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+
+  mobsf:
+    image: opensecurity/mobile-security-framework-mobsf:latest
+    hostname: mobsf
+    ports:
+      - 8181:8000
+    environment:
+      - "MOBSF_API_ONLY=0"
+      - "MOBSF_API_KEY=515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9"
+
+  kibana:
+    image: kibana:7.7.0
+    hostname: kibana
+    ports:
+      - 5601:5601
+    links:
+      - elasticsearch:elasticsearch
+    depends_on:
+      - elasticsearch
+
+  minio:
+    image: minio/minio:RELEASE.2020-11-13T20-10-18Z
+    volumes:
+      - local_minio_data:/data
+    env_file:
+      - ./.envs/.local/.django
+    command: server /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - local_prometheus_data:/prometheus
+      - ./config/prometheus.conf:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - '3000:3000'
+    volumes:
+      - local_grafana_data:/var/lib/grafana:rw
+    environment:
+      GF_SECURITY_ADMIN_USER: 'admin'
+      GF_SECURITY_ADMIN_PASSWORD: 'rootme'
+      GF_USERS_ALLOW_SIGN_UP: 'false'

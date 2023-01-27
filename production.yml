@@ -71,12 +71,17 @@ services:
     hostname: elasticsearch
     environment:
       - "discovery.type=single-node"
-      - "ES_JAVA_OPTS=-Xms4000m -Xmx4000m"
+      - "ES_JAVA_OPTS=-Xms6000m -Xmx6000m"
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
     volumes:
       - production_elasticsearch_data:/usr/share/elasticsearch/data
 
   mobsf:
-    image: opensecurity/mobile-security-framework-mobsf:latest
+    image: opensecurity/mobile-security-framework-mobsf:v3.4.6
     hostname: mobsf
     environment:
       - "MOBSF_API_ONLY=1"

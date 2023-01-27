@@ -252,7 +252,7 @@ def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha
                 'must': [
                     {
                         'terms': {
-                            'chunk_size': [chunksize, chunksize * 2, int(chunksize / 2)]
+                            'chunk_size': [chunksize, chunksize * 2, int(chunksize / 2)],
                         }
                     },
                     {
@@ -292,9 +292,11 @@ def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha
             dexofuzzy_grade = dexofuzzy.compare(record_dexofuzzy, dexofuzzy_value)
 
             if dexofuzzy_grade >= threshold_grade:
-                sha256_list_to_return.append((record['_source']['sha256'], dexofuzzy_grade))
+                sha256_list_to_return.append(
+                    (record['_source']['sha256'], dexofuzzy_grade))
 
     return sha256_list_to_return
+
 
 def compute_genetic_analysis(results):
     try:
@@ -312,7 +314,7 @@ def compute_genetic_analysis(results):
                     if genom:
                         tmp_csv.write(f'{sha256},{genom}\n')
                 except Exception as e:
-                    logging.error(e)
+                    pass
 
             csv_data = pd.read_csv(tmp_csv.name, delimiter=',', header=None)
         labels = csv_data.pop(0)
@@ -328,5 +330,5 @@ def compute_genetic_analysis(results):
 
         return x
     except Exception as e:
-        logging.error(e)
+        pass
         return None

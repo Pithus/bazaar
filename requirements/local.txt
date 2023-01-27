@@ -37,4 +37,4 @@ pytest-django==4.1.0  # https://github.com/pytest-dev/pytest-django
 
 # APKiD
 # ------------------------------------------------------------------------------
-yara-python-dex>=1.0.1  # https://github.com/MobSF/yara-python-dex
+yara-python-dex>=1.0.3  # https://github.com/MobSF/yara-python-dex

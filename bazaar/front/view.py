@@ -1,5 +1,7 @@
 import logging
 from tempfile import NamedTemporaryFile
+import requests
+import hashlib
 
 from androguard.core.androconf import is_android
 from django.conf import settings
@@ -17,6 +19,7 @@ from django.views.generic import View
 from django_q.tasks import async_task
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers.actions import scan
+from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse_lazy
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
@@ -27,7 +30,7 @@ from androcfg.code_style import U39bStyle
 from bazaar.core.models import Yara
 from bazaar.core.tasks import analyze, retrohunt
 from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
-from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm
+from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status, generate_world_map, \
     transform_hl_results, get_sample_timeline, get_andro_cfg_storage_path
@@ -95,6 +98,8 @@ class ReportView(View):
 
         sha = kwargs['sha256']
         cache_key = f'html_report_{sha}'
+        if request.user.is_authenticated:
+            cache_key = f'html_report_{sha}_authenticated'
 
         # First, check if the report is already in cache
         cached_report = cache.get(cache_key)
@@ -115,6 +120,7 @@ class ReportView(View):
 
             # Find similar sample based on dexofuzzy
             similar_samples = None
+            similar_samples_extended = None
             try:
                 dexofuzzy_hash = result['dexofuzzy']['apk']
                 if dexofuzzy_hash:
@@ -124,6 +130,18 @@ class ReportView(View):
                         settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, sha)
             except Exception:
                 pass
+
+            if similar_samples:
+                res = []
+                for sha256, score in similar_samples:
+                    apk = get_sample_light(sha256)
+                    try:
+                        vt = apk[0]['source']['vt']
+                    except:
+                        vt = None
+                    res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
+
+                    similar_samples_extended = res
 
             # Find public hunting results
             hunting_matches = Yara.find_public_hunting_matches(sha)
@@ -141,12 +159,46 @@ class ReportView(View):
                 'status': status,
                 'map': map_svg,
                 'timeline': timeline,
+                'cache_key': f'{cache_key}_tpl',
                 'hunting_matches': hunting_matches,
-                'similar_samples': similar_samples,
+                'similar_samples': similar_samples_extended,
                 'cache_retention_time': cache_retention_time})
         except Exception as e:
             logging.exception(e)
             return redirect(reverse_lazy('front:home'))
+
+
+def basic_url_download_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+    if request.method == 'POST':
+        form = BasicUrlDownloadForm(request.POST)
+        if form.is_valid():
+            url = form.cleaned_data.get('url')
+            res = requests.get(url, stream=True)
+
+            if res.status_code not in [200, 301, 302]:
+                messages.warning(request, 'URL is not available.')
+                return redirect(reverse_lazy('front:home'))
+
+            sha256_hash = hashlib.sha256()
+            with NamedTemporaryFile() as tmp:
+                for chunk in res.iter_content(chunk_size=16 * 1024):
+                    tmp.write(chunk)
+                    sha256_hash.update(chunk)
+
+                sha256 = str(sha256_hash.hexdigest()).lower()
+                if is_android(tmp.name) != 'APK':
+                    messages.warning(request, 'Submitted file is not a valid APK.')
+
+                if default_storage.exists(sha256):
+                    return redirect(reverse_lazy('front:report', [sha256]))
+                else:
+                    default_storage.save(sha256, tmp)
+                    analyze(sha256)
+                    return redirect(reverse_lazy('front:report', [sha256]))
+
+    return redirect(reverse_lazy('front:home'))
 
 
 def basic_upload_view(request):
@@ -183,8 +235,20 @@ def similarity_search_view(request, sha256=''):
     if request.method == 'GET':
         form = SimilaritySearchForm(request.GET)
         results = None
+        res = []
         if form.is_valid():
             results = form.do_search(sha256)
+            for sha256, score in results:
+                apk = get_sample_light(sha256)
+                try:
+                    vt = apk[0]['source']['vt']
+                except:
+                    vt = None
+
+                res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
+
+            results = res
+
         return render(request, 'front/similarity_search.html', {'form': form, 'results': results})
 
 
@@ -234,7 +298,10 @@ def my_rules_view(request):
     if request.method == 'GET':
         my_rules = get_rules(request)
 
-    return render(request, 'front/yara_rules/my_rules.html', context={'my_rules': my_rules})
+    owner = request.user
+    token, _ = Token.objects.get_or_create(user=owner)
+
+    return render(request, 'front/yara_rules/my_rules.html', context={'my_rules': my_rules, 'my_token': token.key})
 
 
 def my_rule_create_view(request):
@@ -405,18 +472,20 @@ def my_retrohunt_view(request, uuid):
 
 
 def get_andgrocfg_code(request, sha256, foo):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+
     storage_path = get_andro_cfg_storage_path(sha256)
 
     out = default_storage.open(f'{storage_path}/{foo}').read()
 
     if f'{storage_path}/{foo}'.endswith('.raw'):
-        out_formatted = highlight(out,JavaLexer(), HtmlFormatter(style=U39bStyle, noclasses=True))
+        out_formatted = highlight(out, JavaLexer(), HtmlFormatter(style=U39bStyle, noclasses=True))
         return HttpResponse(out_formatted, content_type="text/html")
     elif f'{storage_path}/{foo}'.endswith('.png'):
         return HttpResponse(out, content_type='image/bmp')
-    else: 
+    else:
         return HttpResponse(out, content_type="image/bmp")
-
 
 
 def get_genom(request):
@@ -432,7 +501,8 @@ def get_genom(request):
         threat = 'unknown'
         try:
             genom = report.get('_source').get('andro_cfg').get('genom')
-            threat = report.get('_source').get('vt_report').get('attributes').get('popular_threat_classification').get('suggested_threat_label')
+            threat = report.get('_source').get('vt_report').get('attributes').get(
+                'popular_threat_classification').get('suggested_threat_label')
         except Exception:
             pass
         if genom:

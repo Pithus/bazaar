@@ -15,55 +15,98 @@
         </div>
       </div>
 
-      {# Search form #}
       <div class="row justify-content-center mt-2">
-        <div class="col-md-6 mt-2 mb-2">
-          <form class="form-horizontal text-center" method="get">
-            <div class="input-group">
-              {% if q %}
-                <input type="text" name="q" class="form-control" required value="{{ q }}">
-              {% else %}
-                <input type="text" name="q" class="form-control" required placeholder="Your query">
+        {# Search or upload file or download from URL #}
+        <div class="col-md-8 mt-2 mb-2">
+          <ul class="nav justify-content-center nav-pills mb-1" id="menu-tabs">
+            <li class="nav-item">
+              <a class="nav-link text-white" data-toggle="pill" href="#search" role="tab"
+                 id="search-tab" aria-controls="search" aria-selected="true">
+                Search
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" data-toggle="pill" href="#upload" role="tab"
+                 id="upload-tab" aria-controls="upload" aria-selected="true">
+                File
+              </a>
+            </li>
+            {% if request.user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link text-white" data-toggle="pill" href="#url_download" role="tab"
+                   id="url_download-tab" aria-controls="url_download" aria-selected="true">
+                  URL
+                </a>
+              </li>
+            {% endif %}
+          </ul>
+          <div class="row justify-content-center">
+            <div class="col-md-12 tab-content">
+              <div class="tab-pane" role="tabpanel" aria-labelledby="search-tab" id="search">
+                <form class="form-horizontal text-center" method="get">
+                  <div class="input-group">
+                    {% if q %}
+                      <input type="text" name="q" class="form-control" required value="{{ q }}">
+                    {% else %}
+                      <input type="text" name="q" class="form-control" required placeholder="Your query">
+                    {% endif %}
+                    <div class="input-group-append">
+                      <button class="btn btn-primary" type="submit"><i class="nf nf-oct-search"></i></button>
+                    </div>
+                  </div>
+                  <div class="control-group mt-1">
+                    <div class="controls">
+                      {% include "front/m_search_help.html" %}
+                      {% if request.user.is_authenticated and q|length > 0 and false %}
+                        {% include "front/m_search_save.html" %}
+                      {% endif %}
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="tab-pane" role="tabpanel" aria-labelledby="upload-tab" id="upload">
+                <form class="form-horizontal text-center" method="post" action="{% url "front:basic_upload" %}"
+                      enctype="multipart/form-data">{% csrf_token %}
+                  <div class="custom-file ">
+                    <input type="file" class="custom-file-input" id="file_upload_selector" name="apk">
+                    <label class="custom-file-label" for="file_upload_selector">APK to be analyzed
+                      ({{ max_size|filesizeformat }}
+                      max.)</label>
+                  </div>
+                  <div class="control-group mt-1">
+                    <div class="controls">
+                      <button type="submit" class="btn btn-primary" id="upload_btn">
+                        Upload
+                      </button>
+                      <a href="#" id="show_report_btn" style="display: none" class="btn btn-primary">
+                        Show report
+                      </a>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              {% if request.user.is_authenticated %}
+                <div class="tab-pane" role="tabpanel" aria-labelledby="url_download-tab" id="url_download">
+                  <form class="form text-center" method="post" action="{% url "front:basic_url_download" %}"
+                        enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input class="form-control" type="text" id="url" name="url" placeholder="URL to be downloaded">
+                    <button type="submit" class="btn btn-primary mt-1">
+                      Download and analyze
+                    </button>
+                  </form>
+                </div>
               {% endif %}
-              <div class="input-group-append">
-                <button class="btn btn-primary" type="submit"><i class="nf nf-oct-search"></i></button>
-              </div>
             </div>
-            <div class="control-group mt-1">
-              <div class="controls">
-                {% include "front/m_search_help.html" %}
-                {% if request.user.is_authenticated and q|length > 0 and false %}
-                  {% include "front/m_search_save.html" %}
-                {% endif %}
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="col-md-6 mt-2 mb-2">
-          <form class="form-horizontal text-center" method="post" action="{% url "front:basic_upload" %}"
-                enctype="multipart/form-data">{% csrf_token %}
-            <div class="custom-file ">
-              <input type="file" class="custom-file-input" id="customFile" name="apk">
-              <label class="custom-file-label" for="customFile">APK to be analyzed ({{ max_size|filesizeformat }}
-                max.)</label>
-            </div>
-            <div class="control-group mt-1">
-              <div class="controls">
-                <button type="submit" class="btn btn-primary" data-toggle="tooltip" data-placement="top"
-                        title="Malicious samples are automatically uploaded to MalwareBazaar.">
-                  <span class="text-warning"><i class="fa fa-exclamation-triangle"></i></span>
-                  Upload
-                </button>
-              </div>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
 
-      
-      <div class="row justify-content-center">
+
+      <div class="row justify-content-center mt-3">
         <div class="col text-center">
-            Try a real life example of Pithus on TryHackMe: <a href="https://tryhackme.com/room/androidmalwareanalysis">Android Malware Analysis</a>
+          Try a real life example of Pithus on TryHackMe: <a href="https://tryhackme.com/room/androidmalwareanalysis">Android
+          Malware Analysis</a>
         </div>
       </div>
       <div class="row justify-content-center">
