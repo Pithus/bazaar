@@ -721,8 +721,30 @@ def andro_cfg(sha256, force=False):
                 cfg = CFG(f.name, output_dir, 'raw')
                 cfg.compute_rules()
                 report = cfg.generate_json_report()
-                es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'andro_cfg': report}},
-                          retry_on_conflict=5)
+
+                # es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'andro_cfg': report}}, retry_on_conflict = 5)
+
+                rules = report['rules']
+
+                updated_rules = []
+                updated_report = {}
+                for rule in rules:
+                    for findings in rule['findings']:
+                        ssdeep_hash = findings['ssdeep_hash']
+                        chunk_size, chunk, double_chunk = ssdeep_hash.split(':')
+                        chunk_size = int(chunk_size)
+                        findings['chunk'] = chunk
+                        findings['chunk_size'] = chunk_size
+                        findings['double_chunk'] = double_chunk
+
+                    rule['findings'] = findings
+                    updated_rules.append(rule)
+
+                updated_report['rules'] = updated_rules
+
+                es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256,
+                          body={'doc': {'andro_cfg': updated_report}}, retry_on_conflict=5)
+
                 output_path = get_andro_cfg_storage_path(sha256)
                 files_to_upload = glob.glob(f'{output_dir}/**/*.bmp', recursive=True)
                 files_to_upload.extend(glob.glob(f'{output_dir}/**/*.png', recursive=True))

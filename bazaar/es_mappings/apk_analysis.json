@@ -602,19 +602,31 @@
               "findings": {
                 "properties": {
                   "id": {
-                    "type": "keyword",
+                    "type": "text",
                     "index": true
                   },
                   "call_by": {
-                    "type": "keyword",
+                    "type": "text",
                     "index": true
                   },
                   "evidence_file": {
-                    "type": "keyword",
+                    "type": "text",
                     "index": true
                   },
                   "ssdeep_hash": {
-                    "type": "keyword",
+                    "type": "text",
+                    "index": true
+                  },
+                  "chunk": {
+                    "type": "text",
+                    "index": true
+                  },
+                  "chunk_size": {
+                    "type": "text",
+                    "index": true
+                  },
+                  "double_chunk": {
+                    "type": "text",
                     "index": true
                   }
                 }

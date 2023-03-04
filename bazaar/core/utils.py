@@ -241,30 +241,49 @@ def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
 
 
 def get_matching_items_by_ssdeep_func(ssdeep_input, threshold_grade, index, sha256):
+    chunksize, chunk, double_chunk = ssdeep_input.split(':')
+    chunksize = int(chunksize)
     es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
-    ssdeep_value = ssdeep_input.split("=")[-1]
+    # ssdeep_value = ssdeep_input.split("=")[-1]
+    print("#######")
+    print([chunksize, chunksize * 2, int(chunksize / 2)])
     query = {
         "query": {
             "bool": {
-                "filter": [
+                "must": [
                     {
-                        "bool": {
-                            "should": [
+                        "terms": {
+                            "chunk_size": [chunksize, chunksize * 2, int(chunksize / 2)]
+                        }
+                    },
+                    {
+                        'bool': {
+                            'should': [
                                 {
-                                    "match_phrase": {
-                                        "andro_cfg.rules.findings.ssdeep_hash": ssdeep_value
+                                    'match': {
+                                        'chunk': {
+                                            'query': chunk
+                                        }
+                                    }
+                                },
+                                {
+                                    'match': {
+                                        'double_chunk': {
+                                            'query': double_chunk
+                                        }
                                     }
                                 }
                             ],
-                            "minimum_should_match": 1
+                            'minimum_should_match': 1
                         }
                     }
-                ],
+                ]
             }
         }
     }
 
     results = es.search(index=index, body=query)
+    print(results)
     sha256_list_to_return = []
 
     for record in results['hits']['hits']:
