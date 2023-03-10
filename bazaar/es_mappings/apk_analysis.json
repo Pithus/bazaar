@@ -628,36 +628,35 @@
                   "double_chunk": {
                     "type": "text",
                     "index": true
-                  }
-                }
-              },
-              "rule": {
-                "type": "object",
-                "properties": {
-                  "or_predicates": {
-                    "type": "text",
-                    "index": true
                   },
-                  "name": {
+                  "rule": {
+                    "properties": {
+                      "or_predicates": {
+                        "type": "text",
+                        "index": true
+                      },
+                      "name": {
+                        "type": "keyword",
+                        "index": true
+                      },
+                      "description": {
+                        "type": "text"
+                      },
+                      "title": {
+                        "type": "text",
+                        "index": true
+                      },
+                      "tags": {
+                        "type": "keyword",
+                        "index": true
+                      }
+                    }
+                  },
+                  "cfg_file": {
                     "type": "keyword",
                     "index": true
-                  },
-                  "description": {
-                    "type": "text"
-                  },
-                  "title": {
-                    "type": "text",
-                    "index": true
-                  },
-                  "tags": {
-                    "type": "keyword",
-                    "index": true
                   }
                 }
-              },
-              "cfg_file": {
-                "type": "keyword",
-                "index": true
               }
             }
           }
