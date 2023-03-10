@@ -240,20 +240,18 @@ def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
     return sha256_list_to_return
 
 
-def get_matching_items_by_ssdeep_func(ssdeep_input, threshold_grade, index, sha256):
-    chunksize, chunk, double_chunk = ssdeep_input.split(':')
+def get_matching_items_by_ssdeep_func(ssdeep_value, threshold_grade, index, sha256):
+    chunksize, chunk, double_chunk = ssdeep_value.split(':')
     chunksize = int(chunksize)
     es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
     # ssdeep_value = ssdeep_input.split("=")[-1]
-    print("#######")
-    print([chunksize, chunksize * 2, int(chunksize / 2)])
     query = {
         "query": {
             "bool": {
                 "must": [
                     {
                         "terms": {
-                            "chunk_size": [chunksize, chunksize * 2, int(chunksize / 2)]
+                            "andro_cfg.rules.findings.chunk_size": [chunksize, chunksize * 2, int(chunksize / 2)]
                         }
                     },
                     {
@@ -261,14 +259,14 @@ def get_matching_items_by_ssdeep_func(ssdeep_input, threshold_grade, index, sha2
                             'should': [
                                 {
                                     'match': {
-                                        'chunk': {
+                                        'andro_cfg.rules.findings.chunk': {
                                             'query': chunk
                                         }
                                     }
                                 },
                                 {
                                     'match': {
-                                        'double_chunk': {
+                                        'andro_cfg.rules.findings.double_chunk': {
                                             'query': double_chunk
                                         }
                                     }
@@ -283,18 +281,17 @@ def get_matching_items_by_ssdeep_func(ssdeep_input, threshold_grade, index, sha2
     }
 
     results = es.search(index=index, body=query)
-    print(results)
     sha256_list_to_return = []
 
     for record in results['hits']['hits']:
         if record['_source']['sha256'] != sha256:
             for rule in record['_source']['andro_cfg']['rules']:
-                ssdeep_grade_final = []
-                for find in rule['findings']:
-                    ssdeep_grade = ssdeep.compare(find['ssdeep_hash'], ssdeep_value)
-                    ssdeep_grade_final.append(ssdeep_grade)
+                chunk_size, chunk, double_chunk = rule['findings']['chunk_size'], rule['findings']['chunk'], rule['findings']['double_chunk']
+                record_ssdeep = f'{chunk_size}:{chunk}:{double_chunk}'
+                ssdeep_grade = ssdeep.compare(record_ssdeep, ssdeep_value)
 
-            sha256_list_to_return.append((record['_source']['sha256'], 100))
+                if ssdeep_grade >= threshold_grade:
+                    sha256_list_to_return.append((record['_source']['sha256'], ssdeep_grade))
 
     return sha256_list_to_return
 
