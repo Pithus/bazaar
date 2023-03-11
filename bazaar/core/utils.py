@@ -244,7 +244,6 @@ def get_matching_items_by_ssdeep_func(ssdeep_value, threshold_grade, index, sha2
     chunksize, chunk, double_chunk = ssdeep_value.split(':')
     chunksize = int(chunksize)
     es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
-    # ssdeep_value = ssdeep_input.split("=")[-1]
     query = {
         "query": {
             "bool": {
