@@ -14,7 +14,7 @@
                 <li>
                   <a class="btn btn-sm btn-link p-0 text-decoration-none" target="_blank"
                      href="{% url "front:get_andgrocfg_code" sha256 r.findings.evidence_file %}">{{r.findings.call_by}}</a>
-                <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:similarity_search' %}?hash={{ r.findings.ssdeep_hash }}&algorithm=func_hash" data-toggle="tooltip">
+                <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:similarity_search' %}?hash={{ r.findings.dexofuzzy_hash }}&algorithm=func_hash" data-toggle="tooltip">
                 <i class="nf nf-oct-search"></i></a>
                 </li>
             </ul>

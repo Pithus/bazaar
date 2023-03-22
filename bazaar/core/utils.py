@@ -283,14 +283,13 @@ def get_matching_items_by_ssdeep_func(ssdeep_value, threshold_grade, index, sha2
     sha256_list_to_return = []
 
     for record in results['hits']['hits']:
-        if record['_source']['sha256'] != sha256:
-            for rule in record['_source']['andro_cfg']['rules']:
-                chunk_size, chunk, double_chunk = rule['findings']['chunk_size'], rule['findings']['chunk'], rule['findings']['double_chunk']
-                record_ssdeep = f'{chunk_size}:{chunk}:{double_chunk}'
-                ssdeep_grade = ssdeep.compare(record_ssdeep, ssdeep_value)
+        for rule in record['_source']['andro_cfg']['rules']:
+            chunk_size, chunk, double_chunk = rule['findings']['chunk_size'], rule['findings']['chunk'], rule['findings']['double_chunk']
+            record_ssdeep = f'{chunk_size}:{chunk}:{double_chunk}'
+            ssdeep_grade = ssdeep.compare(record_ssdeep, ssdeep_value)
 
-                if ssdeep_grade >= threshold_grade:
-                    sha256_list_to_return.append((record['_source']['sha256'], ssdeep_grade))
+            if ssdeep_grade >= threshold_grade:
+                sha256_list_to_return.append((record['_source']['sha256'], ssdeep_grade))
 
     return sha256_list_to_return
 

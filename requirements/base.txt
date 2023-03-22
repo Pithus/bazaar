@@ -35,7 +35,7 @@ google-play-scraper
 gpapi
 requests
 dexofuzzy
-git+https://github.com/U039b/AndroCFG.git 
+git+https://github.com/evilcel3ri/AndroCFG.git
 vt-py
 scipy
 numpy

@@ -14,8 +14,8 @@ tmp_index = f'{original_index}_tmp'
 INDEX_NAME = "apk_analysis"
 
 # Set the old field name and the new field name
-OLD_FIELD_NAME = "ssdeed_hash"
-NEW_FIELD_NAME = "ssdeep_hash"
+OLD_FIELD_NAME = "ssdeep_hash"
+NEW_FIELD_NAME = "dexofuzzy_hash"
 # Set the old field name and the new field name
 
 # Load the new mapping from the provided JSON file

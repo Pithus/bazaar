@@ -724,7 +724,7 @@ def andro_cfg(sha256, force=False):
                 cfg.compute_rules()
                 report = cfg.generate_json_report()
 
-                # es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'andro_cfg': report}}, retry_on_conflict = 5)
+                es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'andro_cfg': report}}, retry_on_conflict = 5)
 
                 rules = report['rules']
 
@@ -732,8 +732,8 @@ def andro_cfg(sha256, force=False):
                 updated_report = {}
                 for rule in rules:
                     for findings in rule['findings']:
-                        ssdeep_hash = findings['ssdeep_hash']
-                        chunk_size, chunk, double_chunk = ssdeep_hash.split(':')
+                        dexofuzzy_hash = findings['dexofuzzy_hash']
+                        chunk_size, chunk, double_chunk = dexofuzzy_hash.split(':')
                         chunk_size = int(chunk_size)
                         findings['chunk'] = chunk
                         findings['chunk_size'] = chunk_size
