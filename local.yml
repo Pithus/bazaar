@@ -76,7 +76,7 @@ services:
       - 9300:9300
 
   mobsf:
-    image: opensecurity/mobile-security-framework-mobsf:v3.6.0
+    image: opensecurity/mobile-security-framework-mobsf:v3.4.6
     hostname: mobsf
     ports:
       - 8181:8000
