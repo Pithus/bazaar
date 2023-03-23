@@ -30,8 +30,8 @@ from django_q.tasks import async_task
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers.actions import scan
 from google_play_scraper import app
-from quark.Objects.quark import Quark
-from quark.Objects.quarkrule import QuarkRule
+from quark.core.quark import Quark
+from quark.core.struct.ruleobject import RuleObject as QuarkRule
 from tld import get_tld, is_tld
 from tqdm import tqdm
 
@@ -202,6 +202,7 @@ def execute_single_yara_rule(rule_id, sha256):
 
 
 def yara_analysis(sha256, rule_id=-1):
+    rule = None
     if rule_id == -1:
         for rule in Yara.objects.all():
             execute_single_yara_rule(rule.id, sha256)
@@ -217,6 +218,7 @@ def yara_analysis(sha256, rule_id=-1):
 
 
 def retrohunt(rule_id):
+    rule = None
     try:
         rule = Yara.objects.get(id=rule_id)
     except Exception as e:
@@ -532,7 +534,7 @@ def mobsf_analysis(sha256):
                 to_store = {
                     'analysis_date': report['timestamp'],
                     'average_cvss': report['average_cvss'],
-                    'security_score': report['security_score'],
+                    'security_score': report['appsec']['security_score'],
                     'size': report['size'],
                     'md5': report['md5'],
                     'sha1': report['sha1'],
