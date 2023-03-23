@@ -125,7 +125,7 @@ def execute_single_yara_rule(rule_id, sha256):
     if not default_storage.exists(sha256):
         reason = f'{sha256} not found, unable to analyze'
         logging.error(reason)
-        return { 'status': 'error', 'info': ''}
+        return {'status': 'error', 'info': ''}
 
     es_index = rule.get_es_index_name()
 
@@ -138,7 +138,7 @@ def execute_single_yara_rule(rule_id, sha256):
         yara_rule = yara.compile(source=rule.content)
     except Exception as e:
         logging.error(e)
-        return { 'status': 'error', 'info': ''}
+        return {'status': 'error', 'info': ''}
 
     document_uuid = uuid.uuid4()
     res_struct = {
@@ -207,10 +207,8 @@ def yara_analysis(sha256, rule_id=-1):
         for rule in Yara.objects.all():
             execute_single_yara_rule(rule.id, sha256)
     else:
-        # TODO: handle missing yara rule
         execute_single_yara_rule(rule_id, sha256)
 
-    # TODO
     del rule
     gc.collect()
 
@@ -226,8 +224,8 @@ def retrohunt(rule_id):
         return
 
     for report in scan(es, query={"query": {"match_all": {}}},
-                               index=settings.ELASTICSEARCH_APK_INDEX,
-                               ):
+                       index=settings.ELASTICSEARCH_APK_INDEX,
+                       ):
         _id = report.get('_source').get('sha256')
         execute_single_yara_rule(rule.id, _id)
 
@@ -481,6 +479,7 @@ def _dict_to_list(d):
         ret.append(v)
     return ret
 
+
 def _check_tld(d):
     res = []
     for v in d:
@@ -493,8 +492,9 @@ def _check_tld(d):
                 continue
         except:
             continue
-    
-    return res 
+
+    return res
+
 
 def _check_urls(d):
     res = []
@@ -508,9 +508,8 @@ def _check_urls(d):
                     continue
             except:
                 continue
-   
-    return res
 
+    return res
 
 
 def mobsf_analysis(sha256):
@@ -704,7 +703,7 @@ def malware_bazaar_analysis(sha256):
 
 
 def andro_cfg(sha256, force=False):
-    if default_storage.size(sha256) > 3*10485760:
+    if default_storage.size(sha256) > 3 * 10485760:
         return
 
     try:
@@ -722,8 +721,28 @@ def andro_cfg(sha256, force=False):
                 cfg = CFG(f.name, output_dir, 'raw')
                 cfg.compute_rules()
                 report = cfg.generate_json_report()
-                es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'andro_cfg': report}},
-                          retry_on_conflict=5)
+
+                rules = report['rules']
+
+                updated_rules = []
+                updated_report = {}
+                for rule in rules:
+                    for findings in rule['findings']:
+                        dexofuzzy_hash = findings['dexofuzzy_hash']
+                        chunk_size, chunk, double_chunk = dexofuzzy_hash.split(':')
+                        chunk_size = int(chunk_size)
+                        findings['chunk'] = chunk
+                        findings['chunk_size'] = chunk_size
+                        findings['double_chunk'] = double_chunk
+
+                    rule['findings'] = findings
+                    updated_rules.append(rule)
+
+                updated_report['rules'] = updated_rules
+
+                es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256,
+                          body={'doc': {'andro_cfg': updated_report}}, retry_on_conflict=5)
+
                 output_path = get_andro_cfg_storage_path(sha256)
                 files_to_upload = glob.glob(f'{output_dir}/**/*.bmp', recursive=True)
                 files_to_upload.extend(glob.glob(f'{output_dir}/**/*.png', recursive=True))

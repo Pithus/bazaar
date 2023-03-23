@@ -592,8 +592,75 @@
         "enabled": false
       },
       "andro_cfg": {
-        "type": "object",
-        "enabled": false
+        "properties": {
+          "genom": {
+            "type": "object",
+            "enabled": false
+          },
+          "rules": {
+            "properties": {
+              "findings": {
+                "properties": {
+                  "id": {
+                    "type": "text",
+                    "index": true
+                  },
+                  "call_by": {
+                    "type": "text",
+                    "index": true
+                  },
+                  "evidence_file": {
+                    "type": "text",
+                    "index": true
+                  },
+                  "ssdeep_hash": {
+                    "type": "text",
+                    "index": true
+                  },
+                  "chunk": {
+                    "type": "text",
+                    "index": true
+                  },
+                  "chunk_size": {
+                    "type": "text",
+                    "index": true
+                  },
+                  "double_chunk": {
+                    "type": "text",
+                    "index": true
+                  },
+                  "rule": {
+                    "properties": {
+                      "or_predicates": {
+                        "type": "text",
+                        "index": true
+                      },
+                      "name": {
+                        "type": "keyword",
+                        "index": true
+                      },
+                      "description": {
+                        "type": "text"
+                      },
+                      "title": {
+                        "type": "text",
+                        "index": true
+                      },
+                      "tags": {
+                        "type": "keyword",
+                        "index": true
+                      }
+                    }
+                  },
+                  "cfg_file": {
+                    "type": "keyword",
+                    "index": true
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "vt": {
         "properties": {
@@ -914,14 +981,14 @@
             }
           },
           "type": {
-        "type": "text",
-        "fields": {
-          "keyword": {
-            "type": "keyword",
-            "ignore_above": 256
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
           }
-        }
-      }
         }
       },
       "threat_name": {
