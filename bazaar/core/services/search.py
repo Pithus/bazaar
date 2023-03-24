@@ -87,7 +87,7 @@ def similarity_search(search_hash, algorithm, ignore_sha=''):
                 )
             case 'func_hash':
                 results = get_matching_items_by_ssdeep_func(
-                    search_hash, 25, settings.ELASTICSEARCH_APK_INDEX, ignore_sha
+                    search_hash, 25, settings.ELASTICSEARCH_APK_INDEX
                 )
     except Exception as e:
         logging.error(e)
