@@ -714,6 +714,7 @@ def andro_cfg(sha256, force=False):
         return
 
     with NamedTemporaryFile() as f:
+
         f.write(default_storage.open(sha256).read())
         f.seek(0)
         with TemporaryDirectory() as output_dir:

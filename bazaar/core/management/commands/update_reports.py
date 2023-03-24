@@ -16,13 +16,21 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         sha256 = options['hash']
         tasks = options['tasks']
-
+        reports = []
         if '*' in sha256:
             for report in scan(es,
-                                  query={"query": {"match_all": {}}},
+                                  query={"query": {"match_all": {}},"_source": ["uploaded_at", "sha256"]},
                                   index=settings.ELASTICSEARCH_APK_INDEX,
                                   ):
-                _id = report.get('_source').get('sha256')
+                reports.append(report['_source'])
+
+            reports = sorted(reports, key=lambda x: x.get('uploaded_at'), reverse=True)
+            counter = 1
+            for r in reports:
+                _id = r.get('sha256')
+                _date = r.get('uploaded_at')
+                print(f'Progress -- {counter}/{len(reports)} -- {_id} -- {_date}')
+                counter += 1
                 try:
                     self._handle_sample(_id, tasks)
                 except Exception as e:
