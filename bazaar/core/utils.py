@@ -240,7 +240,8 @@ def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
     return sha256_list_to_return
 
 
-def get_matching_items_by_ssdeep_func(ssdeep_value, threshold_grade, index, sha256):
+def get_matching_items_by_ssdeep_func(ssdeep_value, threshold_grade, index):
+    ssdeep_value = ssdeep_value.replace(" ", "+").replace("%2F", "/")
     chunksize, chunk, double_chunk = ssdeep_value.split(':')
     chunksize = int(chunksize)
     es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
