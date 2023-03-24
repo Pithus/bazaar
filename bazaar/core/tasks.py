@@ -727,6 +727,7 @@ def andro_cfg(sha256, force=False):
                 updated_rules = []
                 updated_report = {}
                 for rule in rules:
+                    res = []
                     for findings in rule['findings']:
                         dexofuzzy_hash = findings['dexofuzzy_hash']
                         chunk_size, chunk, double_chunk = dexofuzzy_hash.split(':')
@@ -734,8 +735,9 @@ def andro_cfg(sha256, force=False):
                         findings['chunk'] = chunk
                         findings['chunk_size'] = chunk_size
                         findings['double_chunk'] = double_chunk
+                        res.append(findings)
 
-                    rule['findings'] = findings
+                    rule['findings'] = res
                     updated_rules.append(rule)
 
                 updated_report['rules'] = updated_rules
