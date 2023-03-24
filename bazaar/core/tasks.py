@@ -531,23 +531,22 @@ def mobsf_analysis(sha256):
                 mobsf.delete_scan(response)
 
                 to_store = {
-                    'analysis_date': report['timestamp'],
-                    'average_cvss': report['average_cvss'],
-                    'security_score': report['appsec']['security_score'],
-                    'size': report['size'],
-                    'md5': report['md5'],
-                    'sha1': report['sha1'],
-                    'icon_hidden': report['icon_hidden'],
-                    'icon_found': report['icon_found'],
-                    'manifest_analysis': report['manifest_analysis'],
-                    'network_security': report['network_security'],
-                    'file_analysis': report['file_analysis'],
-                    # 'binary_analysis': report['binary_analysis'],
+                    'analysis_date': report['timestamp'] if 'timestamp' in report else None,
+                    'average_cvss': report['average_cvss'] if 'average_cvss' in report else None,
+                    'size': report['size'] if 'size' in report else None,
+                    'md5': report['md5'] if 'md5' in report else None,
+                    'sha1': report['sha1'] if 'sha1' in report else None,
+                    'icon_hidden': report['icon_hidden'] if 'icon_hidden' in report else None,
+                    'icon_found': report['icon_found'] if 'icon_found' in report else None,
+                    'manifest_analysis': report['manifest_analysis'] if 'manifest_analysis' in report else None,
+                    'network_security': report['network_security'] if 'network_security' in report else None,
+                    'file_analysis': report['file_analysis'] if 'file_analysis' in report else None,
+                    'email_analysis': report['emails'] if 'emails' in report else None,
+                    'secrets': report['secrets'] if 'secrets' in report else None,
+                    'firebase_urls': report['firebase_urls'] if 'firebase_urls' in report else None,
+                    'playstore_details': report['playstore_details'] if 'playstore_details' in report else None,
+                    # 'security_score': report['appsec']['security_score'] ,
                     'url_analysis': _check_urls(report['urls']),
-                    'email_analysis': report['emails'],
-                    'secrets': report['secrets'],
-                    'firebase_urls': report['firebase_urls'],
-                    'playstore_details': report['playstore_details'],
                     'browsable_activities': _dict_to_list(report['browsable_activities']),
                     'detailed_permissions': _dict_to_list(report['permissions']),
                     'android_api_analysis': _dict_to_list(report['android_api']),
@@ -561,7 +560,8 @@ def mobsf_analysis(sha256):
 
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': 2}},
                   retry_on_conflict=5)
-    except Exception:
+    except Exception as e:
+        print(e)
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': -1}},
                   retry_on_conflict=5)
 

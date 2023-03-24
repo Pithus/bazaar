@@ -3,7 +3,7 @@
   <p class="text-muted small">Information computed by
     <a class="small" target="_blank" href="https://github.com/pithus/bazaar">Pithus</a>.
   </p>
-  
+
   {% for r in andro_cfg.rules %}
     <div class="row">
       <div class="col-md-12">
@@ -14,18 +14,20 @@
                 <li>
                   <a class="btn btn-sm btn-link p-0 text-decoration-none" target="_blank"
                      href="{% url "front:get_andgrocfg_code" sha256 r.findings.evidence_file %}">{{r.findings.call_by}}</a>
-                <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:similarity_search' %}?hash={{ r.findings.dexofuzzy_hash }}&algorithm=func_hash" data-toggle="tooltip">
+                <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:similarity_search' %}?hash={{ r.findings.dexofuzzy_hash }}&algorithm=func_hash">
                 <i class="nf nf-oct-search"></i></a>
                 </li>
             </ul>
           </div>
-          <div class="col-md-5 text-center">
-            <a class="btn btn-sm btn-link p-0 text-decoration-none" target="_blank"
-               href="{% url "front:get_andgrocfg_code" sha256 r.cfg_file %}.png">
-              <img src="{% url "front:get_andgrocfg_code" sha256 r.cfg_file %}.png" class="img-fluid mb-4"
-                   style="max-height: 8em;">
-            </a>
-          </div>
+          {% if r.cfg_file %}
+            <div class="col-md-5 text-center">
+              <a class="btn btn-sm btn-link p-0 text-decoration-none" target="_blank"
+                 href="{% url "front:get_andgrocfg_code" sha256 r.cfg_file %}.png">
+                <img src="{% url "front:get_andgrocfg_code" sha256 r.cfg_file %}.png" class="img-fluid mb-4"
+                     style="max-height: 8em;">
+              </a>
+            </div>
+          {% endif %}
         </div>
       </div>
     </div>

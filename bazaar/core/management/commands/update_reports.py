@@ -59,7 +59,7 @@ class Command(BaseCommand):
                 async_task(quark_analysis, sha256)
             if 'g' in tasks:
                 print(f'Start andro_cfg for {sha256}')
-                andro_cfg(sha256)
+                andro_cfg(sha256, force=True)
             if 'y' in tasks:
                 print(f'Start yara_analysis for {sha256}')
                 yara_analysis(sha256)

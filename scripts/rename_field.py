@@ -2,6 +2,7 @@
 # docker-compose -f production.yml run --rm django python manage.py shell
 
 import json
+from django.core.files.storage import default_storage
 
 from django.conf import settings
 from elasticsearch import Elasticsearch
@@ -23,6 +24,13 @@ with open("bazaar/es_mappings/apk_analysis.json") as f:
     new_mapping = json.load(f)
 es.indices.create(index=tmp_index, body=new_mapping)
 
+# Get all APKs
+_, hashes = default_storage.listdir('.')
+for hash in hashes:
+    if es.exists(original_index, id=hash):
+        result = es.get(index=original_index, id=hash)['_source']
+        es.index(index=tmp_index, id=hash, body=result)
+
 # Update the mapping for the field
 new_mapping["mappings"]["properties"]["andro_cfg"]["properties"]["rules"]["properties"]["findings"]["properties"][NEW_FIELD_NAME] = {
         "type": "keyword",
@@ -33,15 +41,17 @@ del new_mapping["mappings"]["properties"]["andro_cfg"]["properties"]["rules"]["p
 
 reindex = {
     "source": {
-        "index": INDEX_NAME
+        "index": original_index
     },
     "dest": {
-        "index": f"{INDEX_NAME}_new"
+        "index": tmp_index
     },
     "script": {
         "source": f"ctx._source.remove('{OLD_FIELD_NAME}'); ctx._source.{NEW_FIELD_NAME} = ctx._source.remove('{OLD_FIELD_NAME}')"
     }
 }
+
+es.reindex(body=reindex)
 
 es.indices.delete(index=original_index)
 es.indices.create(index=original_index, body=new_mapping)
