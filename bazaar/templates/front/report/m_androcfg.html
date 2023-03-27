@@ -14,9 +14,9 @@
               {% for f in r.findings %}
                 <li>
                   <a class="btn btn-sm btn-link p-0 text-decoration-none" target="_blank"
-                     href="{% url "front:get_andgrocfg_code" sha256 f.evidence_file %}">{{f.call_by}}</a>
-                <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:similarity_search' %}?hash={{ f.dexofuzzy_hash }}&algorithm=func_hash">
-                <i class="nf nf-oct-search"></i></a>
+                    href="{% url "front:get_andgrocfg_code" sha256 f.evidence_file %}">{{f.call_by}}</a>
+                  <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:similarity_search' %}?hash={{ f.dexofuzzy_hash|urlencode }}&algorithm=func_hash">
+                  <i class="nf nf-oct-search"></i></a>
                 </li>
                 {% endfor %}
             </ul>

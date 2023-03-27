@@ -48,7 +48,7 @@ class SimilaritySearchForm(forms.Form):
             if algorithm == 'ssdeep':
                 results = get_matching_items_by_ssdeep(hash, 25, settings.ELASTICSEARCH_SSDEEP_APK_INDEX, sha)
             if algorithm == 'func_hash':
-                results = get_matching_items_by_ssdeep_func(hash, 25, settings.ELASTICSEARCH_APK_INDEX, sha)
+                results = get_matching_items_by_ssdeep_func(hash, 25, settings.ELASTICSEARCH_APK_INDEX)
 
         except Exception as e:
             print(e)
