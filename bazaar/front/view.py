@@ -853,3 +853,16 @@ def get_genom(request):
 
 def instance_status(request):
     return render(request, 'front/instance_status.html')
+
+
+def compare_analysis_view(request, left_sha, right_sha):
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+
+    try:
+        left_result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=left_sha)['_source']
+        right_result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=right_sha)['_source']
+    except Exception as e:
+        logging.exception(e)
+        return redirect(reverse_lazy('front:home'))
+
+    return render(request, 'front/compare_analysis.html', context={'left_analysis': left_result, 'right_analysis': right_result})
