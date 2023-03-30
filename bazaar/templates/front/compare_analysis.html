@@ -14,12 +14,276 @@
         it works
       </div>
     </div>
-
-    <div class="col">
-      {{left_analysis }}
-    </div>
-
-    <!-- container-->
   </div>
+  <!-- container-->
 </div>
+
+<table class="table table-condensed">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Left APK (report)</th>
+      <th>Right APK (report)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <p>Handle</p>
+      </td>
+      <td>
+        <p>{{ left_analysis.handle }}</p>
+      </td>
+      <td>
+        <p>{{ right_analysis.handle }}</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>App name</p>
+      </td>
+      <td>{{left_analysis.app_name}}</td>
+      <td>{{right_analysis.app_name}}</td>
+    </tr>
+    <tr>
+      <td>MD5</td>
+      <td>{{left_analysis.md5}}</td>
+      <td>{{right_analysis.md5}}</td>
+    </tr>
+    <tr>
+      <td>SHA1</td>
+      <td>{{left_analysis.sha1}}</td>
+      <td>{{right_analysis.sha1}}</td>
+    </tr>
+    <tr>
+      <td>SHA256</td>
+      <td>{{left_analysis.sha256}}</td>
+      <td>{{right_analysis.sha256}}</td>
+    </tr>
+    <tr>
+      <td>Size</td>
+      <td>{{left_analysis.size}}</td>
+      <td>{{right_analysis.size}}</td>
+    </tr>
+    <tr>
+      <td>Frosting data</td>
+      <td>
+        {% if left_analysis.frosting_data.is_frosted %}
+        <span class="badge badge-success">Frosted</span>
+        {% else %}
+        <span class="badge badge-danger">Not frosted</span>
+        {% endif %}
+        {% if d.frosting_data.v2_signature_blocks|length > 0 %}
+        <div class="small">
+          Blocks found within V2 signature:
+          <ul class="list-unstyled mt-0">
+            {% for elt in d.frosting_data.v2_signature_blocks %}
+            <li><samp>{{ elt.value }}</samp>: {{ elt.comment }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+      </td>
+      <td>
+        {% if right_analysis.frosting_data.is_frosted %}
+        <span class="badge badge-success">Frosted</span>
+        {% else %}
+        <span class="badge badge-danger">Not frosted</span>
+        {% endif %}
+        {% if d.frosting_data.v2_signature_blocks|length > 0 %}
+        <div class="small">
+          Blocks found within V2 signature:
+          <ul class="list-unstyled mt-0">
+            {% for elt in d.frosting_data.v2_signature_blocks %}
+            <li><samp>{{ elt.value }}</samp>: {{ elt.comment }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>Main activity</p>
+      </td>
+      <td>
+        <p>{{left_analysis.main_activity}}</p>
+      </td>
+      <td>
+        <p>{{right_analysis.main_activity}}</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <p>Activities</p>
+      </td>
+      <td>
+        <ul class="list-unstyled">
+          {% for activity in left_analysis.activities %}
+          <li>
+            <pre><code>{{activity}}</code></pre>
+          </li>
+          {% endfor %}
+        </ul>
+      </td>
+      <td>
+        <ul class="list-unstyled">
+          {% for activity in right_analysis.activities %}
+          <li>
+            <pre><code>{{activity}}</code></pre>
+          </li>
+          {% endfor %}
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>Receivers</td>
+      <td>
+        <pre><code>{% for s in left_analysis.receivers %}{{ s }}<br>{% endfor %}</code></pre>
+      </td>
+      <td>
+        <pre><code>{% for s in right_analysis.receivers %}{{ s }}<br>{% endfor %}</code></pre>
+      </td>
+    </tr>
+    <tr>
+      <td>Services</td>
+      <td>
+        <pre><code>{% for s in left_analysis.services %}{{ s }}<br>{% endfor %}</code></pre>
+      </td>
+      <td>
+        <pre><code>{% for s in right_analysis.services %}{{ s }}<br>{% endfor %}</code></pre>
+      </td>
+    </tr>
+    <tr>
+      <td>APKiD</td>
+      {% for p in left_analysis.apkid|dictsort:"filename" %}
+      <td class=""><samp>{{ p.filename }}</samp>
+        {% for k, v in p.matches.items %}
+        {{ k }}
+        <ul class="list-unstyled">
+          {% for c in v %}
+          <li><samp>{{ c }}</samp></li>
+          {% endfor %}
+        </ul>
+        {% endfor %}
+        {% endfor %}
+      </td>
+      {% for p in right_analysis.apkid|dictsort:"filename" %}
+      <td class=""><samp>{{ p.filename }}</samp>
+        {% for k, v in p.matches.items %}
+        {{ k }}
+        <ul class="list-unstyled">
+          {% for c in v %}
+          <li><samp>{{ c }}</samp></li>
+          {% endfor %}
+        </ul>
+        {% endfor %}
+        {% endfor %}
+      </td>
+    </tr>
+    <tr>
+      <td>Certificate</td>
+      <td>
+        {% for c in left_analysis.certificates %}
+        <ul class="list-unstyled">
+          <li><samp>{{ c.fingerprint_md5 }}</samp>
+            {% include "front/report/m_copy_to_clipboard.html" with data=c.fingerprint_md5 %}
+            <a class="btn btn-sm btn-link p-0 text-decoration-none"
+              href="{% url 'front:home' %}?q=cert_md5:{{ c.fingerprint_md5 }}" data-toggle="tooltip"
+              data-placement="top" title="Find similar samples">
+              <i class="nf nf-oct-search"></i>
+            </a>
+          </li>
+          <li><samp>{{ c.fingerprint_sha1 }}</samp>
+            {% include "front/report/m_copy_to_clipboard.html" with data=c.fingerprint_sha1 %}
+            <a class="btn btn-sm btn-link p-0 text-decoration-none"
+              href="{% url 'front:home' %}?q=cert_sha1:{{ c.fingerprint_sha1 }}" data-toggle="tooltip"
+              data-placement="top" title="Find similar samples">
+              <i class="nf nf-oct-search"></i>
+            </a>
+          </li>
+          <li><samp>{{ c.fingerprint_sha256 }}</samp>
+            {% include "front/report/m_copy_to_clipboard.html" with data=c.fingerprint_sha256 %}
+            <a class="btn btn-sm btn-link p-0 text-decoration-none"
+              href="{% url 'front:home' %}?q=cert_sha256:{{ c.fingerprint_sha256 }}" data-toggle="tooltip"
+              data-placement="top" title="Find similar samples">
+              <i class="nf nf-oct-search"></i>
+            </a>
+          </li>
+          <li><samp>{{ c.issuer }}</samp>
+            {% include "front/report/m_copy_to_clipboard.html" with data=c.issuer %} </li>
+          <li><samp>{{ c.not_before }}</samp>
+            {% include "front/report/m_copy_to_clipboard.html" with data=c.not_before %}
+          </li>
+          <li><samp>{{ c.not_after }}</samp>
+            {% include "front/report/m_copy_to_clipboard.html" with data=c.not_after %}
+          </li>
+          {% endfor %}
+        </ul>
+      </td>
+      <td>
+        {% for c in right_analysis.certificates %}
+        <ul class="list-unstyled">
+          <li><samp>{{ c.fingerprint_md5 }}</samp>
+            {% include "front/report/m_copy_to_clipboard.html" with data=c.fingerprint_md5 %}
+            <a class="btn btn-sm btn-link p-0 text-decoration-none"
+              href="{% url 'front:home' %}?q=cert_md5:{{ c.fingerprint_md5 }}" data-toggle="tooltip"
+              data-placement="top" title="Find similar samples">
+              <i class="nf nf-oct-search"></i>
+            </a>
+          </li>
+          <li><samp>{{ c.fingerprint_sha1 }}</samp>
+            {% include "front/report/m_copy_to_clipboard.html" with data=c.fingerprint_sha1 %}
+            <a class="btn btn-sm btn-link p-0 text-decoration-none"
+              href="{% url 'front:home' %}?q=cert_sha1:{{ c.fingerprint_sha1 }}" data-toggle="tooltip"
+              data-placement="top" title="Find similar samples">
+              <i class="nf nf-oct-search"></i>
+            </a>
+          </li>
+          <li><samp>{{ c.fingerprint_sha256 }}</samp>
+            {% include "front/report/m_copy_to_clipboard.html" with data=c.fingerprint_sha256 %}
+            <a class="btn btn-sm btn-link p-0 text-decoration-none"
+              href="{% url 'front:home' %}?q=cert_sha256:{{ c.fingerprint_sha256 }}" data-toggle="tooltip"
+              data-placement="top" title="Find similar samples">
+              <i class="nf nf-oct-search"></i>
+            </a>
+          </li>
+          <li><samp>{{ c.issuer }}</samp>
+            {% include "front/report/m_copy_to_clipboard.html" with data=c.issuer %} </li>
+          <li><samp>{{ c.not_before }}</samp>
+            {% include "front/report/m_copy_to_clipboard.html" with data=c.not_before %}
+          </li>
+          <li><samp>{{ c.not_after }}</samp>
+            {% include "front/report/m_copy_to_clipboard.html" with data=c.not_after %}
+          </li>
+          {% endfor %}
+        </ul>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <p>Permissions</p>
+      </td>
+      <td>
+        <ul class="list-unstyled">
+          {% for permission in left_analysis.permissions %}
+          <li>{{permission}}</li>
+          {% endfor %}
+        </ul>
+      </td>
+      <td>
+        <ul class="list-unstyled">
+          {% for permission in right_analysis.permissions %}
+          <li>{{permission}}</li>
+          {% endfor %}
+        </ul>
+      </td>
+    </tr>
+
+
+
+  </tbody>
+</table>
+{{left_analysis}}
+
+
 {% endblock whole_content %}
