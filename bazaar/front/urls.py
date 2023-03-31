@@ -30,6 +30,7 @@ urlpatterns = [
     path("similar/<str:sha256>", view=similarity_search_view, name="similarity_search"),
     path("androcfg/<str:sha256>/<path:foo>", view=get_andgrocfg_code, name="get_andgrocfg_code"),
     path("androcfg/all", view=get_genom, name="get_genom"),
+<<<<<<< HEAD
     path("status", view=instance_status, name="instance_status"),
     path("url/", view=basic_url_download_view, name="basic_url_download"),
     path("workspace/", view=workspace_view, name="workspace"),
@@ -37,5 +38,8 @@ urlpatterns = [
     path("comment/<uuid:comment_id>/delete", view=delete_comment_view, name="delete_comment"),
     path("notifications", view=notifications_view, name="notifications_url"),
     path("notifications/<uuid:notif_id>/delete", view=notification_delete_view, name="notifications_url"),
+=======
+    path("compare/", view=compare_analysis_view, name="compare_analysis"),
+>>>>>>> 3ca8256 (save)
     path("compare/<str:left_sha>/to/<str:right_sha>", view=compare_analysis_view, name="compare_analysis")
 ]

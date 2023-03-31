@@ -31,10 +31,17 @@ from bazaar.core.services import RulesService
 from bazaar.core.services import GenomService
 from bazaar.core.services import NotificationsService
 
+<<<<<<< HEAD
 from bazaar.core.models import Yara, Bookmark, Comment, Notification
 from bazaar.core.modules.pithus import retrohunt
 from bazaar.core.utils import get_matching_items_by_dexofuzzy
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm, CommentForm
+=======
+from bazaar.core.models import Yara
+from bazaar.core.tasks import analyze, retrohunt
+from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
+from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm, CompareSearchForm
+>>>>>>> 3ca8256 (save)
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import get_similarity_matrix, generate_world_map, \
     get_sample_timeline, get_andro_cfg_storage_path
@@ -855,14 +862,13 @@ def instance_status(request):
     return render(request, 'front/instance_status.html')
 
 
-def compare_analysis_view(request, left_sha, right_sha):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+def compare_analysis_view(request, *args, **kwargs):
+    if request.method == 'GET':
+        # print(request.__dict__)
 
-    try:
-        left_result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=left_sha)['_source']
-        right_result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=right_sha)['_source']
-    except Exception as e:
-        logging.exception(e)
-        return redirect(reverse_lazy('front:home'))
+        f = CompareSearchForm(request.GET)
+        print(f)
 
-    return render(request, 'front/compare_analysis.html', context={'left_analysis': left_result, 'right_analysis': right_result})
+        left_result = ""
+        right_result = ""
+        return render(request, 'front/compare_analysis.html', context={'left_analysis': left_result, 'right_analysis': right_result})
