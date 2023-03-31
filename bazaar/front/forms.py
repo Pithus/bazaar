@@ -114,3 +114,50 @@ class YaraCreateForm(ModelForm):
     class Meta:
         model = Yara
         fields = ['title', 'content', 'is_private']
+
+
+class CompareSearchForm(forms.Form):
+    left_hash = forms.CharField()
+    right_hash = forms.CharField()
+
+    def do_search(self):
+        print(self.cleaned_data['left_hash'])
+        left_hash = self.cleaned_data['left_hash']
+
+        results = None
+        query = {
+            "query": {
+                "query_string": {
+                    "default_field": "sha256",
+                    "query": left_hash,
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "*": {"pre_tags": ["<mark>"], "post_tags": ["</mark>"]}
+                }
+            },
+            "aggs": {
+                "permissions": {
+                    "terms": {"field": "permissions.keyword"}
+                },
+                "domains": {
+                    "terms": {"field": "domains_analysis._name.keyword"}
+                },
+                "android_features": {
+                    "terms": {"field": "features.keyword"}
+                }
+            },
+            "sort": {"analysis_date": "desc"},
+            "_source": ["apk_hash", "sha256", "uploaded_at", "icon_base64", "handle", "app_name",
+                        "version_code", "size", "dexofuzzy.apk", "quark.threat_level", "vt", "is_signed", "frosting_data.is_frosted", "features"],
+            "size": 50,
+        }
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+        try:
+            raw_results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
+            results = transform_hl_results(raw_results)
+        except Exception as e:
+            return [], [], None
+
+        return results
