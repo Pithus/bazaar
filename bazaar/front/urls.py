@@ -24,6 +24,5 @@ urlpatterns = [
     path("rules/<str:uuid>/retro", view=my_retrohunt_view, name="my_rule_retro"),
     path("androcfg/<str:sha256>/<path:foo>", view=get_andgrocfg_code, name="get_andgrocfg_code"),
     path("androcfg/all", view=get_genom, name="get_genom"),
-    path("compare/", view=compare_analysis_view, name="compare_analysis"),
-    path("compare/<str:left_sha>/to/<str:right_sha>", view=compare_analysis_view, name="compare_analysis")
+    path("compare/", view=compare_analysis_view, name="compare_analysis")
 ]
