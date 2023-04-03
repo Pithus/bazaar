@@ -31,17 +31,10 @@ from bazaar.core.services import RulesService
 from bazaar.core.services import GenomService
 from bazaar.core.services import NotificationsService
 
-<<<<<<< HEAD
 from bazaar.core.models import Yara, Bookmark, Comment, Notification
 from bazaar.core.modules.pithus import retrohunt
 from bazaar.core.utils import get_matching_items_by_dexofuzzy
-from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm, CommentForm
-=======
-from bazaar.core.models import Yara
-from bazaar.core.tasks import analyze, retrohunt
-from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
-from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm, CompareSearchForm
->>>>>>> 3ca8256 (save)
+from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm, CommentForm, CompareSearchForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import get_similarity_matrix, generate_world_map, \
     get_sample_timeline, get_andro_cfg_storage_path
@@ -864,11 +857,13 @@ def instance_status(request):
 
 def compare_analysis_view(request, *args, **kwargs):
     if request.method == 'GET':
-        # print(request.__dict__)
-
         f = CompareSearchForm(request.GET)
-        print(f)
+        res = []
+        left_res, right_res = None
+        if f.is_valid:
+            print("valid form")
+            res = f.do_search()
+            left_res = res[0][0]
+            right_res = res[0][1]
 
-        left_result = ""
-        right_result = ""
-        return render(request, 'front/compare_analysis.html', context={'left_analysis': left_result, 'right_analysis': right_result})
+        return render(request, 'front/compare_analysis.html', context={'left_analysis': left_res, 'right_analysis': right_res})
