@@ -512,16 +512,21 @@ def get_genom(request):
     response['Content-Disposition'] = f'inline; filename=pithus_genom.csv'
     return response
 
-
 def compare_analysis_view(request, *args, **kwargs):
     if request.method == 'GET':
         f = CompareSearchForm(request.GET)
-        res = []
-        left_res, right_res = None
-        if f.is_valid:
-            print("valid form")
-            res = f.do_search()
-            left_res = res[0][0]
-            right_res = res[0][1]
 
+        res = []
+        left_res = None
+        right_res = None
+        if f.is_valid:
+            res = f.do_search()
+            if res:
+                left_res = res[0][0]['source']
+                right_res = res[1][0]['source']
+            else:
+                return render(request, 'front/compare_analysis.html')
+
+        print(res)
         return render(request, 'front/compare_analysis.html', context={'left_analysis': left_res, 'right_analysis': right_res})
+
