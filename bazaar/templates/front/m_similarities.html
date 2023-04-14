@@ -1,3 +1,4 @@
+
 <table class="table table-condensed">
   <thead>
     <tr>
@@ -6,6 +7,9 @@
       <th>SHA256</th>
       <th>VirusTotal Score</th>
       <th>Similarity</th>
+      {% if andro_cfg %}
+      <th>Code</th>
+      {% endif %}
     </tr>
   </thead>
   <tbody>
@@ -39,6 +43,11 @@
           </div>
         </div>
       </td>
+      {% if andro_cfg %}
+      <td>
+        <a class="btn btn-sm btn-link p-0 text-decoration-none" target="_blank" href="{% url "front:get_andgrocfg_code" hash andro_cfg.evidence_file %}">{{andro_cfg.call_by}}</a>
+      </td>
+      {% endif%}
     </tr>
     {% endif %}
     {% endfor %}

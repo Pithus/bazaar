@@ -236,8 +236,9 @@ def similarity_search_view(request, sha256=''):
         form = SimilaritySearchForm(request.GET)
         results = None
         res = []
+        ssdeep_struct = None
         if form.is_valid():
-            results = form.do_search(sha256)
+            results, ssdeep_struct = form.do_search(sha256)
             for sha256, score in results:
                 apk = get_sample_light(sha256)
                 try:
@@ -249,7 +250,7 @@ def similarity_search_view(request, sha256=''):
 
             results = res
 
-        return render(request, 'front/similarity_search.html', {'form': form, 'results': results})
+        return render(request, 'front/similarity_search.html', {'form': form, 'results': results, 'andro_cfg': ssdeep_struct})
 
 
 def download_sample_view(request, sha256):
