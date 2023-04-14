@@ -29,7 +29,7 @@ from androcfg.code_style import U39bStyle
 
 from bazaar.core.models import Yara
 from bazaar.core.tasks import analyze, retrohunt
-from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
+from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy, compute_genetic_analysis
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status, generate_world_map, \
@@ -124,7 +124,7 @@ class ReportView(View):
             try:
                 dexofuzzy_hash = result['dexofuzzy']['apk']
                 if dexofuzzy_hash:
-                    similar_samples = get_matching_items_by_dexofuzzy(
+                    similar_samples, _ = get_matching_items_by_dexofuzzy(
                         dexofuzzy_hash,
                         25,
                         settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, sha)
@@ -237,6 +237,7 @@ def similarity_search_view(request, sha256=''):
         results = None
         res = []
         ssdeep_struct = None
+        genetic_analysis = None
         if form.is_valid():
             results, ssdeep_struct = form.do_search(sha256)
             for sha256, score in results:
@@ -249,8 +250,9 @@ def similarity_search_view(request, sha256=''):
                 res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
 
             results = res
+            genetic_analysis = compute_genetic_analysis(results)
 
-        return render(request, 'front/similarity_search.html', {'form': form, 'results': results, 'andro_cfg': ssdeep_struct})
+        return render(request, 'front/similarity_search.html', {'form': form, 'results': results, 'andro_cfg': ssdeep_struct, 'genetic_analysis': genetic_analysis})
 
 
 def download_sample_view(request, sha256):
