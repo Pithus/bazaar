@@ -237,8 +237,7 @@ def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
             if ssdeep_grade >= threshold_grade:
                 sha256_list_to_return.append((record['_source']['sha256'], ssdeep_grade))
 
-    return sha256_list_to_return
-
+    return (sha256_list_to_return, None)
 
 def get_matching_items_by_ssdeep_func(ssdeep_value, threshold_grade, index, sha256):
     chunksize, chunk, double_chunk = ssdeep_value.split(':')
@@ -281,6 +280,7 @@ def get_matching_items_by_ssdeep_func(ssdeep_value, threshold_grade, index, sha2
 
     results = es.search(index=index, body=query)
     sha256_list_to_return = []
+    ssdeep_struct = None
 
     for record in results['hits']['hits']:
         for rule in record['_source']['andro_cfg']['rules']:
@@ -291,8 +291,11 @@ def get_matching_items_by_ssdeep_func(ssdeep_value, threshold_grade, index, sha2
 
                 if ssdeep_grade >= threshold_grade:
                     sha256_list_to_return.append((record['_source']['sha256'], ssdeep_grade))
-
-    return sha256_list_to_return
+    
+                if f["dexofuzzy_hash"] == ssdeep_value:
+                    ssdeep_struct = f
+            
+    return (sha256_list_to_return, ssdeep_struct)
 
 
 def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha256):
@@ -350,8 +353,7 @@ def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha
                 sha256_list_to_return.append(
                     (record['_source']['sha256'], dexofuzzy_grade))
 
-    return sha256_list_to_return
-
+    return (sha256_list_to_return, None)
 
 def compute_genetic_analysis(results):
     try:
