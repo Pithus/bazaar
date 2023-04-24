@@ -43,7 +43,7 @@ tld==0.12.6
 
 # Map
 pygal-maps-world==1.0.2
-CairoSVG==2.5.2
+CairoSVG==2.7.0
 
 # Monitoring
 django-prometheus==2.2.0
