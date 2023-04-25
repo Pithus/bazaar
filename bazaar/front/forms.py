@@ -48,7 +48,7 @@ class SimilaritySearchForm(forms.Form):
             if algorithm == 'ssdeep':
                 results = get_matching_items_by_ssdeep(hash, 25, settings.ELASTICSEARCH_SSDEEP_APK_INDEX, sha)
             if algorithm == 'func_hash':
-                results = get_matching_items_by_ssdeep_func(hash, 25, settings.ELASTICSEARCH_APK_INDEX, sha)
+                results = get_matching_items_by_ssdeep_func(hash, 25, settings.ELASTICSEARCH_APK_INDEX)
 
         except Exception as e:
             print(e)
@@ -114,3 +114,85 @@ class YaraCreateForm(ModelForm):
     class Meta:
         model = Yara
         fields = ['title', 'content', 'is_private']
+
+
+class CompareSearchForm(forms.Form):
+    left_sha = forms.CharField()
+    right_sha = forms.CharField()
+
+    def do_search(self):
+        shas = []
+        shas.append(self['left_sha'].value())
+        shas.append(self['right_sha'].value())
+
+        results = []
+        for sha in shas:
+            query = {
+                "query": {
+                    "query_string": {
+                        "default_field": "sha256",
+                        "query": sha,
+                    }
+                },
+                "highlight": {
+                    "fields": {
+                        "*": {"pre_tags": ["<mark>"], "post_tags": ["</mark>"]}
+                    }
+                },
+                "aggs": {
+                    "permissions": {
+                        "terms": {"field": "permissions.keyword"}
+                    },
+                    "domains": {
+                        "terms": {"field": "domains_analysis._name.keyword"}
+                    },
+                    "android_features": {
+                        "terms": {"field": "features.keyword"}
+                    }
+                },
+                "sort": {"analysis_date": "desc"},
+                "_source": [
+                    "uaid",
+                    "signatures",
+                    "is_signed",
+                    "is_signed_v1",
+                    "is_signed_v2",
+                    "is_signed_v3",
+                    "certificates",
+                    "dexofuzzy",
+                    "apkid",
+                    "manifest_analysis",
+                    "browsable_activities",
+                    "niap_analysis",
+                    "code_analysis",
+                    "detailed_permissions",
+                    "trackers",
+                    "quark.crimes",
+                    "android_api_analysis",
+                    "ssdeep",
+                    "version_name",
+                    "apk_hash",
+                    "app_name", 
+                    "dexofuzzy.apk", 
+                    "features"
+                    "frosting_data.is_frosted", 
+                    "handle", 
+                    "is_signed", 
+                    "md5", 
+                    "quark.threat_level", 
+                    "sha1", 
+                    "sha256", 
+                    "size", 
+                    "uploaded_at", 
+                    "version_code", 
+                    ],
+                "size": 1,
+            }
+            es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+            try:
+                raw_results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
+                results.append(transform_hl_results(raw_results))
+            except Exception as e:
+                return []
+
+        return results

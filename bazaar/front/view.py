@@ -30,7 +30,7 @@ from androcfg.code_style import U39bStyle
 from bazaar.core.models import Yara
 from bazaar.core.tasks import analyze, retrohunt
 from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
-from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm
+from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm, CompareSearchForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status, generate_world_map, \
     transform_hl_results, get_sample_timeline, get_andro_cfg_storage_path
@@ -511,3 +511,22 @@ def get_genom(request):
     response = HttpResponse('\n'.join(entire_genom), content_type='text/csv')
     response['Content-Disposition'] = f'inline; filename=pithus_genom.csv'
     return response
+
+def compare_analysis_view(request, *args, **kwargs):
+    if request.method == 'GET':
+        f = CompareSearchForm(request.GET)
+
+        res = []
+        left_res = None
+        right_res = None
+        if f.is_valid:
+            res = f.do_search()
+            if res:
+                left_res = res[0][0]['source']
+                right_res = res[1][0]['source']
+            else:
+                return render(request, 'front/compare_analysis.html')
+
+        print(res)
+        return render(request, 'front/compare_analysis.html', context={'left_analysis': left_res, 'right_analysis': right_res})
+
