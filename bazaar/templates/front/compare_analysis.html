@@ -37,234 +37,237 @@
   </div>
 
   {% if left_analysis and right_analysis %}
-  <table class="table table-condensed">
-    <thead>
-      <tr>
-        <th> </th>
-        <th><strong><a href="{% url 'front:report' left_analysis.sha256 %}">{{left_analysis.sha256}}</a></strong></th>
-        <th><strong><a href="{% url 'front:report' right_analysis.sha256 %}">{{right_analysis.sha256}}</a></strong></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>
-          <p>File sums</p>
-        </td>
-        <td>
-          {% include "front/report/m_file.html" with d=left_analysis %}
-        </td>
-        <td>
-          {% include "front/report/m_file.html" with d=right_analysis %}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p>APKiD</p>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/rednaga/APKiD">APKiD</a>.
-          </p>
-        </td>
-        <td>
-          {% include "front/report/m_apkid.html" with d=left_analysis %}
-        </td>
-        <td>
-          {% include "front/report/m_apkid.html" with d=right_analysis %}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p>SSdeep</p>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/DinoTools/python-ssdeep">ssdeep</a>.
-          </p>
-        </td>
-        <td>
-          {% include "front/report/m_ssdeep.html" with d=left_analysis %}
-        </td>
-        <td>
-          {% include "front/report/m_ssdeep.html" with d=right_analysis %}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p>Dexofuzzy</p>
-        </td>
-        <td>
-          {% include "front/report/m_dexofuzzy.html" with d=left_analysis %}
-        </td>
-        <td>
-          {% include "front/report/m_dexofuzzy.html" with d=right_analysis %}
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p>APK details</p>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/androguard/androguard">AndroGuard</a>
-            and <a class="small" target="_blank" href="https://github.com/pithus/bazaar">Pithus</a>.
-          </p>
-        </td>
-        <td>
-          {% include "front/report/m_apk.html" with d=left_analysis %}
-        <td>
-          {% include "front/report/m_apk.html" with d=right_analysis %}
-        </td>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <p>Certificate</p>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/androguard/androguard">AndroGuard</a>.
-          </p>
-        </td>
-        <td>
-          {% include "front/report/m_certificate.html" with d=left_analysis %}
-        </td>
-        <td>
-          {% include "front/report/m_certificate.html" with d=left_analysis %}
-        </td>
-      </tr>
+  <div class="table-responsive">
+    <table class="table table-responsive">
+      <thead>
+        <tr>
+          <th> </th>
+          <th><strong><a href="{% url 'front:report' left_analysis.sha256 %}">{{left_analysis.sha256}}</a></strong></th>
+          <th><strong><a href="{% url 'front:report' right_analysis.sha256 %}">{{right_analysis.sha256}}</a></strong>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <p>File sums</p>
+          </td>
+          <td>
+            {% include "front/report/m_file.html" with d=left_analysis %}
+          </td>
+          <td>
+            {% include "front/report/m_file.html" with d=right_analysis %}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p>APKiD</p>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/rednaga/APKiD">APKiD</a>.
+            </p>
+          </td>
+          <td>
+            {% include "front/report/m_apkid.html" with d=left_analysis %}
+          </td>
+          <td>
+            {% include "front/report/m_apkid.html" with d=right_analysis %}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p>SSdeep</p>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/DinoTools/python-ssdeep">ssdeep</a>.
+            </p>
+          </td>
+          <td>
+            {% include "front/report/m_ssdeep.html" with d=left_analysis %}
+          </td>
+          <td>
+            {% include "front/report/m_ssdeep.html" with d=right_analysis %}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p>Dexofuzzy</p>
+          </td>
+          <td>
+            {% include "front/report/m_dexofuzzy.html" with d=left_analysis %}
+          </td>
+          <td>
+            {% include "front/report/m_dexofuzzy.html" with d=right_analysis %}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p>APK details</p>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/androguard/androguard">AndroGuard</a>
+              and <a class="small" target="_blank" href="https://github.com/pithus/bazaar">Pithus</a>.
+            </p>
+          </td>
+          <td>
+            {% include "front/report/m_apk.html" with d=left_analysis %}
+          <td>
+            {% include "front/report/m_apk.html" with d=right_analysis %}
+          </td>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <p>Certificate</p>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/androguard/androguard">AndroGuard</a>.
+            </p>
+          </td>
+          <td>
+            {% include "front/report/m_certificate.html" with d=left_analysis %}
+          </td>
+          <td>
+            {% include "front/report/m_certificate.html" with d=left_analysis %}
+          </td>
+        </tr>
 
-      {% if left_analysis.manifest_analysis or right_analysis.manifest_analysis %}
-      <tr>
-        <td>
-          <p>Manifest</p>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-          </p>
-        </td>
-        <td>
-          {% include "front/report/m_manifest.html" with d=left_analysis %}
-        </td>
-        <td>
-          {% include "front/report/m_manifest.html" with d=right_analysis %}
-        </td>
-      </tr>
-      {% endif %}
+        {% if left_analysis.manifest_analysis or right_analysis.manifest_analysis %}
+        <tr>
+          <td>
+            <p>Manifest</p>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+            </p>
+          </td>
+          <td>
+            {% include "front/report/m_manifest.html" with d=left_analysis %}
+          </td>
+          <td>
+            {% include "front/report/m_manifest.html" with d=right_analysis %}
+          </td>
+        </tr>
+        {% endif %}
 
-      {% if left_analysis.browsable_activities and right_analysis.browsable_activities %}
-      <tr>
-        <td>
-          <p>Browsable activities</p>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-          </p>
-        </td>
-        <td>
-          {% include "front/report/m_browsable_activities.html" with d=left_analysis %}
-        </td>
-        <td>
-          {% include "front/report/m_browsable_activities.html" with d=right_analysis %}
-        </td>
-      </tr>
-      {% endif %}
+        {% if left_analysis.browsable_activities and right_analysis.browsable_activities %}
+        <tr>
+          <td>
+            <p>Browsable activities</p>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+            </p>
+          </td>
+          <td>
+            {% include "front/report/m_browsable_activities.html" with d=left_analysis %}
+          </td>
+          <td>
+            {% include "front/report/m_browsable_activities.html" with d=right_analysis %}
+          </td>
+        </tr>
+        {% endif %}
 
 
-      {% if left_analysis.niap_analysis and right_analysis.niap_analysis %}
-      <tr>
-        <td>
-          <p>NIAP analysis</p>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-          </p>
-        </td>
-        <td>
-          {% include "front/report/m_niap.html" with d=left_analysis %}
-        </td>
-        <td>
-          {% include "front/report/m_niap.html" with d=right_analysis %}
-        </td>
-      </tr>
-      {% endif %}
+        {% if left_analysis.niap_analysis and right_analysis.niap_analysis %}
+        <tr>
+          <td>
+            <p>NIAP analysis</p>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+            </p>
+          </td>
+          <td>
+            {% include "front/report/m_niap.html" with d=left_analysis %}
+          </td>
+          <td>
+            {% include "front/report/m_niap.html" with d=right_analysis %}
+          </td>
+        </tr>
+        {% endif %}
 
-      {% if left_analysis.code_analysis and right_analysis.code_analysis %}
-      <tr>
-        <td>
-          <p>Code analysis</p>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-          </p>
-        </td>
-        <td>
-          {% include "front/report/m_code.html" with d=left_analysis %}
-        </td>
-        <td>
-          {% include "front/report/m_code.html" with d=right_analysis %}
-        </td>
-      </tr>
-      {% endif %}
+        {% if left_analysis.code_analysis and right_analysis.code_analysis %}
+        <tr>
+          <td>
+            <p>Code analysis</p>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+            </p>
+          </td>
+          <td>
+            {% include "front/report/m_code.html" with d=left_analysis %}
+          </td>
+          <td>
+            {% include "front/report/m_code.html" with d=right_analysis %}
+          </td>
+        </tr>
+        {% endif %}
 
-      {% if left_analysis.detailed_permissions and right_analysis.detailed_permissions %}
-      <tr>
-        <td>
-          <p>Permissions analysis</p>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-          </p>
-        </td>
-        <td>
-          {% include "front/report/m_permissions.html" with d=left_analysis %}
-        </td>
-        <td>
-          {% include "front/report/m_permissions.html" with d=right_analysis %}
-        </td>
-      </tr>
-      {% endif %}
+        {% if left_analysis.detailed_permissions and right_analysis.detailed_permissions %}
+        <tr>
+          <td>
+            <p>Permissions analysis</p>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+            </p>
+          </td>
+          <td>
+            {% include "front/report/m_permissions.html" with d=left_analysis %}
+          </td>
+          <td>
+            {% include "front/report/m_permissions.html" with d=right_analysis %}
+          </td>
+        </tr>
+        {% endif %}
 
-      {% if left_analysis.trackers and right_analysis.trackers %}
-      <tr>
-        <td>
-          <p>Tracking analysis</p>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/Exodus-Privacy/exodus-core">Exodus-core</a>.
-          </p>
-        </td>
-        <td>
-          {% include "front/report/m_trackers.html" with d=left_analysis %}
-        </td>
-        <td>
-          {% include "front/report/m_trackers.html" with d=right_analysis %}
-        </td>
-      </tr>
-      {% endif %}
+        {% if left_analysis.trackers and right_analysis.trackers %}
+        <tr>
+          <td>
+            <p>Tracking analysis</p>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/Exodus-Privacy/exodus-core">Exodus-core</a>.
+            </p>
+          </td>
+          <td>
+            {% include "front/report/m_trackers.html" with d=left_analysis %}
+          </td>
+          <td>
+            {% include "front/report/m_trackers.html" with d=right_analysis %}
+          </td>
+        </tr>
+        {% endif %}
 
-      {% if left_analysis.quark.crimes and right_analysis.quark.crimes %}
-      <tr>
-        <td>
-          <p>Threat analysis</p>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/quark-engine/quark-engine">Quark-Engine</a>.
-          </p>
-        </td>
-        <td>
-          {% include "front/report/m_quark.html" with d=left_analysis %}
-        </td>
-        <td>
-          {% include "front/report/m_quark.html" with d=right_analysis %}
-        </td>
-      </tr>
-      {% endif %}
+        {% if left_analysis.quark.crimes and right_analysis.quark.crimes %}
+        <tr>
+          <td>
+            <p>Threat analysis</p>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/quark-engine/quark-engine">Quark-Engine</a>.
+            </p>
+          </td>
+          <td>
+            {% include "front/report/m_quark.html" with d=left_analysis %}
+          </td>
+          <td>
+            {% include "front/report/m_quark.html" with d=right_analysis %}
+          </td>
+        </tr>
+        {% endif %}
 
-      {% if left_analysis.android_api_analysis and right_analysis.android_api_analysis %}
-      <tr>
-        <td>
-          <p>Behavior analysis</p>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-          </p>
-        </td>
-        <td>
-          {% include "front/report/m_api.html" with d=left_analysis %}
-        </td>
-        <td>
-          {% include "front/report/m_api.html" with d=right_analysis %}
-        </td>
-      </tr>
-      {% endif %}
+        {% if left_analysis.android_api_analysis and right_analysis.android_api_analysis %}
+        <tr>
+          <td>
+            <p>Behavior analysis</p>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+            </p>
+          </td>
+          <td>
+            {% include "front/report/m_api.html" with d=left_analysis %}
+          </td>
+          <td>
+            {% include "front/report/m_api.html" with d=right_analysis %}
+          </td>
+        </tr>
+        {% endif %}
 
-    </tbody>
-  </table>
-  {% endif %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
 </div>
 {% endblock whole_content %}
