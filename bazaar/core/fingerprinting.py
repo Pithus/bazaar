@@ -10,6 +10,7 @@ from tempfile import NamedTemporaryFile
 from PIL import Image
 from androguard.core import androconf
 from androguard.core.bytecodes.apk import APK
+from androguard.core.bytecodes.axml import ResParserError
 
 MAX_IMAGE_SIZE = 96, 96
 androconf.show_logging(logging.ERROR)
@@ -251,7 +252,10 @@ class ApplicationSignature(object):
         sign.md5 = hashes['md5']
         sign.sha1 = hashes['sha1']
         sign.sha256 = hashes['sha256']
-        sign.icon_base64 = icon_to_base64(apk_path, apk.get_app_icon())
+        try:
+            sign.icon_base64 = icon_to_base64(apk_path, apk.get_app_icon())
+        except ResParserError as e:
+            logging.warn(e)
         sign.icon_hash = compute_dhash_from_base64(sign.icon_base64)
         sign.certificates = get_certificates(apk)
         return sign

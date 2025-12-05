@@ -19,7 +19,7 @@ es.indices.create(index=tmp_index, body=apk_analysis_settings)
 # Get all APKs
 _, hashes = default_storage.listdir('.')
 for hash in hashes:
-    if es.exists(original_index, id=hash):
+    if es.exists(index=original_index, id=hash):
         result = es.get(index=original_index, id=hash)['_source']
         es.index(index=tmp_index, id=hash, body=result)
 

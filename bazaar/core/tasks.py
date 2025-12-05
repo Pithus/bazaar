@@ -57,7 +57,7 @@ def _prepare(sha256):
         'analysis_date': timezone.now()
     }
 
-    if not es.exists(settings.ELASTICSEARCH_TASKS_INDEX, id=sha256):
+    if not es.exists(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256):
         es.index(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body=tasks)
     else:
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': tasks}, retry_on_conflict=5)
@@ -94,7 +94,7 @@ def extract_attributes(sha256):
         sign['is_signed_v2'] = a.is_signed_v2()
         sign['is_signed_v3'] = a.is_signed_v3()
 
-        if not es.exists(settings.ELASTICSEARCH_APK_INDEX, id=sha256):
+        if not es.exists(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256):
             es.index(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body=sign)
         else:
             es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': sign}, retry_on_conflict=5)
@@ -785,7 +785,7 @@ def analyze(sha256, force=False):
         logging.error(reason)
         return {'status': 'error', 'info': reason}
 
-    if es.exists(settings.ELASTICSEARCH_APK_INDEX, id=sha256) and not force:
+    if es.exists(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256) and not force:
         return {'status': 'success', 'info': ''}
 
     # Schedule all other tasks

@@ -21,5 +21,5 @@ class Command(BaseCommand):
         _, hashes = default_storage.listdir('.')
         for hash in hashes:
             # Check if it exists on the ES:
-            if not es.exists(original_index, id=hash):
+            if not es.exists(index=original_index, id=hash):
                 default_storage.delete(hash)
