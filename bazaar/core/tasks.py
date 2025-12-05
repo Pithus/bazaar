@@ -45,7 +45,7 @@ from bazaar.core.utils import (
 )
 from bazaar.front.utils import get_andro_cfg_storage_path
 
-es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, timeout=30, max_retries=5, retry_on_timeout=True)
+es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, timeout=30, max_retries=5, retry_on_timeout=True, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
 
 
 def _prepare(sha256):

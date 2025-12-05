@@ -19,7 +19,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
         reports = es.search(index=settings.ELASTICSEARCH_TASKS_INDEX, body=query)['hits']['hits']
         for report in reports:
             id = report['_id']

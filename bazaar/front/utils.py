@@ -148,7 +148,7 @@ def generate_world_map(domains, to_png=False, fp=None):
 
 
 def get_sample_timeline(sha256):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     try:
         sample = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
         # parse_datetime(str(sample.get('uploaded_at'))).astimezone(pytz.UTC)

@@ -42,7 +42,7 @@ class HomeView(View):
 
     def get(self, request, *args, **kwargs):
         # Gets the latest complete report as an example
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
         q = {
             "size": 1,
             "sort": {"analysis_date": "desc"},
@@ -107,7 +107,7 @@ class ReportView(View):
             return cached_report
 
         # Not cached so, let's compute the report
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
         try:
             result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha)['_source']
             status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha)['_source']
@@ -271,7 +271,7 @@ def export_report_view(request, sha256):
         return redirect(reverse_lazy('front:home'))
 
     if request.method == 'GET':
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
         try:
             result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
             response = JsonResponse(result)
@@ -368,7 +368,7 @@ def my_rule_delete_view(request, uuid=None):
 
 
 def delete_es_matches(request, rule):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     public_es_index, private_es_index = Yara.get_es_index_names(request.user)
     q = {'query': {
         'match': {
@@ -392,7 +392,7 @@ def delete_es_matches(request, rule):
 
 
 def get_rules(request):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     yara_rules = Yara.objects.filter(owner=request.user)
     public_es_index, private_es_index = Yara.get_es_index_names(request.user)
     q = {
@@ -451,7 +451,7 @@ def get_sample_light(sha256):
                     "is_signed", "frosting_data.is_frosted", "features"],
         "size": 1,
     }
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     try:
         results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
         results = transform_hl_results(results)
@@ -489,7 +489,7 @@ def get_andgrocfg_code(request, sha256, foo):
 
 
 def get_genom(request):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     entire_genom = []
     for report in scan(
         es,

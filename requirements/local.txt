@@ -41,5 +41,5 @@ pytest-django  #
 # apkid
 # yara-python-dex  #
 # setup differently for now
-yara-python
+yara-python==3.11.0
 apkid

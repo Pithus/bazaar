@@ -7,7 +7,7 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 from elasticsearch import Elasticsearch
 
-es = Elasticsearch([settings.ELASTICSEARCH_HOST], timeout=30, max_retries=5, retry_on_timeout=True)
+es = Elasticsearch([settings.ELASTICSEARCH_HOST], timeout=30, max_retries=5, retry_on_timeout=True, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
 original_index = settings.ELASTICSEARCH_APK_INDEX
 tmp_index = f'{original_index}_tmp'
 

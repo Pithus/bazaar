@@ -131,7 +131,7 @@ def strings_from_apk(apk_file):
 
 
 def upload_sample_to_malware_bazaar(sha256):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     try:
         result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
         if not result or 'vt' not in result:
@@ -175,7 +175,7 @@ def insert_fuzzy_hash(hash_value, sha256, index):
     chunksize, chunk, double_chunk = hash_value.split(':')
     chunksize = int(chunksize)
 
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
 
     document = {'chunk_size': chunksize, 'chunk': chunk, 'double_chunk': double_chunk, 'sha256': sha256}
 
@@ -187,7 +187,7 @@ def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
     chunksize, chunk, double_chunk = ssdeep_value.split(':')
     chunksize = int(chunksize)
 
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
 
     query = {
         'query': {
@@ -243,7 +243,7 @@ def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
 def get_matching_items_by_ssdeep_func(ssdeep_value, threshold_grade, index, sha256):
     chunksize, chunk, double_chunk = ssdeep_value.split(':')
     chunksize = int(chunksize)
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     query = {
         "query": {
             "bool": {
@@ -299,7 +299,7 @@ def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha
     chunksize, chunk, double_chunk = dexofuzzy_value.split(':')
     chunksize = int(chunksize)
 
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
 
     query = {
         'query': {

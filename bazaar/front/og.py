@@ -55,7 +55,7 @@ def rounded_rectangle(image_draw: ImageDraw, xy, corner_radius, fill=None, outli
 
 
 def generate_og_card(sha256, fp):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     try:
         result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
 

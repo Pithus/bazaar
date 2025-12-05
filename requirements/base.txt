@@ -23,28 +23,28 @@ djangorestframework  # https://github.com/encode/django-rest-framework
 django-cors-headers  # https://github.com/adamchainz/django-cors-headers
 
 django-q2
-elasticsearch==7.17.8
-elasticsearch-dsl==7.4.0
-quark-engine==22.12.1
-androguard==3.4.0a1
-django-minio-storage==0.3.10
-dhash==1.4
-iocextract==1.13.2
-ssdeep==3.4
-google-play-scraper==1.2.2
-gpapi==0.4.4
-requests==2.28.1
+elasticsearch
+elasticsearch-dsl
+quark-engine
+androguard
+django-minio-storage
+dhash
+iocextract
+ssdeep
+google-play-scraper
+gpapi
+requests
 dexofuzzy
 git+https://github.com/U039b/AndroCFG.git
-vt-py==0.17.3
+vt-py
 scipy
 numpy
 pandas
-tld==0.12.6
+tld
 
 # Map
-pygal-maps-world==1.0.2
-CairoSVG==2.5.2
+pygal-maps-world
+CairoSVG
 
 # Monitoring
-django-prometheus==2.2.0
+django-prometheus

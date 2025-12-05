@@ -24,7 +24,7 @@ class BasicSearchForm(forms.Form):
             "_source": ["handle", "apk_hash", "size", "app_name"],
             "size": 50,
         }
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
         try:
             results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
             results = transform_results(results)
@@ -91,7 +91,7 @@ class SearchForm(forms.Form):
                         "is_signed", "frosting_data.is_frosted", "features", "andro_cfg.genom"],
             "size": 50,
         }
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
         try:
             raw_results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
             results = transform_hl_results(raw_results)

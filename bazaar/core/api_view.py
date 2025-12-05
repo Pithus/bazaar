@@ -82,7 +82,8 @@ def apk_analysis_report(request, sha256):
         return Response({"user": "is_authenticated"})
 
     if request.method == 'GET':
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+
         try:
             result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
             return Response(result)
@@ -99,7 +100,7 @@ def analysis_tasks_status(request, sha256):
         return Response({"user": "is_authenticated"})
 
     if request.method == 'GET':
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
         try:
             result = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256)['_source']
             return Response(result)
@@ -136,7 +137,7 @@ def search(request):
         "size": 150,
     }
 
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     try:
         raw_results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
         results = transform_hl_results(raw_results)

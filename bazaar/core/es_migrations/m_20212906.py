@@ -6,7 +6,7 @@ from elasticsearch.helpers.actions import scan
 
 
 def do():
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
 
     # Update the index mapping
     mapping = json.load(open('bazaar/es_mappings/apk_analysis.json'))

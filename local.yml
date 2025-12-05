@@ -60,11 +60,12 @@ services:
 #      - "8025:8025"
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.19.8
     hostname: elasticsearch
     environment:
       - "discovery.type=single-node"
       - "ES_JAVA_OPTS=-Xms2000m -Xmx2000m"
+      - "ELASTIC_PASSWORD=ozzejav8D749Dp4ADrB2f27ETALFigug6XV"
     ulimits:
       memlock:
         soft: -1
