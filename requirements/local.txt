@@ -1,5 +1,6 @@
 -r base.txt 
 
+networkx
 Werkzeug  #
 ipdb  #
 psycopg2   # https://github.com/psycopg/psycopg2
@@ -40,3 +41,5 @@ pytest-django  #
 # apkid
 # yara-python-dex  #
 # setup differently for now
+yara-python
+apkid

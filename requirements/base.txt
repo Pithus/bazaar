@@ -1,3 +1,4 @@
+setuptools
 pytz  # https://github.com/stub42/pytz
 python-slugify  # https://github.com/un33k/python-slugify
 Pillow # https://github.com/python-pillow/Pillow
@@ -21,7 +22,7 @@ django-redis  # https://github.com/jazzband/django-redis
 djangorestframework  # https://github.com/encode/django-rest-framework
 django-cors-headers  # https://github.com/adamchainz/django-cors-headers
 
-django-q==1.3.9
+django-q2
 elasticsearch==7.17.8
 elasticsearch-dsl==7.4.0
 quark-engine==22.12.1

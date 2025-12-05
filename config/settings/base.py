@@ -141,6 +141,7 @@ MIDDLEWARE = [
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'django_prometheus.middleware.PrometheusAfterMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 # STATIC
