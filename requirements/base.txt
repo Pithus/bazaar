@@ -11,7 +11,7 @@ uvicorn[standard]  # https://github.com/encode/uvicorn
 
 # Django
 # ------------------------------------------------------------------------------
-django  # https://www.djangoproject.com/
+django==6.0.1  # https://www.djangoproject.com/
 django-environ  # https://github.com/joke2k/django-environ
 django-model-utils  # https://github.com/jazzband/django-model-utils
 django-allauth  # https://github.com/pennersr/django-allauth
