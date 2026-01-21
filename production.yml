@@ -1,4 +1,3 @@
-version: '3'
 
 volumes:
   production_postgres_data: {}
@@ -67,7 +66,7 @@ services:
     image: redis:5.0
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.19.10
     hostname: elasticsearch
     environment:
       - "discovery.type=single-node"

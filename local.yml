@@ -1,4 +1,3 @@
-version: '3'
 
 volumes:
   local_postgres_data: {}
@@ -30,7 +29,7 @@ services:
     command: /start
 
   redis:
-    image: redis:5.0
+    image: redis:8
 
   worker:
     <<: *django
@@ -60,7 +59,7 @@ services:
 #      - "8025:8025"
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.19.8
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.19.10
     hostname: elasticsearch
     environment:
       - "discovery.type=single-node"
@@ -86,7 +85,7 @@ services:
       - "MOBSF_API_KEY=515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9"
 
   kibana:
-    image: kibana:8.19.8
+    image: kibana:8.19.10
     hostname: kibana
     ports:
       - 5601:5601
