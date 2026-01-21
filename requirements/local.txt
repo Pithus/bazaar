@@ -1,45 +1,38 @@
--r base.txt 
+-r base.txt
 
-networkx
-Werkzeug  #
-ipdb  #
-psycopg2   # https://github.com/psycopg/psycopg2
-watchgod  #
+networkx==3.6.1
+Werkzeug==3.1.5
+ipdb==0.13.13
+psycopg2==2.9.11
+watchgod==0.8.2
 
 # Testing
-# ------------------------------------------------------------------------------
-mypy  #
-django-stubs  #
-pytest  #
-pytest-sugar  #
+mypy==1.19.1
+django-stubs==5.2.8
+pytest==9.0.2
+pytest-sugar==1.1.1
+
 
 # Documentation
-# ------------------------------------------------------------------------------
-sphinx  #
-sphinx-autobuild  #
+sphinx-autobuild==2025.8.25
+sphinx-autobuild==2025.8.25
 
 # Code quality
-# ------------------------------------------------------------------------------
-flake8  #
-flake8-isort  #
-coverage  #
-black  #
-pylint-django  #
-pre-commit  #
+flake8==7.3.0
+flake8-isort==7.0.0
+coverage==7.13.1
+black==26.1.0
+pylint-django==2.7.0
+pre_commit==4.5.1
 
 # Django
-# ------------------------------------------------------------------------------
-factory-boy  #
-
-django-debug-toolbar  #
-django-extensions  #
-django-coverage-plugin  #
-pytest-django  #
+factory_boy==3.3.3
+django-debug-toolbar==6.2.0
+django-extensions==4.1
+django_coverage_plugin==3.2.0
+pytest-django==4.11.1
 
 # APKiD
-# ------------------------------------------------------------------------------
-# apkid
-# yara-python-dex  #
-# setup differently for now
+apkid==3.0.0
+yara-python-dex==1.0.7
 yara-python==3.11.0
-apkid

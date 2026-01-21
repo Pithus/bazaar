@@ -1,50 +1,49 @@
-setuptools
-pytz  # https://github.com/stub42/pytz
-python-slugify  # https://github.com/un33k/python-slugify
-Pillow # https://github.com/python-pillow/Pillow
-rcssmin  # https://github.com/ndparker/rcssmin
-argon2-cffi  # https://github.com/hynek/argon2_cffi
-whitenoise  # https://github.com/evansd/whitenoise
-redis  # https://github.com/andymccurdy/redis-py
-hiredis  # https://github.com/redis/hiredis-py
-uvicorn[standard]  # https://github.com/encode/uvicorn
+setuptools==80.9.0
+pytz==2025.2
+python-slugify==8.0.4
+pillow==12.1.0
+rcssmin==1.2.2
+argon2-cffi==25.1.0
+whitenoise==6.11.0
+redis==7.1.0
+hiredis==3.3.0
+uvicorn==0.40.0
 
 # Django
-# ------------------------------------------------------------------------------
-django==6.0.1  # https://www.djangoproject.com/
-django-environ  # https://github.com/joke2k/django-environ
-django-model-utils  # https://github.com/jazzband/django-model-utils
-django-allauth  # https://github.com/pennersr/django-allauth
-django-crispy-forms  # https://github.com/django-crispy-forms/django-crispy-forms
-django-compressor  # https://github.com/django-compressor/django-compressor
-django-redis  # https://github.com/jazzband/django-redis
+Django==6.0.1
+django-environ==0.12.0
+django-model-utils==5.0.0
+django-allauth==65.14.0
+django-crispy-forms==2.5
+django_compressor==4.6.0
+django-redis==6.0.0
 # Django REST Framework
-djangorestframework  # https://github.com/encode/django-rest-framework
-django-cors-headers  # https://github.com/adamchainz/django-cors-headers
+djangorestframework==3.16.1
+django-cors-headers==4.9.0
+django-q2==1.9.0
 
-django-q2
-elasticsearch
-elasticsearch-dsl
-quark-engine
-androguard
-django-minio-storage
-dhash
-iocextract
-ssdeep
-google-play-scraper
-gpapi
-requests
-dexofuzzy
-git+https://github.com/U039b/AndroCFG.git
-vt-py
-scipy
-numpy
-pandas
-tld
+elasticsearch==8.19.3
+elasticsearch-dsl==8.15.4
+quark-engine==26.1.1
+androguard==3.4.0a1
+django-minio-storage==0.5.9
+dhash==1.4
+iocextract==1.16.1
+ssdeep==3.4
+google-play-scraper==1.2.7
+gpapi==0.4.4
+requests==2.32.5
+dexofuzzy==2.0.0
+AndroCFG @ git+https://github.com/U039b/AndroCFG.git
+vt-py==0.22.0
+scipy==1.17.0
+numpy==2.4.1
+pandas==2.3.3
+tld==0.13.1
 
 # Map
-pygal-maps-world
-CairoSVG
+pygal_maps_world==1.0.2
+CairoSVG==2.8.2
 
 # Monitoring
-django-prometheus
+django-prometheus==2.4.0
