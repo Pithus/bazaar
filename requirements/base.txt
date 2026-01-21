@@ -17,6 +17,8 @@ django-allauth==65.14.0
 django-crispy-forms==2.5
 django_compressor==4.6.0
 django-redis==6.0.0
+django-extensions==4.1
+
 # Django REST Framework
 djangorestframework==3.16.1
 django-cors-headers==4.9.0

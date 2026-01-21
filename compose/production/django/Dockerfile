@@ -1,5 +1,5 @@
 
-FROM python:3.8-slim-buster
+FROM python:3.13.10-trixie
 
 ENV PYTHONUNBUFFERED 1
 
@@ -16,8 +16,10 @@ RUN apt-get update \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir -p /home/django 
 RUN addgroup --system django \
-    && adduser --system --ingroup django django
+    && adduser --system --ingroup django django --home /home/django
+RUN chmod 775 /home/django && chown django:django /home/django
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements

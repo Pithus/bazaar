@@ -2,14 +2,14 @@
 
 -r base.txt
 
-gunicorn==20.0.4  # https://github.com/benoitc/gunicorn
-psycopg2==2.8.6  # https://github.com/psycopg/psycopg2
-sentry-sdk==0.19.3  # https://github.com/getsentry/sentry-python
+gunicorn==23.0.0  # https://github.com/benoitc/gunicorn
+psycopg2==2.9.11  # https://github.com/psycopg/psycopg2
+sentry-sdk==2.50.0  # https://github.com/getsentry/sentry-python
 
 # Django
 # ------------------------------------------------------------------------------
-django-anymail==8.1  # https://github.com/anymail/django-anymail
+django-anymail==14.0  # https://github.com/anymail/django-anymail
 
 # APKiD
 # ------------------------------------------------------------------------------
-yara-python-dex>=1.0.3  # https://github.com/MobSF/yara-python-dex
+yara-python-dex==1.0.7  # https://github.com/MobSF/yara-python-dex
