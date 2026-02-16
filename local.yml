@@ -14,16 +14,22 @@ services:
       dockerfile: ./compose/local/django/Dockerfile
     image: bazaar_local_django
     depends_on:
-      - postgres
-      - redis
-      - elasticsearch
-      - minio
-      - mobsf
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+      mobsf:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
     volumes:
       - .:/app:z
     env_file:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
+      - ./.envs/.local/.elastic
     ports:
       - "8001:8000"
     command: /start
@@ -35,10 +41,14 @@ services:
     <<: *django
     image: backend_local_worker
     depends_on:
-      - redis
-      - postgres
-      - elasticsearch
-      - minio
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
     ports: []
     command: /start-worker
 
@@ -64,7 +74,8 @@ services:
     environment:
       - "discovery.type=single-node"
       - "ES_JAVA_OPTS=-Xms2000m -Xmx2000m"
-      - "ELASTICSEARCH_PASSWORD=ozzejav8D749Dp4ADrB2f27ETALFigug6XV"
+    env_file:
+      - ./.envs/.local/.elastic
     ulimits:
       memlock:
         soft: -1
@@ -74,6 +85,16 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --user elastic:$$ELASTICSEARCH_PASSWORD -X GET http://localhost:9200/_cluster/health?pretty | grep status | grep -Eq '(green|yellow)'"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 50
+      start_period: 20s
 
   mobsf:
     image: opensecurity/mobile-security-framework-mobsf:v3.4.6
