@@ -35,4 +35,3 @@ pytest-django==4.11.1
 # APKiD
 apkid==3.0.0
 yara-python-dex==1.0.7
-yara-python==3.11.0
