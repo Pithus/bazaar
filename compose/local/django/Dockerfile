@@ -19,6 +19,19 @@ RUN apt update \
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
 RUN pip install --upgrade pip
+
+# Special SSDEEP edge case
+# AndroCFG requires ssdeep==3.4, but since setuptools dropped support of pkg_resources, install always fail
+# This is a temporary fix until:
+#   1) This PR gets merged https://github.com/DinoTools/python-ssdeep/pull/70
+#   2) AndroCFG bumps ssdeep requirements to version 3.4.2 specified in above patch
+RUN git clone https://github.com/DinoTools/python-ssdeep.git /python-ssdeep
+COPY ./requirements/ssdeep.patch /python-ssdeep/ssdeep.patch
+WORKDIR /python-ssdeep
+RUN git apply ssdeep.patch
+RUN python -m pip install /python-ssdeep
+WORKDIR /
+
 RUN pip install -r /requirements/local.txt 
 
 COPY ./compose/production/django/entrypoint /entrypoint

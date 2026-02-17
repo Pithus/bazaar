@@ -503,8 +503,8 @@ def get_genom(request):
             genom = report.get('_source').get('andro_cfg').get('genom')
             threat = report.get('_source').get('vt_report').get('attributes').get(
                 'popular_threat_classification').get('suggested_threat_label')
-        except Exception:
-            pass
+        except Exception as e:
+            logging.error(f'Get Genom: {e}')
         if genom:
             entire_genom.append(f'{sha256}-{threat},{genom}')
 

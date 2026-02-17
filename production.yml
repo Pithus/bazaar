@@ -29,6 +29,7 @@ services:
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
+      - ./.envs/.production/.elastic
     command: /start
 
   worker:
@@ -77,7 +78,7 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.19.10
     hostname: elasticsearch
-    env_file: ./.envs/.production/.django
+    env_file: ./.envs/.production/.elastic
     environment:
       - "discovery.type=single-node"
       - "ES_JAVA_OPTS=-Xms6G -Xmx6G"
@@ -89,15 +90,15 @@ services:
     volumes:
       - production_elasticsearch_data:/usr/share/elasticsearch/data
     healthcheck:
-    test:
-      [
-        "CMD-SHELL",
-        "curl -s --user elastic:$$ELASTICSEARCH_PASSWORD -X GET http://localhost:9200/_cluster/health?pretty | grep status | grep -Eq '(green|yellow)'"
-      ]
-    interval: 10s
-    timeout: 5s
-    retries: 50
-    start_period: 20s
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --user elastic:$$ELASTICSEARCH_PASSWORD -X GET http://localhost:9200/_cluster/health?pretty | grep status | grep -Eq '(green|yellow)'"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 50
+      start_period: 20s
 
 
   mobsf:
