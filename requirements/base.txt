@@ -1,4 +1,4 @@
-setuptools==80.9.0
+setuptools==82.0.0
 pytz==2025.2
 python-slugify==8.0.4
 pillow==12.1.0
@@ -31,7 +31,6 @@ androguard==3.4.0a1
 django-minio-storage==0.5.9
 dhash==1.4
 iocextract==1.16.1
-ssdeep==3.4
 google-play-scraper==1.2.7
 gpapi==0.4.4
 requests==2.32.5
