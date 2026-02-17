@@ -114,8 +114,8 @@ services:
       - elasticsearch:elasticsearch
     depends_on:
       - elasticsearch
-    environment:
-      - "ELASTICSEARCH_SERVICEACCOUNTTOKEN=AAEAAWVsYXN0aWMva2liYW5hL3Rva2VuMTpkbnFta0FrTVN1LTYzRTZCT2hxVTRB"
+    env_file:
+      - ./.envs/.local/.elastic
 
   minio:
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z
