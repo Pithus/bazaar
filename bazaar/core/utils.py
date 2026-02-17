@@ -167,8 +167,8 @@ def upload_sample_to_malware_bazaar(sha256):
                              schedule_type=Schedule.ONCE,
                              next_run=timezone.now() + timedelta(minutes=30))
 
-    except Exception:
-        pass
+    except Exception as e:
+        logging.error(f'Malware Bazaar: {e}')
 
 
 def insert_fuzzy_hash(hash_value, sha256, index):
@@ -179,7 +179,7 @@ def insert_fuzzy_hash(hash_value, sha256, index):
 
     document = {'chunk_size': chunksize, 'chunk': chunk, 'double_chunk': double_chunk, 'sha256': sha256}
 
-    es.index(index, id=sha256, body=document)
+    es.index(index=index, id=sha256, body=document)
     es.indices.refresh(index=index)
 
 
@@ -362,6 +362,7 @@ def compute_genetic_analysis(results):
             return d_prime
 
         with NamedTemporaryFile(mode='w') as tmp_csv:
+
             for r in results:
                 try:
                     sha256 = r.get('source').get('sha256')
@@ -369,7 +370,7 @@ def compute_genetic_analysis(results):
                     if genom:
                         tmp_csv.write(f'{sha256},{genom}\n')
                 except Exception as e:
-                    pass
+                    logging.error(f'Compute Genetic Analysis: {e}')
 
             csv_data = pd.read_csv(tmp_csv.name, delimiter=',', header=None)
         labels = csv_data.pop(0)
@@ -385,5 +386,5 @@ def compute_genetic_analysis(results):
 
         return x
     except Exception as e:
-        pass
+        logging.error(f'Compute Genetic Analysis: {e}')
         return None

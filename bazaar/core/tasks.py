@@ -400,8 +400,8 @@ def ssdeep_analysis(sha256):
             insert_fuzzy_hash(ssdeep_apk, sha256, settings.ELASTICSEARCH_SSDEEP_APK_INDEX)
             dexofuzzy_apk = dexofuzzy.hash_from_file(f.name)
             insert_fuzzy_hash(dexofuzzy_apk, sha256, settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX)
-        except Exception:
-            pass
+        except Exception as e:
+            logging.error(f'ssdeep analysis: {e}')
 
         doc = {
             'ssdeep': {
