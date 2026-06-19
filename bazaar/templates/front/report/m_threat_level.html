@@ -5,14 +5,10 @@
   </h5>
   <p class="small text-muted">Threat <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
                                         title="Provided by MalwareBazaar"></i></p>
-{% elif result.vt %}
+{% elif result.vt and result.vt.malicious > 1 %}
   <p>
-    {% if result.vt.malicious > 1 %}
       <span class="text-danger h4">Malicious<br>{{ result.vt.malicious }}</span>
       <span class="text-muted">/{{ result.vt.total }}</span>
-    {% else %}
-      <span class="text-info h4">{{ result.vt.malicious }}</span><span class="text-muted">/{{ result.vt.total }}</span>
-    {% endif %}
   </p>
   <p class="small text-muted">Threat <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
                                         title="Provided by VirusTotal"></i></p>
@@ -28,4 +24,11 @@
               ">{{ result.quark.threat_level }}</h3>
   <p class="small text-muted">Threat level <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
                                title="Computed with Quark-Engine"></i></p>
+
+{% elif result.vt %}
+  <p>
+    <span class="text-info h4">{{ result.vt.malicious }}</span><span class="text-muted">/{{ result.vt.total }}</span>
+  </p>
+  <p class="small text-muted">Threat <i class="fa fa-info-circle small" data-toggle="tooltip" data-placement="top"
+                                        title="Provided by VirusTotal"></i></p>
 {% endif %}

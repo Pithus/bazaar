@@ -1,10 +1,6 @@
-{% if d.vt %}
+{% if d.vt and d.vt.malicious > 1 %}
   <span class="small text-muted">VT Score</span><br>
-  {% if d.vt.malicious > 1 %}
-    <span class="badge badge-danger small">{{ d.vt.malicious }}/{{ d.vt.total }}</span>
-  {% else %}
-    <span class="badge badge-info small">{{ d.vt.malicious }}/{{ d.vt.total }}</span>
-  {% endif %}
+  <span class="badge badge-danger small">{{ d.vt.malicious }}/{{ d.vt.total }}</span>
 {% elif d.malware_bazaar.vendor_intel.ReversingLabs.threat_name %}
   <span class="small text-muted">Reversing Labs</span><br>
   <span class="badge badge-danger small">{{ d.malware_bazaar.vendor_intel.ReversingLabs.threat_name }}</span>
@@ -19,4 +15,7 @@
               badge-danger
               {% endif %}
               ">{{ d.quark.threat_level }}</span>
+{% elif d.vt %}
+  <span class="small text-muted">VT Score</span><br>
+  <span class="badge badge-info small">{{ d.vt.malicious }}/{{ d.vt.total }}</span>
 {% endif %}
