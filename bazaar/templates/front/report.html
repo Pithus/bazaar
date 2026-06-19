@@ -277,6 +277,9 @@
           {% include "front/report/m_malware_bazaar.html" with d=result %}
         </div>
         {% endif %}
+        {% if not result.malware_bazaar and not result.vt and not similar_samples and not timeline and not hunting_matches %}
+          There is no data to display.
+        {% endif %}
       </div>
 
       <div class="tab-pane" role="tabpanel" aria-labelledby="code_analysis-tab" id="code_analysis">
