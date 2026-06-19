@@ -78,7 +78,8 @@
                    aria-valuenow="{{ result.source.vt.malicious }}" aria-valuemin="0"
                    aria-valuemax="{{ result.source.vt.total }}"></div>
             </div>
-          {% elif result.source.quark %}
+          {% endif %}
+          {% if result.source.quark %}
             <span class="small text-muted">Threat level: </span>
             {% include "front/report/m_severity_alt.html" with s=result.source.quark.threat_level class="small" %}<br>
           {% endif %}
