@@ -17,7 +17,7 @@ import ssdeep
 import vt
 import yara
 from androcfg.call_graph_extractor import CFG
-from androguard.core.bytecodes.apk import APK
+from androguard.core.apk import APK
 from androguard.misc import AnalyzeAPK
 from apkid.apkid import Options, Scanner
 from apkid.output import OutputFormatter
@@ -669,7 +669,7 @@ def quark_analysis(sha256):
 def malware_bazaar_analysis(sha256):
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'malware_bazaar_analysis': 1}},
               retry_on_conflict=5)
-    url = 'https://mb-api.abuse.ch/api/v1/'
+    url = 'https://mb-api.abuse.ch/api/v1/' # TODO: this looks down
     data_query = {
         'query': 'get_info',
         'hash': sha256

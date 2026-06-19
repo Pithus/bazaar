@@ -8,13 +8,12 @@ from io import BytesIO
 from tempfile import NamedTemporaryFile
 
 from PIL import Image
-from androguard.core import androconf
-from androguard.core.bytecodes.apk import APK
-from androguard.core.bytecodes.axml import ResParserError
+from androguard.util import set_log
+from androguard.core.apk import APK
+from androguard.core.axml import ResParserError
 
 MAX_IMAGE_SIZE = 96, 96
-androconf.show_logging(logging.ERROR)
-
+set_log("ERROR")
 
 class Certificate:
     """
@@ -103,7 +102,7 @@ def get_check_sums_of_file_as_dict(file_path):
 def get_certificates(apk):
     """
     Returns the signing certificates of the given apk
-    :param apk: apk `androguard.core.bytecodes.apk.APK` object
+    :param apk: apk `androguard.core.apk.APK` object
     :return: list of `scatter_scam_core.utils.Certificate`
     """
     certificates = []
@@ -116,7 +115,7 @@ def get_certificates(apk):
 def compute_uaid(apk):
     """
     Computes the Universal Application ID of the given apk
-    :param apk: apk `androguard.core.bytecodes.apk.APK` object
+    :param apk: apk `androguard.core.apk.APK` object
     :return: str
     """
     parts = [apk.get_package()]

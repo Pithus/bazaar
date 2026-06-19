@@ -9,7 +9,7 @@ from datetime import timedelta
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 import ssdeep
 import requests
-from androguard.core.bytecodes import apk
+from androguard.core import apk
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.urls import reverse
