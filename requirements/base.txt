@@ -1,7 +1,7 @@
 setuptools==82.0.0
 pytz==2025.2
 python-slugify==8.0.4
-pillow==12.1.0
+pillow==12.2.0
 rcssmin==1.2.2
 argon2-cffi==25.1.0
 whitenoise==6.11.0
@@ -26,8 +26,9 @@ django-q2==1.9.0
 
 elasticsearch==8.19.3
 elasticsearch-dsl==8.15.4
-quark-engine==26.1.1
-androguard==3.4.0a1
+#quark-engine==26.6.1
+quark-engine @ git+https://github.com/trpyn/quark-engine.git
+androguard==4.1.4
 django-minio-storage==0.5.9
 dhash==1.4
 iocextract==1.16.1
@@ -35,7 +36,7 @@ google-play-scraper==1.2.7
 gpapi==0.4.4
 requests==2.32.5
 dexofuzzy==2.0.0
-AndroCFG @ git+https://github.com/U039b/AndroCFG.git
+AndroCFG @ git+https://github.com/trpyn/AndroCFG.git
 vt-py==0.22.0
 scipy==1.17.0
 numpy==2.4.1
