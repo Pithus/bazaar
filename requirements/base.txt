@@ -36,7 +36,7 @@ google-play-scraper==1.2.7
 gpapi==0.4.4
 requests==2.32.5
 dexofuzzy==2.0.0
-AndroCFG @ git+https://github.com/trpyn/AndroCFG.git
+AndroCFG @ git+https://github.com/U039b/AndroCFG.git
 vt-py==0.22.0
 scipy==1.17.0
 numpy==2.4.1
