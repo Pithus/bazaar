@@ -102,11 +102,12 @@ services:
 
 
   mobsf:
-    image: opensecurity/mobile-security-framework-mobsf:v3.4.6
+    image: opensecurity/mobile-security-framework-mobsf:v4.4.6
     hostname: mobsf
     environment:
       - "MOBSF_API_ONLY=1"
       - "MOBSF_API_KEY=515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9"
+      - "MOBSF_NIAP_ENABLED=1"
 
   minio:
     image: minio/minio:RELEASE.2025-09-07T16-13-09Z
