@@ -149,15 +149,17 @@ def generate_world_map(domains, to_png=False, fp=None):
 
 def get_sample_timeline(sha256):
     es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+
+    sample = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
+    # parse_datetime(str(sample.get('uploaded_at'))).astimezone(pytz.UTC)
+    timeline = [
+        {
+            'id': 'pithus_upload',
+            'title': 'Upload on Pithus',
+            'date': parse_datetime(str(sample.get('uploaded_at'))).astimezone(pytz.UTC)
+        }]
     try:
-        sample = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
-        # parse_datetime(str(sample.get('uploaded_at'))).astimezone(pytz.UTC)
-        timeline = [
-            {
-                'id': 'pithus_upload',
-                'title': 'Upload on Pithus',
-                'date': parse_datetime(str(sample.get('uploaded_at'))).astimezone(pytz.UTC)
-            },
+        timeline.append(
             {
                 'id': 'cert_not_before',
                 'title': 'Certificate valid not before',
@@ -167,7 +169,13 @@ def get_sample_timeline(sha256):
                 'id': 'cert_not_after',
                 'title': 'Certificate valid not after',
                 'date': parse_datetime(str(sample.get('certificates')[0].get('not_after'))).astimezone(pytz.UTC)
-            },
+            }
+        )
+    except Exception:
+        pass
+
+    try:
+        timeline.append(
             {
                 'id': 'vt_first_seen',
                 'title': 'First submission on VT',
@@ -179,39 +187,37 @@ def get_sample_timeline(sha256):
                 'title': 'Last submission on VT',
                 'date': datetime.utcfromtimestamp(sample.get('vt_report').get('attributes').get('last_submission_date')).astimezone(pytz.UTC)
             }
-        ]
-
-        try:
-            timeline.append(
-                {
-                    'id': 'bundle_lowest_date',
-                    'title': 'Oldest file found in APK',
-                    'date': parse_datetime(
-                        str(sample.get('vt_report').get('attributes').get('bundle_info').get('lowest_datetime'))).astimezone(pytz.UTC)
-                }
-            )
-        except Exception:
-            pass
-
-        try:
-            timeline.append(
-                {
-                    'id': 'bundle_highest_date',
-                    'title': 'Latest file found in APK',
-                    'date': parse_datetime(
-                        str(sample.get('vt_report').get('attributes').get('bundle_info').get('highest_datetime'))).astimezone(
-                        pytz.UTC)
-                }
-            )
-        except Exception:
-            pass
-
-        timeline.sort(key = lambda x:x['date'])
-        return timeline
-
+        )
     except Exception:
-        return None
+        pass
 
+    try:
+        timeline.append(
+            {
+                'id': 'bundle_lowest_date',
+                'title': 'Oldest file found in APK',
+                'date': parse_datetime(
+                    str(sample.get('vt_report').get('attributes').get('bundle_info').get('lowest_datetime'))).astimezone(pytz.UTC)
+            }
+        )
+    except Exception:
+        pass
+
+    try:
+        timeline.append(
+            {
+                'id': 'bundle_highest_date',
+                'title': 'Latest file found in APK',
+                'date': parse_datetime(
+                    str(sample.get('vt_report').get('attributes').get('bundle_info').get('highest_datetime'))).astimezone(
+                    pytz.UTC)
+            }
+        )
+    except Exception:
+        pass
+
+    timeline.sort(key = lambda x:x['date'])
+    return timeline
 
 def get_andro_cfg_storage_path(sha256):
     return f'andro_cfg_{sha256}'
