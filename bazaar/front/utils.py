@@ -164,7 +164,9 @@ def get_sample_timeline(sha256):
                 'id': 'cert_not_before',
                 'title': 'Certificate valid not before',
                 'date': parse_datetime(str(sample.get('certificates')[0].get('not_before'))).astimezone(pytz.UTC)
-            },
+            }
+        )
+        timeline.append(
             {
                 'id': 'cert_not_after',
                 'title': 'Certificate valid not after',
@@ -181,7 +183,9 @@ def get_sample_timeline(sha256):
                 'title': 'First submission on VT',
                 'date': datetime.utcfromtimestamp(sample.get('vt_report').get('attributes').get('first_submission_date')).astimezone(
                     pytz.UTC)
-            },
+            }
+        )
+        timeline.append(
             {
                 'id': 'vt_last_seen',
                 'title': 'Last submission on VT',
