@@ -1,3 +1,4 @@
+import logging
 from django import forms
 from django.conf import settings
 from elasticsearch import Elasticsearch
@@ -88,7 +89,7 @@ class SearchForm(forms.Form):
             "sort": {"analysis_date": "desc"},
             "_source": ["apk_hash", "sha256", "uploaded_at", "icon_base64", "handle", "app_name",
                         "version_code", "size", "dexofuzzy.apk", "quark.threat_level", "vt", "vt_report", "malware_bazaar",
-                        "is_signed", "frosting_data.is_frosted", "features", "andro_cfg.genom"],
+                        "is_signed", "frosting_data.is_frosted", "features", "andro_cfg"],
             "size": 50,
         }
         es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
@@ -96,9 +97,11 @@ class SearchForm(forms.Form):
             raw_results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
             results = transform_hl_results(raw_results)
             results = append_dexofuzzy_similarity(results, 'sim', 30)
+
             genetic_analysis = compute_genetic_analysis(results)
             return results, get_aggregations(raw_results), genetic_analysis
         except Exception as e:
+            logging.error(e)
             return [], [], None
 
 

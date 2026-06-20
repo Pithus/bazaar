@@ -1,7 +1,9 @@
 <div class="row justify-content-center">
+  <center>
   <div class="col-md-6 text-center">
-    <div id="genetic_analysis_dataviz"></div>
+    <div id="genetic_analysis_dataviz" style="margin: 40px;"></div>
   </div>
+  </center>
 </div>
 
 <script>
@@ -10,13 +12,14 @@
     var coeff_x = 2;
     var coeff_y = 4;
 
+    var margin = 30;
+    width = 650;
     var svg = d3.select("#genetic_analysis_dataviz")
             .append("svg")
-            .attr("width", 840)
-            .attr("height", 40 + 10 * coeff_x * data['labels'].length)
+            .attr("width", width + 2*margin)
+            .attr("height", 40 + 10 * coeff_x * data['labels'].length + 2*margin)
             .append("g")
-            .attr("transform", "rotate(90, 0, " + data.max_y * coeff_y + ") translate(" +
-                    -data.max_y * coeff_y + ", -20)");
+            .attr("transform", "rotate(90, 0, 0) translate("+ margin +", "+ -width/2 +")")
 
     var links = []
     for (var i = 0; i < data.icoord.length; i++) {
@@ -57,11 +60,11 @@
             .enter()
             .append("a")
             .attr("xlink:href", function (d) {
-              return "/report/" + d.label;
+              return "/report/" + d.label[0];
             })
             .append('text')
             .text(function (d) {
-              return d.label;
+              return d.label[1];
             })
             .attr("transform", function (d) {
               return "rotate(-90, " + d.x + "," + d.y + ") translate(10, 0)";
@@ -90,7 +93,7 @@
 
     var scale = d3.scaleLinear()
             .domain([0, data.max_y])
-            .range([data.max_y * coeff_y, 0]);
+            .range([0, data.max_y * coeff_y + 10*coeff_y]);
 
     var axis = d3.axisBottom()
             .scale(scale)
@@ -102,6 +105,13 @@
     svg.append('g')
             .attr('transform', 'rotate(-90, ' + data.max_y * coeff_y + ',0) translate(0, ' + translate_y + ')')
             .call(axis)
+
+    svg.append('text')
+             .attr("x", -200)
+             .attr("y", 0)
+             .style("font-size", "12px")
+             .style("text-decoration", "underline")
+             .text("Sample Similarity Graph").attr("transform", "rotate(-90)")
   }
 
 </script>

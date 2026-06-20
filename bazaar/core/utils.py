@@ -354,37 +354,31 @@ def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha
 
 
 def compute_genetic_analysis(results):
-    try:
-        def normalize(data):
-            d_prime = []
-            for i in data:
-                d_prime.append((100 * i) / max(data))
-            return d_prime
 
-        with NamedTemporaryFile(mode='w') as tmp_csv:
+    def normalize(data):
+        d_prime = []
+        for i in data:
+            d_prime.append((100 * i) / max(data))
+        return d_prime
 
-            for r in results:
-                try:
-                    sha256 = r.get('source').get('sha256')
-                    genom = r.get('source').get('andro_cfg').get('genom')
-                    if genom:
-                        tmp_csv.write(f'{sha256},{genom}\n')
-                except Exception as e:
-                    logging.error(f'Compute Genetic Analysis: {e}')
+    data = {}
+    for r in results:
+        r = r['source']
+        try:
+            app = (r['sha256'], r['handle'])
+            genom = r['andro_cfg']['genom']
+            data[app] = [int(x.strip()) for x in genom.split(',')]
+        except Exception:
+            pass # No genom found
 
-            csv_data = pd.read_csv(tmp_csv.name, delimiter=',', header=None)
-        labels = csv_data.pop(0)
-        distances = pdist(csv_data)  # compute distance over all dimensions
-        normalized_dist = normalize(distances)
-        z = linkage(normalized_dist)
-        x = dendrogram(z, orientation='top', no_labels=True, labels=list(labels))
+    distances = pdist(list(data.values()))  # compute distance over all dimensions
+    normalized_dist = normalize(distances)
+    z = linkage(normalized_dist)
+    x = dendrogram(z, orientation='top', no_labels=True, labels=list(data.keys()))
 
-        # Add a few more data to help the JS
-        x["max_x"] = numpy.amax(x["icoord"])
-        x["max_y"] = numpy.amax(x["dcoord"])
-        x["labels"] = list(labels)
+    # Add a few more data to help the JS
+    x["max_x"] = numpy.amax(x["icoord"])
+    x["max_y"] = numpy.amax(x["dcoord"])
+    x["labels"] = list(data.keys())
 
-        return x
-    except Exception as e:
-        logging.error(f'Compute Genetic Analysis: {e}')
-        return None
+    return x

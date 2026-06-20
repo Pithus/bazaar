@@ -491,18 +491,17 @@ def get_andgrocfg_code(request, sha256, foo):
 def get_genom(request):
     es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     entire_genom = []
-    for report in scan(
-        es,
-        query={"query": {"match_all": {}}},
-        index=settings.ELASTICSEARCH_APK_INDEX,
-    ):
-        sha256 = report.get('_source').get('sha256')
+    query={"query": {"match_all": {}}}
+    reports = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
+
+    for report in reports:
+        report = report['_source']
+        sha256 = report['sha256']
         genom = None
         threat = 'unknown'
         try:
-            genom = report.get('_source').get('andro_cfg').get('genom')
-            threat = report.get('_source').get('vt_report').get('attributes').get(
-                'popular_threat_classification').get('suggested_threat_label')
+            genom = report['andro_cfg']['genom']
+            threat = report['vt_report']['attributes']['popular_threat_classification']['suggested_threat_label']
         except Exception as e:
             logging.error(f'Get Genom: {e}')
         if genom:
