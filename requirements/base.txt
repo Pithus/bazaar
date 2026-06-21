@@ -50,3 +50,7 @@ CairoSVG==2.8.2
 
 # Monitoring
 django-prometheus==2.4.0
+
+# APKiD
+apkid==3.1.0
+yara-python-dex==1.0.7
