@@ -79,14 +79,16 @@
                    aria-valuemax="{{ result.source.vt.total }}"></div>
             </div>
           {% endif %}
+          {% if result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name %}
+            <span class="small text-danger">
+              <i class="fa fa-bug"></i> {{ result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name }}<br>
+            </span>
+          {% endif %}
           {% if result.source.quark %}
             <span class="small text-muted">Threat level: </span>
             {% include "front/report/m_severity_alt.html" with s=result.source.quark.threat_level class="small" %}<br>
           {% endif %}
-          {% if result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name %}
-            <span class="small text-danger"><i
-                    class="fa fa-bug"></i> {{ result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name }}</span>
-          {% endif %}
+
 
           {% if result.sim %}
             <div class="mt-2">

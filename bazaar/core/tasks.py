@@ -8,7 +8,7 @@ import shutil
 import time
 import uuid
 import zipfile
-from datetime import datetime
+from datetime import datetime, timedelta
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 import dexofuzzy
@@ -27,6 +27,8 @@ from django.core.files import File
 from django.core.files.storage import default_storage
 from django.utils import timezone
 from django_q.tasks import async_task
+from django_q.models import Schedule
+from django_q.tasks import schedule
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers.actions import scan
 from google_play_scraper import app
@@ -42,8 +44,11 @@ from bazaar.core.utils import (
     insert_fuzzy_hash,
     strings_from_apk,
     upload_sample_to_malware_bazaar,
+    MalwareBazaarUploadStatus,
 )
 from bazaar.front.utils import get_andro_cfg_storage_path
+from http.client import responses as http_responses
+
 
 es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, timeout=30, max_retries=5, retry_on_timeout=True, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
 
@@ -675,26 +680,55 @@ def quark_analysis(sha256):
 def malware_bazaar_analysis(sha256):
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'malware_bazaar_analysis': 1}},
               retry_on_conflict=5)
-    url = 'https://mb-api.abuse.ch/api/v1/' # TODO: this looks down
+    url = 'https://mb-api.abuse.ch/api/v1/'
+    headers = {'Auth-Key': settings.MALWARE_BAZAAR_API_KEY}
     data_query = {
         'query': 'get_info',
         'hash': sha256
     }
     try:
-        response = requests.post(url, data=data_query)
+        response = requests.post(url, headers=headers, data=data_query)
         if response.status_code != 200:
-            upload_sample_to_malware_bazaar(sha256)
-
+            logging.error(f"Request to Malware Bazaar failed with error code: {response.status_code} {http_responses[response.status_code]}")
             es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256,
                       body={'doc': {'malware_bazaar_analysis': -1}}, retry_on_conflict=5)
             return
         json_response = response.json()
+        logging.info(json_response)
     except Exception as e:
+        logging.error(e)
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'malware_bazaar_analysis': -1}},
                   retry_on_conflict=5)
         return
 
-    if 'data' in json_response:
+    if 'query_status' in json_response and json_response["query_status"] == "hash_not_found":
+            # Report not found, we try to upload
+            upload_status = upload_sample_to_malware_bazaar(sha256)
+            match upload_status:
+                case MalwareBazaarUploadStatus.SUCCESS:
+                    # Upload successful, we reschedule the analysis in 15 minutes
+                    schedule('bazaar.core.tasks.malware_bazaar_analysis', [sha256],
+                              schedule_type=Schedule.ONCE,
+                              next_run=timezone.now() + timedelta(minutes=15))
+                    return
+
+                case MalwareBazaarUploadStatus.FAILURE_ALREADY_KNOWN:
+                    # No report found and our file couldn't be uploaded,
+                    # this may happen sometimes when the Auth-Key is from a new user
+                    # Simply add an empty entry to the report to avoid retriggering unnecessary uploads.
+                    # We reschedule in a few days because this submission must be approved by admins
+                    es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'malware_bazaar': {}}},
+                              retry_on_conflict=5)
+                    schedule('bazaar.core.tasks.malware_bazaar_analysis', [sha256],
+                              schedule_type=Schedule.ONCE,
+                              next_run=timezone.now() + timedelta(days=5))
+                    return
+
+                case MalwareBazaarUploadStatus.FAILURE:
+                    # something went wrong, not much we can do
+                    pass
+
+    elif 'data' in json_response:
         for d in json_response['data']:
             if d['sha256_hash'] == sha256:
                 es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'malware_bazaar': d}},

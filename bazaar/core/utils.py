@@ -5,7 +5,6 @@ import logging
 
 import dexofuzzy
 from django.utils import timezone
-from datetime import timedelta
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 import ssdeep
 import requests
@@ -14,14 +13,13 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.urls import reverse
 from django.utils.html import escape
-from django_q.models import Schedule
-from django_q.tasks import schedule
 from elasticsearch import Elasticsearch
 import numpy
 from scipy.cluster.hierarchy import dendrogram, linkage, to_tree
 from scipy.spatial.distance import pdist
 import pandas as pd
-
+from http.client import responses as http_responses
+from enum import Enum
 
 def get_sha256_of_file_path(file_path):
     sha256_hash = hashlib.sha256()
@@ -130,6 +128,11 @@ def strings_from_apk(apk_file):
         return {}
 
 
+class MalwareBazaarUploadStatus(Enum):
+    SUCCESS = True
+    FAILURE = False
+    FAILURE_ALREADY_KNOWN = 'file_already_known'
+
 def upload_sample_to_malware_bazaar(sha256):
     es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     try:
@@ -138,8 +141,7 @@ def upload_sample_to_malware_bazaar(sha256):
             return
 
         if result['vt']['malicious'] > 1 and 'malware_bazaar' not in result:
-            print(f'Upload {sha256}')
-            headers = {'API-KEY': settings.MALWARE_BAZAAR_API_KEY}
+            logging.info(f'Uploading {sha256} to Malware Bazaar')
             uri = reverse('front:report', args=[sha256])
             data = {
                 'tags': [
@@ -151,7 +153,8 @@ def upload_sample_to_malware_bazaar(sha256):
                     ]
                 }
             }
-            print(data)
+            headers = {'Auth-Key': settings.MALWARE_BAZAAR_API_KEY}
+
             with NamedTemporaryFile() as f:
                 f.write(default_storage.open(sha256).read())
                 f.seek(0)
@@ -159,16 +162,34 @@ def upload_sample_to_malware_bazaar(sha256):
                     'json_data': (None, json.dumps(data), 'application/json'),
                     'file': (open(f.name, 'rb'))
                 }
-                response = requests.post('https://mb-api.abuse.ch/api/v1/', files=files, verify=False,
-                                         headers=headers)
-                if response.status_code < 400:
-                    print(f'Update MB report in 15 minutes {sha256}')
-                    schedule('bazaar.core.tasks.malware_bazaar_analysis', [sha256],
-                             schedule_type=Schedule.ONCE,
-                             next_run=timezone.now() + timedelta(minutes=30))
+                response = requests.post('https://mb-api.abuse.ch/api/v1/', files=files, verify=True, headers=headers)
+                if response.ok:
+                    json_response = response.json()
+                    if not 'query_status' in json_response:
+                        logging.error(f"Unexpected result from Malware Bazaar API, no 'query_status' received.")
+                        return MalwareBazaarUploadStatus.FAILURE
 
+                    elif json_response['query_status'] == 'inserted':
+                        logging.info(f"Upload to Malware Bazaar: Sample {sha256} marked as [inserted]. Check again later.")
+                        return MalwareBazaarUploadStatus.SUCCESS
+
+                    elif json_response['query_status'] == 'file_already_known':
+                        logging.warn(f"Upload to Malware Bazaar failed because file is already known.")
+                        # Upload failed because file is already known at MB, 
+                        # but if we're it means we couldn't find a report
+                        return MalwareBazaarUploadStatus.FAILURE_ALREADY_KNOWN
+                    else:
+                        logging.error(f"Failed to upload to Malware Bazaar: query_status: {json_response['query_status']}")
+                        return MalwareBazaarUploadStatus.FAILURE
+
+                else:
+                    logging.error(f"Request to Malware Bazaar failed with error code: {response.status_code} {http_responses[response.status_code]}")
+                    return MalwareBazaarUploadStatus.FAILURE
+        else:
+            logging.warn(f"Malware Bazaar: not uploading because a report for this file already exists, or the file is not flagged as malicious by VirusTotal")
     except Exception as e:
         logging.error(f'Malware Bazaar: {e}')
+    return MalwareBazaarUploadStatus.FAILURE
 
 
 def insert_fuzzy_hash(hash_value, sha256, index):
