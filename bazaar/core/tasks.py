@@ -513,6 +513,7 @@ def _check_urls(d):
 
 
 def mobsf_analysis(sha256):
+
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': 1}},
               retry_on_conflict=5)
     server = 'http://mobsf:8000'
@@ -529,6 +530,11 @@ def mobsf_analysis(sha256):
                 mobsf.scan(response)
                 report = mobsf.report_json(response)
                 mobsf.delete_scan(response)
+
+                updated_report_api = []
+                for x in _dict_to_list(report['android_api']):
+                    x['metadata']['id'] = x['_name']
+                    updated_report_api.append(x)
 
                 to_store = {
                     'analysis_date': report['timestamp'] if 'timestamp' in report else None,
@@ -549,7 +555,7 @@ def mobsf_analysis(sha256):
                     'url_analysis': _check_urls(report['urls']),
                     'browsable_activities': _dict_to_list(report['browsable_activities']),
                     'detailed_permissions': _dict_to_list(report['permissions']),
-                    'android_api_analysis': _dict_to_list(report['android_api']),
+                    'android_api_analysis':updated_report_api,
                     'code_analysis': _dict_to_list(report['code_analysis']),
                     'niap_analysis': _dict_to_list(report['niap_analysis']),
                     'domains_analysis': _check_tld(_dict_to_list(report['domains'])),
