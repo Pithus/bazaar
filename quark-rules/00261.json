@@ -1,0 +1,21 @@
+{
+    "crime": "Dispatch gesture from a list",
+    "permission": [],
+    "api": [
+        {
+            "class": "Ljava/util/LinkedList;",
+            "method": "get",
+            "descriptor": "(I)Ljava/lang/Object;"
+        },
+        {
+            "class": "Landroid/accessibilityservice/AccessibilityService;",
+            "method": "dispatchGesture",
+            "descriptor": "(Landroid/accessibilityservice/GestureDescription;Landroid/accessibilityservice/AccessibilityService$GestureResultCallback;Landroid/os/Handler;)Z"
+        }
+    ],
+    "label": [
+        "accessibility service",
+        "control"
+    ],
+    "score": -0.01
+}

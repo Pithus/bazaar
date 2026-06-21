@@ -1,0 +1,20 @@
+{
+    "crime": "Write data to a file",
+    "permission": [],
+    "api": [
+        {
+            "descriptor": "([B)I",
+            "class": "Ljava/io/InputStream;",
+            "method": "read"
+        },
+        {
+            "descriptor": "([B I I)V",
+            "class": "Ljava/io/FileOutputStream;",
+            "method": "write"
+        }
+    ],
+    "score": -1.01,
+    "label": [
+        "file"
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "crime": "Get messages in the SMS inbox",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/net/Uri;",
+            "method": "parse",
+            "descriptor": "(Ljava/lang/String;)Landroid/net/Uri;",
+            "match_keywords": [
+                "sms/inbox"
+            ]
+        },
+        {
+            "class": "Landroid/database/Cursor;",
+            "method": "getColumnIndexOrThrow",
+            "descriptor": "(Ljava/lang/String;)I"
+        }
+    ],
+    "score": -0.29,
+    "label": [
+        "sms"
+    ]
+}

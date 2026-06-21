@@ -1,0 +1,20 @@
+{
+    "crime": "Use accessibility service to perform action getting node info by text",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/view/accessibility/AccessibilityNodeInfo;",
+            "method": "findAccessibilityNodeInfosByText",
+            "descriptor": "(Ljava/lang/String;)Ljava/util/List;"
+        },
+        {
+            "class": "Landroid/view/accessibility/AccessibilityNodeInfo;",
+            "method": "performAction",
+            "descriptor": "(I)Z"
+        }
+    ],
+    "score": 1.58,
+    "label": [
+        "accessibility service"
+    ]
+}

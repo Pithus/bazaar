@@ -1,0 +1,20 @@
+{
+    "crime": "Get device time and longitude",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/location/Location;",
+            "method": "getTime",
+            "descriptor": "()J"
+        },
+        {
+            "class": "Landroid/location/Location;",
+            "method": "getLongitude",
+            "descriptor": "()D"
+        }
+    ],
+    "score": -0.76,
+    "label": [
+        "collection"
+    ]
+}

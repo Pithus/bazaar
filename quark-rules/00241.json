@@ -1,0 +1,20 @@
+{
+    "crime": "Get the description of a UI element",
+    "permission": [],
+    "api": [
+        {
+            "descriptor": "()Landroid/view/accessibility/AccessibilityNodeInfo;",
+            "class": "Landroid/view/accessibility/AccessibilityEvent;",
+            "method": "getSource"
+        },
+        {
+            "descriptor": "()Ljava/lang/CharSequence;",
+            "class": "Landroid/view/accessibility/AccessibilityNodeInfo;",
+            "method": "getContentDescription"
+        }
+    ],
+    "score": 0.19,
+    "label": [
+        "accessibility service"
+    ]
+}

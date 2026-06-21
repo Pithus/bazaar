@@ -1,0 +1,20 @@
+{
+    "crime": "Get the default ringtone",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/media/RingtoneManager;",
+            "method": "getDefaultUri",
+            "descriptor": "(I)Landroid/net/Uri;"
+        },
+        {
+            "class": "Landroid/media/RingtoneManager;",
+            "method": "getRingtone",
+            "descriptor": "(Landroid/content/Context; Landroid/net/Uri;)Landroid/media/Ringtone;"
+        }
+    ],
+    "score": 0.16,
+    "label": [
+        "collection"
+    ]
+}

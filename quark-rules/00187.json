@@ -1,0 +1,23 @@
+{
+    "crime": "Query a URI and check the result",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/ContentResolver;",
+            "method": "query",
+            "descriptor": "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;"
+        },
+        {
+            "class": "Landroid/database/Cursor;",
+            "method": "moveToNext",
+            "descriptor": "()Z"
+        }
+    ],
+    "score": -1.65,
+    "label": [
+        "collection",
+        "sms",
+        "calllog",
+        "calendar"
+    ]
+}

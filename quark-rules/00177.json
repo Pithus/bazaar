@@ -1,0 +1,20 @@
+{
+    "crime": "Check if permission is granted and request it",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "checkPermission",
+            "descriptor": "(Ljava/lang/String; I I)I"
+        },
+        {
+            "class": "Landroid/app/Activity;",
+            "method": "requestPermissions",
+            "descriptor": "([Ljava/lang/String; I)V"
+        }
+    ],
+    "score": -1.0,
+    "label": [
+        "permission"
+    ]
+}

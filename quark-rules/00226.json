@@ -1,0 +1,21 @@
+{
+    "crime": "Check for network connectivity",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "getSystemService",
+            "descriptor": "(Ljava/lang/String;)Ljava/lang/Object;"
+        },
+        {
+            "class": "Landroid/net/NetworkInfo;",
+            "method": "isConnected",
+            "descriptor": "()Z"
+        }
+    ],
+    "score": -1.47,
+    "label": [
+        "collection",
+        "network"
+    ]
+}

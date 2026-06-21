@@ -1,0 +1,20 @@
+{
+    "crime": "Execute Linux commands via ProcessBuilder",
+    "permission": [],
+    "api": [
+        {
+            "class": "Ljava/lang/ProcessBuilder;",
+            "method": "<init>",
+            "descriptor": "([Ljava/lang/String;)V"
+        },
+        {
+            "class": "Ljava/lang/ProcessBuilder;",
+            "method": "start",
+            "descriptor": "()Ljava/lang/Process;"
+        }
+    ],
+    "score": -0.14,
+    "label": [
+        "command"
+    ]
+}

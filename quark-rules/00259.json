@@ -1,0 +1,23 @@
+{
+    "crime": "Allow website to access internal methods",
+    "permission": [
+        "android.permission.INTERNET"
+    ],
+    "api": [
+        {
+            "class": "Landroid/webkit/WebView;",
+            "method": "addJavascriptInterface",
+            "descriptor": "(Ljava/lang/Object;Ljava/lang/String;)V"
+        },
+        {
+            "class": "Landroid/webkit/WebSettings;",
+            "method": "setJavaScriptEnabled",
+            "descriptor": "(Z)V"
+        }
+    ],
+    "label": [
+        "connection",
+        "control"
+    ],
+    "score": -0.63
+}

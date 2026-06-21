@@ -1,0 +1,20 @@
+{
+    "crime": "Create an overlay window on top of other applications",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/view/View;",
+            "method": "getWindowToken",
+            "descriptor": "()Landroid/os/IBinder;"
+        },
+        {
+            "class": "Landroid/view/ViewManager;",
+            "method": "addView",
+            "descriptor": "(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V"
+        }
+    ],
+    "label": [
+        "screen"
+    ],
+    "score": -0.43
+}

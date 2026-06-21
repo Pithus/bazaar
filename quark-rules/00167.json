@@ -1,0 +1,20 @@
+{
+    "crime": "Use accessibility service to perform action getting root in active window",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/accessibilityservice/AccessibilityService;",
+            "method": "getRootInActiveWindow",
+            "descriptor": "()Landroid/view/accessibility/AccessibilityNodeInfo;"
+        },
+        {
+            "class": "Landroid/view/accessibility/AccessibilityNodeInfo;",
+            "method": "performAction",
+            "descriptor": "(I)Z"
+        }
+    ],
+    "score": 1.53,
+    "label": [
+        "accessibility service"
+    ]
+}

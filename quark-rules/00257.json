@@ -1,0 +1,25 @@
+{
+    "crime": "Get the status bar height",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/res/Resources;",
+            "method": "getIdentifier",
+            "descriptor": "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String;)I",
+            "match_keywords": [
+                "status_bar_height",
+                "dimen",
+                "android"
+            ]
+        },
+        {
+            "class": "Landroid/content/res/Resources;",
+            "method": "getDimensionPixelSize",
+            "descriptor": "(I)I"
+        }
+    ],
+    "score": -1.07,
+    "label": [
+        "screen"
+    ]
+}

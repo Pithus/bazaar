@@ -1,0 +1,23 @@
+{
+    "crime": "Start capturing camera preview frames to the screen",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/hardware/Camera;",
+            "method": "startPreview",
+            "descriptor": "()V"
+        },
+        {
+            "class": "Ljava/lang/Object;",
+            "method": "<init>",
+            "descriptor": "()V"
+        }
+    ],
+    "score": -0.33,
+    "label": [
+        "camera"
+    ],
+    "malware": [
+        "4b65291d3453664b214cf2b0cfd0cd5d"
+    ]
+}

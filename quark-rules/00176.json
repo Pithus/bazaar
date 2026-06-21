@@ -1,0 +1,23 @@
+{
+    "crime": "Send sms to a contact of contact list",
+    "permission": [
+        "android.permission.SEND_SMS",
+        "android.permission.READ_CONTACTS"
+    ],
+    "api": [
+        {
+            "class": "Landroid/content/ContentResolver;",
+            "method": "query",
+            "descriptor": "(Landroid/net/Uri; [Ljava/lang/String; Landroid/os/Bundle; Landroid/os/CancellationSignal;)Landroid/database/Cursor;"
+        },
+        {
+            "class": "Landroid/telephony/SmsManager;",
+            "method": "sendTextMessage",
+            "descriptor": "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Landroid/app/PendingIntent; Landroid/app/PendingIntent;)V"
+        }
+    ],
+    "score": -0.14,
+    "label": [
+        "sms"
+    ]
+}

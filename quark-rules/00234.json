@@ -1,0 +1,23 @@
+{
+    "crime": "Monitor incoming SMS message",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Intent;",
+            "method": "getAction",
+            "descriptor": "()Ljava/lang/String;"
+        },
+        {
+            "class": "Ljava/lang/String;",
+            "method": "equals",
+            "descriptor": "(Ljava/lang/Object;)Z",
+            "match_keywords": [
+                "android.provider.Telephony.SMS_RECEIVED"
+            ]
+        }
+    ],
+    "score": 0.67,
+    "label": [
+        "collection"
+    ]
+}

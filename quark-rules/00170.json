@@ -1,0 +1,21 @@
+{
+    "crime": "Get installed applications and put the list in shared preferences",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/pm/PackageManager;",
+            "method": "getInstalledApplications",
+            "descriptor": "(I)Ljava/util/List;"
+        },
+        {
+            "class": "Landroid/content/SharedPreferences$Editor;",
+            "method": "putString",
+            "descriptor": "(Ljava/lang/String; Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;"
+        }
+    ],
+    "score": 0.43,
+    "label": [
+        "applications",
+        "privacy"
+    ]
+}

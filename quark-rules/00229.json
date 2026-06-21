@@ -1,0 +1,20 @@
+{
+    "crime": "Start an activity",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Intent;",
+            "method": "<init>",
+            "descriptor": "(Ljava/lang/String; Landroid/net/Uri;)V"
+        },
+        {
+            "class": "Landroid/app/Activity;",
+            "method": "startActivity",
+            "descriptor": "(Landroid/content/Intent;)V"
+        }
+    ],
+    "score": -0.02,
+    "label": [
+        "control"
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "crime": "Monitor device boot completion",
+    "permission": [
+        "android.permission.RECEIVE_BOOT_COMPLETED"
+    ],
+    "api": [
+        {
+            "class": "Landroid/content/Intent;",
+            "method": "getAction",
+            "descriptor": "()Ljava/lang/String;"
+        },
+        {
+            "class": "Ljava/lang/String;",
+            "method": "equals",
+            "descriptor": "(Ljava/lang/Object;)Z",
+            "match_keywords": [
+                "android.intent.action.BOOT_COMPLETED"
+            ]
+        }
+    ],
+    "label": [
+        "collection"
+    ],
+    "score": 0.5
+}

@@ -1,0 +1,25 @@
+{
+    "crime": "Get the navigation bar height",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/res/Resources;",
+            "method": "getIdentifier",
+            "descriptor": "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String;)I",
+            "match_keywords": [
+                "navigation_bar_height",
+                "dimen",
+                "android"
+            ]
+        },
+        {
+            "class": "Landroid/content/res/Resources;",
+            "method": "getDimensionPixelSize",
+            "descriptor": "(I)I"
+        }
+    ],
+    "score": -0.97,
+    "label": [
+        "screen"
+    ]
+}

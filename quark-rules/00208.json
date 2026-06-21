@@ -1,0 +1,21 @@
+{
+    "crime": "Capture the contents of the device screen",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/media/projection/MediaProjection;",
+            "method": "createVirtualDisplay",
+            "descriptor": "(Ljava/lang/String; I I I I Landroid/view/Surface; Landroid/hardware/display/VirtualDisplay$Callback; Landroid/os/Handler;)Landroid/hardware/display/VirtualDisplay;"
+        },
+        {
+            "class": "Landroid/media/projection/MediaProjection;",
+            "method": "registerCallback",
+            "descriptor": "(Landroid/media/projection/MediaProjection$Callback; Landroid/os/Handler;)V"
+        }
+    ],
+    "score": 0.18,
+    "label": [
+        "collection",
+        "screen"
+    ]
+}

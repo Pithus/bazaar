@@ -34,6 +34,7 @@ from elasticsearch.helpers.actions import scan
 from google_play_scraper import app
 from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject as QuarkRule
+from quark import freshquark
 from tld import get_tld, is_tld
 from tqdm import tqdm
 
@@ -643,8 +644,15 @@ def get_google_play_info(package):
     return {'status': 'error', 'info': f'Unable to retrieve Google Play details of {package}'}
 
 
+def run_freshquark():
+    freshquark.download()
+    src = os.path.join(freshquark.config.HOME_DIR, 'quark-rules/rules/')
+    for file in os.listdir(src):
+        shutil.copy(os.path.join(src, file), os.path.join('quark-rules/', file))
+
+
 def quark_analysis(sha256):
-    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'quark_analysis': 1}},
+    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'quark_analysis': 5}},
               retry_on_conflict=5)
     with NamedTemporaryFile() as f:
         f.write(default_storage.open(sha256).read())
@@ -653,6 +661,10 @@ def quark_analysis(sha256):
 
         rules_path = 'quark-rules'
         rules_list = os.listdir(rules_path)
+        if datetime.now() - datetime.fromtimestamp(os.stat(os.path.join(rules_path, rules_list[0])).st_mtime) >= timedelta(days=1):
+            run_freshquark()
+            rules_list = os.listdir(rules_path)
+
         for single_rule in tqdm(rules_list):
             if single_rule.endswith('json'):
                 rule_path = os.path.join(rules_path, single_rule)

@@ -1,0 +1,21 @@
+{
+    "crime": "Write data to file",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "openFileOutput",
+            "descriptor": "(Ljava/lang/String; I)Ljava/io/FileOutputStream;"
+        },
+        {
+            "class": "Ljava/io/FileOutputStream;",
+            "method": "write",
+            "descriptor": "([B)V"
+        }
+    ],
+    "score": -0.38,
+    "label": [
+        "collection",
+        "file"
+    ]
+}

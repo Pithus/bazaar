@@ -1,0 +1,23 @@
+{
+    "crime": "Display URL content on a WebView",
+    "permission": [
+        "android.permission.INTERNET"
+    ],
+    "api": [
+        {
+            "class": "Landroid/view/View;",
+            "method": "findViewById",
+            "descriptor": "(I)Landroid/view/View;"
+        },
+        {
+            "class": "Landroid/webkit/WebView;",
+            "method": "loadUrl",
+            "descriptor": "(Ljava/lang/String;)V"
+        }
+    ],
+    "label": [
+        "connection",
+        "http"
+    ],
+    "score": 0.46
+}

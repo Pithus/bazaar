@@ -31,7 +31,3 @@ django-debug-toolbar==6.2.0
 django-extensions==4.1
 django_coverage_plugin==3.2.0
 pytest-django==4.11.1
-
-# APKiD
-apkid==3.1.0
-yara-python-dex==1.0.7

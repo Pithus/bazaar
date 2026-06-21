@@ -1,0 +1,20 @@
+{
+    "crime": "Use accessibility service to perform global action getting node info by View Id",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/view/accessibility/AccessibilityNodeInfo;",
+            "method": "findAccessibilityNodeInfosByViewId",
+            "descriptor": "(Ljava/lang/String;)Ljava/util/List;"
+        },
+        {
+            "class": "Landroid/accessibilityservice/AccessibilityService;",
+            "method": "performGlobalAction",
+            "descriptor": "(I)Z"
+        }
+    ],
+    "score": 1.05,
+    "label": [
+        "accessibility service"
+    ]
+}

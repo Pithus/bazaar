@@ -1,0 +1,21 @@
+{
+    "crime": "Simulate a touch gesture on the device screen",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/accessibilityservice/GestureDescription$Builder;",
+            "method": "addStroke",
+            "descriptor": "(Landroid/accessibilityservice/GestureDescription$StrokeDescription;)Landroid/accessibilityservice/GestureDescription$Builder;"
+        },
+        {
+            "class": "Landroid/accessibilityservice/GestureDescription$Builder;",
+            "method": "build",
+            "descriptor": "()Landroid/accessibilityservice/GestureDescription;"
+        }
+    ],
+    "score": 1.13,
+    "label": [
+        "accessibility service",
+        "control"
+    ]
+}

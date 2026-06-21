@@ -1,0 +1,20 @@
+{
+    "crime": "Check if the resource name of the view contains the given string",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/view/accessibility/AccessibilityNodeInfo;",
+            "method": "getViewIdResourceName",
+            "descriptor": "()Ljava/lang/String;"
+        },
+        {
+            "class": "Ljava/lang/String;",
+            "method": "contains",
+            "descriptor": "(Ljava/lang/CharSequence;)Z"
+        }
+    ],
+    "score": 0.03,
+    "label": [
+        "accessibility service"
+    ]
+}

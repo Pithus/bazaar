@@ -1,0 +1,21 @@
+{
+    "crime": "Save gestures into a list",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/accessibilityservice/GestureDescription$Builder;",
+            "method": "build",
+            "descriptor": "()Landroid/accessibilityservice/GestureDescription;"
+        },
+        {
+            "class": "Ljava/util/LinkedList;",
+            "method": "add",
+            "descriptor": "(Ljava/lang/Object;)Z"
+        }
+    ],
+    "score": -0.22,
+    "label": [
+        "accessibility service",
+        "control"
+    ]
+}

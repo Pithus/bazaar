@@ -1,0 +1,20 @@
+{
+    "crime": "Set the audio encoder and initialize the recorder",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "setAudioEncoder",
+            "descriptor": "(I)V"
+        },
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "prepare",
+            "descriptor": "()V"
+        }
+    ],
+    "score": -0.47,
+    "label": [
+        "record"
+    ]
+}

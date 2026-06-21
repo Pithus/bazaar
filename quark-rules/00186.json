@@ -1,0 +1,23 @@
+{
+    "crime": "Control camera to take picture",
+    "permission": [],
+    "api": [
+        {
+            "class": "Ljava/lang/Object;",
+            "method": "<init>",
+            "descriptor": "()V"
+        },
+        {
+            "class": "Landroid/hardware/Camera;",
+            "method": "takePicture",
+            "descriptor": "(Landroid/hardware/Camera$ShutterCallback; Landroid/hardware/Camera$PictureCallback; Landroid/hardware/Camera$PictureCallback;)V"
+        }
+    ],
+    "score": 0.16,
+    "label": [
+        "camera"
+    ],
+    "malware": [
+        "4b65291d3453664b214cf2b0cfd0cd5d"
+    ]
+}

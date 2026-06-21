@@ -1,0 +1,22 @@
+{
+    "crime": "Create an intent and check if any installed app can handle it",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Intent;",
+            "method": "<init>",
+            "descriptor": "(Landroid/content/Context; Ljava/lang/Class;)V"
+        },
+        {
+            "class": "Landroid/content/pm/PackageManager;",
+            "method": "resolveActivity",
+            "descriptor": "(Landroid/content/Intent; I)Landroid/content/pm/ResolveInfo;"
+        }
+    ],
+    "score": 0.44,
+    "label": [
+        "collection",
+        "applications",
+        "control"
+    ]
+}

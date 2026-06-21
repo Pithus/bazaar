@@ -1,0 +1,20 @@
+{
+    "crime": "Get secure system settings and log warning messages",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/provider/Settings$Secure;",
+            "method": "getString",
+            "descriptor": "(Landroid/content/ContentResolver; Ljava/lang/String;)Ljava/lang/String;"
+        },
+        {
+            "class": "Landroid/util/Log;",
+            "method": "w",
+            "descriptor": "(Ljava/lang/String; Ljava/lang/String;)I"
+        }
+    ],
+    "score": -0.87,
+    "label": [
+        "collection"
+    ]
+}

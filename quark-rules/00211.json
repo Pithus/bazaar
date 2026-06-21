@@ -1,0 +1,21 @@
+{
+    "crime": "Open an URL in Wevbiew",
+    "permission": [],
+    "api": [
+        {
+            "descriptor": "(Ljava/lang/Object;)Lgnu/lists/Pair;",
+            "class": "Lgnu/lists/LList;",
+            "method": "list1"
+        },
+        {
+            "descriptor": "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
+            "class": "Lcom/google/youngandroid/runtime;",
+            "method": "callComponentMethod"
+        }
+    ],
+    "score": -0.41,
+    "label": [
+        "connection",
+        "http"
+    ]
+}

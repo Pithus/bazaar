@@ -1,0 +1,22 @@
+{
+    "crime": "Access PackageManager and check for network connectivity",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "getPackageManager",
+            "descriptor": "()Landroid/content/pm/PackageManager;"
+        },
+        {
+            "class": "Landroid/net/ConnectivityManager;",
+            "method": "getActiveNetworkInfo",
+            "descriptor": "()Landroid/net/NetworkInfo;"
+        }
+    ],
+    "score": -0.76,
+    "label": [
+        "collection",
+        "applications",
+        "network"
+    ]
+}

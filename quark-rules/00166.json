@@ -1,0 +1,21 @@
+{
+    "crime": "Get SMS message body and retrieve a string from it (possibly PIN / mTAN)",
+    "permission": [],
+    "api": [
+        {
+            "descriptor": "()Ljava/lang/String;",
+            "class": "Landroid/telephony/SmsMessage;",
+            "method": "getMessageBody"
+        },
+        {
+            "descriptor": "(Ljava/lang/String)Ljava/util/regex/Matcher;",
+            "class": "Ljava/util/regex/Pattern;",
+            "method": "matcher"
+        }
+    ],
+    "score": -0.15,
+    "label": [
+        "sms",
+        "pin"
+    ]
+}

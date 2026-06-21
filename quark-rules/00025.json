@@ -1,5 +1,5 @@
 {
-    "crime": "Monitor the broadcast action events (BOOT_COMPLETED)",
+    "crime": "Monitor the general action to be performed",
     "permission": [],
     "api": [
         {
@@ -13,7 +13,7 @@
             "descriptor": "(Ljava/lang/Object;)Z"
         }
     ],
-    "score": 1,
+    "score": 0.64,
     "label": [
         "reflection"
     ]

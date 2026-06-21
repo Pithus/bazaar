@@ -1,0 +1,21 @@
+{
+    "crime": "Dispatch gesture",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/accessibilityservice/GestureDescription$Builder;",
+            "method": "build",
+            "descriptor": "()Landroid/accessibilityservice/GestureDescription;"
+        },
+        {
+            "class": "Landroid/accessibilityservice/AccessibilityService;",
+            "method": "dispatchGesture",
+            "descriptor": "(Landroid/accessibilityservice/GestureDescription; Landroid/accessibilityservice/AccessibilityService$GestureResultCallback; Landroid/os/Handler;)Z"
+        }
+    ],
+    "score": 1.05,
+    "label": [
+        "accessibility service",
+        "control"
+    ]
+}

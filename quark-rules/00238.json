@@ -1,0 +1,20 @@
+{
+    "crime": "Extract screenshot data to bitmap format",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/accessibilityservice/AccessibilityService$ScreenshotResult;",
+            "method": "getHardwareBuffer",
+            "descriptor": "()Landroid/hardware/HardwareBuffer;"
+        },
+        {
+            "class": "Landroid/graphics/Bitmap;",
+            "method": "compress",
+            "descriptor": "(Landroid/graphics/Bitmap$CompressFormat; I Ljava/io/OutputStream;)Z"
+        }
+    ],
+    "score": -0.28,
+    "label": [
+        "collection"
+    ]
+}

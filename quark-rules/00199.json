@@ -1,0 +1,20 @@
+{
+    "crime": "Stop recording and release recording resources",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "stop",
+            "descriptor": "()V"
+        },
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "release",
+            "descriptor": "()V"
+        }
+    ],
+    "score": -0.43,
+    "label": [
+        "record"
+    ]
+}

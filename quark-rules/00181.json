@@ -1,0 +1,20 @@
+{
+    "crime": "Load native libraries(.so) via System.load (60% means caught)",
+    "permission": [],
+    "api": [
+        {
+            "class": "Ljava/lang/System;",
+            "method": "load",
+            "descriptor": "(Ljava/lang/String;)V"
+        },
+        {
+            "class": "Ljava/lang/System;",
+            "method": "load",
+            "descriptor": "(Ljava/lang/String;)V"
+        }
+    ],
+    "score": -0.63,
+    "label": [
+        "so"
+    ]
+}

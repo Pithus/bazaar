@@ -1,0 +1,21 @@
+{
+    "crime": "Execute commands on shell using DataOutputStream object",
+    "permission": [],
+    "api": [
+        {
+            "class": "Ljava/lang/Runtime;",
+            "method": "exec",
+            "descriptor": "(Ljava/lang/String;)Ljava/lang/Process;"
+        },
+        {
+            "class": "Ljava/io/DataOutputStream;",
+            "method": "writeBytes",
+            "descriptor": "(Ljava/lang/String;)V"
+        }
+    ],
+    "score": 0.58,
+    "label": [
+        "exec",
+        "command"
+    ]
+}

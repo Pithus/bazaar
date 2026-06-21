@@ -1,0 +1,21 @@
+{
+    "crime": "Create an intent based on the info from PackageManager",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "getPackageManager",
+            "descriptor": "()Landroid/content/pm/PackageManager;"
+        },
+        {
+            "class": "Landroid/content/Intent;",
+            "method": "<init>",
+            "descriptor": "(Landroid/content/Context; Ljava/lang/Class;)V"
+        }
+    ],
+    "score": 1.7,
+    "label": [
+        "applications",
+        "control"
+    ]
+}

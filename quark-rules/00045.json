@@ -13,7 +13,7 @@
             "descriptor": "()Ljava/lang/String;"
         }
     ],
-    "score": 1,
+    "score": 1.33,
     "label": [
         "collection",
         "reflection"

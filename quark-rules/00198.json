@@ -1,0 +1,20 @@
+{
+    "crime": "Initialize the recorder and start recording",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "prepare",
+            "descriptor": "()V"
+        },
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "start",
+            "descriptor": "()V"
+        }
+    ],
+    "score": -0.86,
+    "label": [
+        "record"
+    ]
+}

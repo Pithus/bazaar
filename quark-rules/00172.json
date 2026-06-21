@@ -1,0 +1,22 @@
+{
+    "crime": "Check Admin permissions to (probably) get them",
+    "permission": [
+        "android.permission.BIND_DEVICE_ADMIN"
+    ],
+    "api": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "getSystemService",
+            "descriptor": "(Ljava/lang/String;)Ljava/lang/Object;"
+        },
+        {
+            "class": "Landroid/app/admin/DevicePolicyManager;",
+            "method": "isAdminActive",
+            "descriptor": "(Landroid/content/ComponentName;)Z"
+        }
+    ],
+    "score": -0.43,
+    "label": [
+        "admin"
+    ]
+}

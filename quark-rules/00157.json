@@ -1,0 +1,21 @@
+{
+    "crime": "Instantiate new object using reflection, possibly used for dexClassLoader ",
+    "permission": [],
+    "api": [
+        {
+            "class": "Ljava/lang/Class;",
+            "method": "getConstructor",
+            "descriptor": "([Ljava/lang/Class;)Ljava/lang/reflect/Constructor;"
+        },
+        {
+            "class": "Ljava/lang/reflect/Constructor;",
+            "method": "newInstance",
+            "descriptor": "([Ljava/lang/Object;)Ljava/lang/Object;"
+        }
+    ],
+    "score": 0.58,
+    "label": [
+        "reflection",
+        "dexClassLoader"
+    ]
+}
