@@ -9,16 +9,17 @@ def init_es():
     try:
         with open('bazaar/es_mappings/apk_analysis.json') as mapping:
             apk_analysis_settings = json.load(mapping)
-        es.indices.create(index=settings.ELASTICSEARCH_APK_INDEX, body=apk_analysis_settings, ignore=400)
-        es.indices.create(index=settings.ELASTICSEARCH_GP_INDEX, ignore=400)
-        es.indices.create(index=settings.ELASTICSEARCH_TASKS_INDEX, ignore=400)
+        es.options(ignore=400)
+        es.indices.create(index=settings.ELASTICSEARCH_APK_INDEX, body=apk_analysis_settings)
+        es.indices.create(index=settings.ELASTICSEARCH_GP_INDEX)
+        es.indices.create(index=settings.ELASTICSEARCH_TASKS_INDEX)
     except Exception as e:
         print(e)
         pass
     try:
         with open('bazaar/es_mappings/vt_mapping.json') as mapping:
             vt_reports_settings = json.load(mapping)
-        es.indices.create(index=settings.ELASTICSEARCH_VT_INDEX, body=vt_reports_settings, ignore=400)
+        es.indices.create(index=settings.ELASTICSEARCH_VT_INDEX, body=vt_reports_settings)
     except Exception:
         pass
 
