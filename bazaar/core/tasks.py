@@ -394,7 +394,7 @@ def frosting_analysis(sha256):
 
 def ssdeep_analysis(sha256):
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'ssdeep_analysis': 1}},
-              retry_on_conflict=5)
+              retry_on_conflict=1)
     with NamedTemporaryFile() as f:
         f.write(default_storage.open(sha256).read())
         f.seek(0)
