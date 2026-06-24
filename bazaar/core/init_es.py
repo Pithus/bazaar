@@ -9,7 +9,7 @@ def init_es():
     try:
         with open('bazaar/es_mappings/apk_analysis.json') as mapping:
             apk_analysis_settings = json.load(mapping)
-        es.options(ignore=400)
+        es.options(ignore_status=400)
         es.indices.create(index=settings.ELASTICSEARCH_APK_INDEX, body=apk_analysis_settings)
         es.indices.create(index=settings.ELASTICSEARCH_GP_INDEX)
         es.indices.create(index=settings.ELASTICSEARCH_TASKS_INDEX)
