@@ -170,6 +170,16 @@ class ReportView(View):
             return redirect(reverse_lazy('front:home'))
 
 
+def report_status_view(request, sha256):
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+    try:
+        status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256)["_source"]
+        status = compute_status(status)
+    except:
+        return redirect(reverse_lazy('front:home'))
+    return JsonResponse(status)
+
+
 def basic_url_download_view(request):
     if not request.user.is_authenticated:
         return redirect(reverse_lazy('front:home'))
@@ -223,7 +233,14 @@ def basic_upload_view(request):
 
                 sha256 = get_sha256_of_file(tmp)
                 if default_storage.exists(sha256):
-                    # analyze(sha256, force=True)
+                    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+                    try:
+                        status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256)['_source']
+                        status = compute_status(status)
+                        if status['analysis_launched'] ==  False:
+                            analyze(sha256, force=True)    
+                    except:
+                        analyze(sha256, force=True)
                     return redirect(reverse_lazy('front:report', [sha256]))
                 else:
                     default_storage.save(sha256, tmp)

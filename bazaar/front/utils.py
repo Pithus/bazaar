@@ -94,6 +94,7 @@ def get_aggregations(results):
 
 def compute_status(status):
     success = True
+    analysis_launched = False
     error = False
     running = len(status.keys()) != 8
     for k, v in status.items():
@@ -101,10 +102,12 @@ def compute_status(status):
             success = success and v == 2
             error = error or v == -1
             running = running or v == 1 or v == 0
-
+            if v == 2:
+                analysis_launched = True # if at least one step succeeded, the analysis was launched
     return {
         'in_error': error,
         'success': success,
+        'analysis_launched': analysis_launched,
         'running': running
     }
 
