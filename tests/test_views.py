@@ -178,7 +178,7 @@ class TestBasicUploadView:
     """ Test cases for basic_url_download """
 
     @pytest.mark.django_db
-    def test_basic_upload_view(self, user: User, rf: RequestFactory):
+    def test_basic_upload_view_get(self, user: User, rf: RequestFactory):
         request = rf.get('/apk/')
         request.user = user
         
@@ -190,8 +190,10 @@ class TestBasicUploadView:
     @patch("bazaar.front.view.default_storage.exists")
     @patch("bazaar.front.view.requests.get")
     @patch("bazaar.front.view.is_android")
-    def test_basic_upload(
+    @patch("bazaar.front.view.Elasticsearch.get")
+    def test_basic_upload_view_post(
         self,
+        mock_es_get,
         mock_is_android,
         mock_requests_get,
         mock_exists,
@@ -210,6 +212,7 @@ class TestBasicUploadView:
         mock_requests_get.return_value = response_mock
         mock_is_android.return_value =  "APK"
         mock_exists.return_value = True
+        mock_es_get.return_value = {"_source": {'apkid_analysis': 2, 'ssdeep_analysis': 2, 'extract_classes': 2, 'quark_analysis': 2, 'analysis_date': '2026-06-26T13:37:59.456089+00:00', 'malware_bazaar_analysis': -1, 'vt_analysis': 2, 'mobsf_analysis': 2}}
 
         response = basic_upload_view(request)
         assert response.status_code == 302
