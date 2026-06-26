@@ -357,6 +357,7 @@ Q_CLUSTER = {
     'retry': 20*60,
     'recycle': 1,
     'max_attempts': 5,
+    'guard_cycle': 10,
     'timeout': 19*60,
     'compress': True,
     'save_limit': 25,
