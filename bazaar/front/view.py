@@ -36,6 +36,7 @@ from bazaar.front.utils import transform_results, get_similarity_matrix, compute
     transform_hl_results, get_sample_timeline, get_andro_cfg_storage_path
 from .forms import YaraCreateForm
 
+import json
 
 @method_decorator(csrf_exempt, name='dispatch')
 class HomeView(View):
@@ -111,6 +112,7 @@ class ReportView(View):
         try:
             result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha)['_source']
             status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha)['_source']
+
             status = compute_status(status)
 
             # Generate map
@@ -461,6 +463,8 @@ def get_sample_light(sha256):
 
 
 def my_retrohunt_view(request, uuid):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
     # TODO: add a cap on user use
     try:
         async_task(retrohunt, uuid)

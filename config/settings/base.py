@@ -65,6 +65,7 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "crispy_forms",
+    "crispy_bootstrap4",
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -288,7 +289,11 @@ SOCIALACCOUNT_PROVIDERS = {
         # For each provider, you can choose whether or not the
         # email address(es) retrieved from the provider are to be
         # interpreted as verified.
-        "VERIFIED_EMAIL": True
+        "VERIFIED_EMAIL": True,
+        "APP": {
+            "client_id": "<client id>",
+            "secret": "<secret>",
+        }
     },
 }
 

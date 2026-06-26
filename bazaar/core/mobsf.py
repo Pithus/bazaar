@@ -37,8 +37,6 @@ class MobSF:
             self.hash = {"hash": response["hash"]}
             return response
 
-        print(r.text)
-
         return None
 
     def scan(self, data):

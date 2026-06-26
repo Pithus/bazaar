@@ -161,7 +161,9 @@ def generate_og_card(sha256, fp):
                     bg_color, fg_color, md_color = red_faded, red_primary, red_secondary
                 rounded_rectangle(draw, [(tab_left, top), (tab_left+tab_width, top+tab_height)], 10, fill=bg_color)
                 draw.text((tab_left+10, top+10), tab['text'], font=fa_48, fill=md_color)
-                w,h = font_48.getsize(str(tab['value']))
+                l,t,r,b = font_48.getbbox(str(tab['value']))
+                w = r - l
+                h = t - b
                 txt_left = tab_left+tab_width/2-w/2
                 draw.text((txt_left, top+50), str(tab['value']), font=font_48, fill=fg_color)
                 tab_left += tab_width+int(left_inc)
@@ -169,7 +171,9 @@ def generate_og_card(sha256, fp):
             top += 80
             try:
                 threat = result['malware_bazaar']['vendor_intel']['ReversingLabs']['threat_name']
-                w,h = font_48.getsize(threat)
+                l,t,r,b = font_48.getbbox(threat)
+                w = r - l
+                h = t - b
                 txt_left = im.width/2-w/2
                 txt_top = top + (im.height-top)/2-h/2
                 draw.text((txt_left, txt_top), threat, font=font_48, fill=red_secondary)
