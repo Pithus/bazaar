@@ -13,7 +13,7 @@
             "method": "getDeclaredMethods"
         }
     ],
-    "score": -0.53,
+    "score": -1.16,
     "label": [
         "reflection"
     ]

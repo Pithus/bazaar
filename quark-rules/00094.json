@@ -13,7 +13,7 @@
             "method": "read"
         }
     ],
-    "score": 0.5,
+    "score": 0.02,
     "label": [
         "command",
         "network"

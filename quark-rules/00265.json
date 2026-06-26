@@ -13,7 +13,7 @@
             "descriptor": "(Landroid/content/pm/ApplicationInfo;)Ljava/lang/CharSequence;"
         }
     ],
-    "score": -1.16,
+    "score": -1.23,
     "label": [
         "applications",
         "collection"

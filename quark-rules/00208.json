@@ -13,7 +13,7 @@
             "descriptor": "(Landroid/media/projection/MediaProjection$Callback; Landroid/os/Handler;)V"
         }
     ],
-    "score": 0.18,
+    "score": 0.1,
     "label": [
         "collection",
         "screen"

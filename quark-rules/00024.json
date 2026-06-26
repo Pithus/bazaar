@@ -13,7 +13,7 @@
             "descriptor": "([B)V"
         }
     ],
-    "score": 0.39,
+    "score": 0.15,
     "label": [
         "reflection",
         "file"

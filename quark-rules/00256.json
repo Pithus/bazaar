@@ -16,7 +16,7 @@
             "descriptor": "()Ljava/lang/String;"
         }
     ],
-    "score": -0.3,
+    "score": -0.1,
     "label": [
         "sms",
         "collection",

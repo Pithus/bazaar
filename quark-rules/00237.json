@@ -13,7 +13,7 @@
             "descriptor": "([BII)V"
         }
     ],
-    "score": 0.2,
+    "score": -0.17,
     "label": [
         "network",
         "file"

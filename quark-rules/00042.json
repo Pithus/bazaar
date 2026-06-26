@@ -13,7 +13,7 @@
             "descriptor": "()Ljava/util/List;"
         }
     ],
-    "score": 0.11,
+    "score": 0.19,
     "label": [
         "collection",
         "wifi"

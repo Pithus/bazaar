@@ -13,7 +13,7 @@
             "descriptor": "(Ljava/io/InputStream;)V"
         }
     ],
-    "score": -0.02,
+    "score": -0.15,
     "label": [
         "file"
     ]

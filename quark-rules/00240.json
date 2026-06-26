@@ -13,7 +13,7 @@
             "descriptor": "(Landroid/accessibilityservice/GestureDescription; Landroid/accessibilityservice/AccessibilityService$GestureResultCallback; Landroid/os/Handler;)Z"
         }
     ],
-    "score": 0.85,
+    "score": 0.82,
     "label": [
         "accessibility service",
         "control"

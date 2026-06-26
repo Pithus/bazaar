@@ -13,7 +13,7 @@
             "method": "getNetworkId"
         }
     ],
-    "score": 0.15,
+    "score": 0.06,
     "label": [
         "collection",
         "wifi"
