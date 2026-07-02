@@ -26,14 +26,15 @@ from pygments.formatters import HtmlFormatter
 from pygments.lexers.jvm import JavaLexer
 from androcfg.code_style import U39bStyle
 
-
+from bazaar.core.services.report import ReportService
 from bazaar.core.models import Yara
 from bazaar.core.tasks import analyze, retrohunt
 from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm
 from bazaar.front.og import generate_og_card
-from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status, generate_world_map, \
+from bazaar.front.utils import get_similarity_matrix, generate_world_map, \
     transform_hl_results, get_sample_timeline, get_andro_cfg_storage_path
+from bazaar.core.utils import compute_status
 from .forms import YaraCreateForm
 
 import json
@@ -42,23 +43,8 @@ import json
 class HomeView(View):
 
     def get(self, request, *args, **kwargs):
-        # Gets the latest complete report as an example
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
-        q = {
-            "size": 1,
-            "sort": {"analysis_date": "desc"},
-            "query": {
-                "match_all": {}
-            },
-            "_source": ["handle", "apk_hash", "quark"]
-        }
-        report_example = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=q)
-        tmp = transform_results(report_example)
-        if tmp:
-            report_example = tmp[0]
-        else:
-            report_example = tmp
 
+        report_example = ReportService.get_example()
         q = None
         matrix = None
         results = None
@@ -108,12 +94,9 @@ class ReportView(View):
             return cached_report
 
         # Not cached so, let's compute the report
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
         try:
-            result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha)['_source']
-            status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha)['_source']
-
-            status = compute_status(status)
+            result = ReportService.get_report(sha)
+            status = ReportService.get_status(sha)
 
             # Generate map
             map_svg = None
@@ -130,8 +113,8 @@ class ReportView(View):
                         dexofuzzy_hash,
                         25,
                         settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, sha)
-            except Exception:
-                pass
+            except Exception as e:
+                logging.error(e)
 
             if similar_samples:
                 res = []

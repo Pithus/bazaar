@@ -76,3 +76,28 @@ def test_get_genom():
 def test_get_andgrocfg_code():
     assert reverse("front:get_andgrocfg_code", kwargs={"sha256": sha256, "foo": foo})  == f"/androcfg/{sha256}/{foo}"
     assert resolve(f"/androcfg/{sha256}/{foo}").view_name == "front:get_andgrocfg_code"
+
+
+def test_api_list_reports():
+    assert reverse("core:api-list-reports") == f"/api/report/"
+    assert resolve(f"/api/report/").view_name == "core:api-list-reports"
+
+def test_api_report():
+    assert reverse("core:api-get-report", kwargs={"sha256": sha256}) == f"/api/report/{sha256}"
+    assert resolve(f"/api/report/{sha256}").view_name == "core:api-get-report"
+
+def test_api_example():
+    assert reverse("core:api-report-example") == f"/api/report/example"
+    assert resolve(f"/api/report/example").view_name == "core:api-report-example"
+
+def test_api_report_status():
+    assert reverse("core:api-report-status", kwargs={"sha256": sha256}) == f"/api/report/{sha256}/status"
+    assert resolve(f"/api/report/{sha256}/status").view_name == "core:api-report-status"
+
+def test_api_apk_handler():
+    assert reverse("core:api-apk-handler") == f"/api/apk/"
+    assert resolve(f"/api/apk/").view_name == "core:api-apk-handler"
+
+def test_api_apk_donwload():
+    assert reverse("core:api-apk-download", kwargs={"sha256": sha256}) == f"/api/apk/{sha256}"
+    assert resolve(f"/api/apk/{sha256}").view_name == "core:api-apk-download"

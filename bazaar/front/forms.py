@@ -4,7 +4,7 @@ from django.conf import settings
 from elasticsearch import Elasticsearch
 
 from bazaar.core.utils import get_matching_items_by_dexofuzzy, get_matching_items_by_ssdeep, compute_genetic_analysis, get_matching_items_by_ssdeep_func
-from bazaar.front.utils import transform_results, transform_hl_results, append_dexofuzzy_similarity, get_aggregations
+from bazaar.front.utils import transform_hl_results, append_dexofuzzy_similarity, get_aggregations
 
 from django.forms import ModelForm
 from bazaar.core.models import Yara
@@ -28,7 +28,7 @@ class BasicSearchForm(forms.Form):
         es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
         try:
             results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
-            results = transform_results(results)
+            results = [doc['_source'] for doc in results['hits']['hits']]
             return results
         except Exception:
             return []

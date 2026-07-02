@@ -21,6 +21,27 @@ import pandas as pd
 from http.client import responses as http_responses
 from enum import Enum
 
+
+def compute_status(status):
+    success = True
+    analysis_launched = False
+    error = False
+    running = len(status.keys()) != 8
+    for k, v in status.items():
+        if k != 'analysis_date':
+            success = success and v == 2
+            error = error or v == -1
+            running = running or v == 1 or v == 0
+            if v == 2:
+                analysis_launched = True # if at least one step succeeded, the analysis was launched
+    return {
+        'in_error': error,
+        'success': success,
+        'analysis_launched': analysis_launched,
+        'running': running
+    }
+
+
 def get_sha256_of_file_path(file_path):
     sha256_hash = hashlib.sha256()
     with open(file_path, "rb") as f:

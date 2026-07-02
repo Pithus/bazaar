@@ -11,10 +11,6 @@ from django.conf import settings
 from elasticsearch import Elasticsearch
 
 
-def transform_results(results):
-    return [doc['_source'] for doc in results['hits']['hits']]
-
-
 def transform_hl_results(results):
     ret = []
     for doc in results['hits']['hits']:
@@ -90,26 +86,6 @@ def get_aggregations(results):
         }
 
     return aggregations
-
-
-def compute_status(status):
-    success = True
-    analysis_launched = False
-    error = False
-    running = len(status.keys()) != 8
-    for k, v in status.items():
-        if k != 'analysis_date':
-            success = success and v == 2
-            error = error or v == -1
-            running = running or v == 1 or v == 0
-            if v == 2:
-                analysis_launched = True # if at least one step succeeded, the analysis was launched
-    return {
-        'in_error': error,
-        'success': success,
-        'analysis_launched': analysis_launched,
-        'running': running
-    }
 
 
 def generate_world_map(domains, to_png=False, fp=None):
