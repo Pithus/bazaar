@@ -5,7 +5,7 @@ import requests
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.cache import cache
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse, FileResponse
 from rest_framework.reverse import reverse_lazy
 from elasticsearch import Elasticsearch # TODO: remove this, it should not appear here in this file
 from rest_framework.authentication import TokenAuthentication
@@ -16,6 +16,7 @@ import rest_framework
 from rest_framework.throttling import UserRateThrottle
 
 from bazaar.core.services.report import ReportService
+from bazaar.core.services.apk import ApkService, ApkException
 from bazaar.core.tasks import analyze
 from bazaar.core.utils import get_sha256_of_file
 from bazaar.front.utils import transform_hl_results
@@ -24,53 +25,9 @@ from androguard.core.androconf import is_android
 from tempfile import NamedTemporaryFile
 
 
-
 @api_view(['GET', 'POST'])
 def hello_world(request):
     return Response({"message": "Hello!"})
-
-
-@api_view(['POST'])
-def apk_upload(request):
-    file_obj = request.data['file']
-    sha256 = get_sha256_of_file(file_obj)
-    if default_storage.exists(sha256):
-        return Response({"file_sha256": sha256})
-    else:
-        default_storage.save(sha256, file_obj)
-        analyze(sha256)
-        return Response({"file_sha256": sha256})
-
-
-@api_view(['GET'])
-def url_download(request):
-    if not request.user.is_authenticated:
-        return Response({"user": "is_authenticated"})
-    else:
-        res = requests.get(request.data['url'])
-
-        if res.status_code not in [200, 301, 302]:
-            return Response({"url": "URL is not available."})
-
-        sha256_hash = hashlib.sha256()
-        with NamedTemporaryFile() as tmp:
-            for chunk in res.iter_content(chunk_size=16 * 1024):
-                tmp.write(chunk)
-                sha256_hash.update(chunk)
-
-            sha256 = str(sha256_hash.hexdigest()).lower()
-            if is_android(tmp.name) != 'APK':
-                return Response({"apk": "not a valid APK"})
-
-            sha256 = get_sha256_of_file(tmp)
-            if default_storage.exists(sha256):
-                # analyze(sha256, force=True)
-                return Response({"file_sha256": sha256})
-            else:
-                default_storage.save(sha256, tmp)
-                analyze(sha256)
-                return Response({"file_sha256": sha256})
-
 
 @api_view(['GET'])
 def apk_analysis_report(request, sha256):
@@ -86,22 +43,6 @@ def apk_analysis_report(request, sha256):
         except Exception as e:
             logging.exception(e)
             return Response({"error": e})
-
-
-@api_view(['GET'])
-def analysis_tasks_status(request, sha256):
-    if not request.user.is_authenticated:
-        return Response({"user": "is_authenticated"})
-
-    if request.method == 'GET':
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
-        try:
-            result = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256)['_source']
-            return Response(result)
-        except Exception as e:
-            logging.exception(e)
-            return Response({"error": "Object of type NotFoundError is not JSON serializable"})
-
 
 @api_view(['POST'])
 def search(request):
@@ -256,16 +197,37 @@ class ApkView:
             status=rest_framework.status.HTTP_200_OK,
         )
 
-    @api_view(["POST"])
     @staticmethod
-    def upload_apk(request, apk) -> Response:
+    def upload_apk(request) -> Response:
+        try:
+            apk = request.FILES['apk']
+            sha256 = ApkService.upload_apk(apk)
+        except ApkException as e:
+            return Response(
+                {"status": f"{e}"},
+                status=rest_framework.status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                status=rest_framework.status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
         return Response(
+            {"status": "OK", "file_hash": f"{sha256}"},
             status=rest_framework.status.HTTP_200_OK,
         )
 
     @api_view(["GET"])
     @staticmethod
-    def download_apk(request, sha256) -> Response:
+    def download_sample(request, sha256) -> Response:
+        if ApkService.sample_exists(sha256):
+            response = FileResponse(
+                ApkService.download_sample(sha256),
+                content_type="application/vnd.android.package-archive",
+                status=rest_framework.status.HTTP_200_OK,
+            )
+            response['Content-Disposition'] = f'inline; filename=pithus_sample_{sha256}.apk'
+            return response
         return Response(
-            status=rest_framework.status.HTTP_200_OK,
+            {"status": "Requested file does not exist."},
+            status=rest_framework.status.HTTP_404_NOT_FOUND,
         )

@@ -41,7 +41,6 @@ def test_get(self, rf: RequestFactory):
 
 
 # Test cases for Report View
-
 def test_get(rf: RequestFactory):
     view = ReportView()
     request = rf.get("/report/")
@@ -80,8 +79,8 @@ def test_get_report(
     ]
     assert response.status_code == 200
 
-# Test cases for basic_url_download
 
+# Test cases for basic_url_download
 @pytest.mark.django_db
 def test_basic_url_download_redirect(user: User, rf: RequestFactory):
     request = rf.get('/url/')
@@ -92,30 +91,26 @@ def test_basic_url_download_redirect(user: User, rf: RequestFactory):
     assert response.url == "/"
 
 @pytest.mark.django_db
-@patch("bazaar.front.view.default_storage.exists")
-@patch("bazaar.front.view.requests.get")
-@patch("bazaar.front.view.is_android")
+@patch("bazaar.core.api_view.ApkService.upload_apk")
+@patch("bazaar.core.api_view.requests.get")
 def test_basic_url_download_redirect(
-    mock_is_android,
-    mock_requests_get,
-    mock_exists,
+    mock_get,
+    mock_service_upload,
     user: User,
-    rf: RequestFactory):
-
+    rf: RequestFactory
+):
     request = rf.post(f"/url/", data={"url": f"https://127.0.0.1/test.apk"})
     request.user = user
 
     response_mock = Mock()
     response_mock.status_code = 200
-    response_mock.iter_content.return_value = [b"file", b"content"]
-
-    mock_requests_get.return_value = response_mock
-    mock_is_android.return_value =  "APK"
-    mock_exists.return_value = True
+    response_mock.raw.return_value = BytesIO(b'apk file test data')
+    mock_get.return_value = response_mock
+    mock_service_upload.return_value = sha256
 
     response = basic_url_download_view(request)
     assert response.status_code == 302
-    assert response.url == "/report/5ab24eb0866bafe7d8c0d07f03f09aef7a4caa991a9dc1edd96e64683b750fe2"
+    assert response.url == f"/report/{sha256}"
 
 
 # Test cases for basic_url_download
@@ -129,35 +124,21 @@ def test_basic_upload_view_get(user: User, rf: RequestFactory):
     assert response.url == "/"
 
 @pytest.mark.django_db
-@patch("bazaar.front.view.default_storage.exists")
-@patch("bazaar.front.view.requests.get")
-@patch("bazaar.front.view.is_android")
-@patch("bazaar.front.view.Elasticsearch.get")
+@patch("bazaar.core.api_view.ApkService.upload_apk")
 def test_basic_upload_view_post(
-    mock_es_get,
-    mock_is_android,
-    mock_requests_get,
-    mock_exists,
+    mock_service_upload,
     user: User,
     rf: RequestFactory
 ):
-
     mock_file = SimpleUploadedFile("test.apk", b"filecontent")
 
     request = rf.post(f"/apk/", {"apk": mock_file})
     request.user = user
-
-    response_mock = Mock()
-    response_mock.status_code = 200
-
-    mock_requests_get.return_value = response_mock
-    mock_is_android.return_value =  "APK"
-    mock_exists.return_value = True
-    mock_es_get.return_value = {"_source": {'apkid_analysis': 2, 'ssdeep_analysis': 2, 'extract_classes': 2, 'quark_analysis': 2, 'analysis_date': '2026-06-26T13:37:59.456089+00:00', 'malware_bazaar_analysis': -1, 'vt_analysis': 2, 'mobsf_analysis': 2}}
+    mock_service_upload.return_value = sha256
 
     response = basic_upload_view(request)
     assert response.status_code == 302
-    assert response.url == "/report/5ab24eb0866bafe7d8c0d07f03f09aef7a4caa991a9dc1edd96e64683b750fe2"
+    assert response.url == f"/report/{sha256}"
 
 
 # Test Similarity View
@@ -171,7 +152,6 @@ def test_similarity_search_view(user: User, rf: RequestFactory):
 
 
 # Test Sample Download
-
 def test_download_sample_view_unauth(rf: RequestFactory):
     request = rf.get(f"/apk/{sha256}")
     request.user = AnonymousUser()

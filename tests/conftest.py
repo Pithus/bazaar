@@ -2,6 +2,8 @@ import pytest
 
 from bazaar.users.models import User
 from tests.factories import UserFactory
+from rest_framework.authtoken.models import Token
+from rest_framework.test import APIRequestFactory, force_authenticate
 
 
 @pytest.fixture(autouse=True)
@@ -11,6 +13,24 @@ def media_storage(settings, tmpdir):
 @pytest.fixture
 def user() -> User:
     return UserFactory()
+
+@pytest.fixture
+def api_rf(user):
+    class ApiRF(APIRequestFactory):
+        def __init__(self):
+            super().__init__()
+
+        def get(self, path):
+            request = super().get(path)
+            force_authenticate(request, user=user)
+            return request
+
+        def post(self, path, data=None, **kwargs):
+            request = super().post(path, data=data, **kwargs)
+            force_authenticate(request, user=user)
+            return request
+
+    return ApiRF()
 
 
 # Test Data

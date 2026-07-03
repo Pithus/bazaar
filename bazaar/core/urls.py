@@ -9,7 +9,7 @@ urlpatterns = [
     path("report/<str:sha256>", view=ReportView.get_report, name="api-get-report"),
     path("report/<str:sha256>/status", view=ReportView.get_report_status, name="api-report-status"),
     path("apk/", view=ApkView.apk_handler, name="api-apk-handler"),
-    path("apk/<str:sha256>", view=ApkView.download_apk, name="api-apk-download"),
+    path("apk/<str:sha256>", view=ApkView.download_sample, name="api-apk-download"),
 
 
     # path("status/<str:sha256>", analysis_tasks_status, name="bazaar-api"),

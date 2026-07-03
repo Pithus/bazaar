@@ -27,6 +27,7 @@ from pygments.lexers.jvm import JavaLexer
 from androcfg.code_style import U39bStyle
 
 from bazaar.core.services.report import ReportService
+from bazaar.core.services.apk import ApkService
 from bazaar.core.models import Yara
 from bazaar.core.tasks import analyze, retrohunt
 from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
@@ -166,32 +167,18 @@ def report_status_view(request, sha256):
 def basic_url_download_view(request):
     if not request.user.is_authenticated:
         return redirect(reverse_lazy('front:home'))
+
     if request.method == 'POST':
         form = BasicUrlDownloadForm(request.POST)
         if form.is_valid():
             url = form.cleaned_data.get('url')
-            res = requests.get(url, stream=True)
-
-            if res.status_code not in [200, 301, 302]:
-                messages.warning(request, 'URL is not available.')
+            try:
+                sha256 = ApkService.upload_from_url(url)
+            except Exception as e:
+                messages.warning(request, e)
                 return redirect(reverse_lazy('front:home'))
 
-            sha256_hash = hashlib.sha256()
-            with NamedTemporaryFile() as tmp:
-                for chunk in res.iter_content(chunk_size=16 * 1024):
-                    tmp.write(chunk)
-                    sha256_hash.update(chunk)
-
-                sha256 = str(sha256_hash.hexdigest()).lower()
-                if is_android(tmp.name) != 'APK':
-                    messages.warning(request, 'Submitted file is not a valid APK.')
-
-                if default_storage.exists(sha256):
-                    return redirect(reverse_lazy('front:report', [sha256]))
-                else:
-                    default_storage.save(sha256, tmp)
-                    analyze(sha256)
-                    return redirect(reverse_lazy('front:report', [sha256]))
+            return redirect(reverse_lazy('front:report', [sha256]))
 
     return redirect(reverse_lazy('front:home'))
 
@@ -201,34 +188,13 @@ def basic_upload_view(request):
         form = BasicUploadForm(request.POST, request.FILES)
         if form.is_valid():
             apk = request.FILES['apk']
-            if apk.size > settings.MAX_APK_UPLOAD_SIZE:
-                messages.warning(request, 'Submitted file is too large.')
+            try:
+                sha256 = ApkService.upload_apk(apk)
+            except Exception as e:
+                messages.warning(request, e)
                 return redirect(reverse_lazy('front:home'))
 
-            with NamedTemporaryFile() as tmp:
-                for chunk in apk.chunks():
-                    tmp.write(chunk)
-                tmp.seek(0)
-
-                if is_android(tmp.name) != 'APK':
-                    messages.warning(request, 'Submitted file is not a valid APK.')
-                    return redirect(reverse_lazy('front:home'))
-
-                sha256 = get_sha256_of_file(tmp)
-                if default_storage.exists(sha256):
-                    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
-                    try:
-                        status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256)['_source']
-                        status = compute_status(status)
-                        if status['analysis_launched'] ==  False:
-                            analyze(sha256, force=True)    
-                    except:
-                        analyze(sha256, force=True)
-                    return redirect(reverse_lazy('front:report', [sha256]))
-                else:
-                    default_storage.save(sha256, tmp)
-                    analyze(sha256)
-                    return redirect(reverse_lazy('front:report', [sha256]))
+            return redirect(reverse_lazy('front:report', [sha256]))
 
     return redirect(reverse_lazy('front:home'))
 
@@ -259,10 +225,10 @@ def download_sample_view(request, sha256):
         return redirect(reverse_lazy('front:home'))
 
     if request.method == 'GET':
-        if not default_storage.exists(sha256):
+        if not ApkService.sample_exists(sha256):
             return redirect(reverse_lazy('front:home'))
 
-        response = HttpResponse(default_storage.open(sha256).read(),
+        response = HttpResponse(ApkService.download_sample(sha256),
                                 content_type="application/vnd.android.package-archive")
         response['Content-Disposition'] = f'inline; filename=pithus_sample_{sha256}.apk'
         return response
