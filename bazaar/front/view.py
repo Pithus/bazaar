@@ -28,13 +28,15 @@ from androcfg.code_style import U39bStyle
 
 from bazaar.core.services.report import ReportService
 from bazaar.core.services.apk import ApkService
+from bazaar.core.services.search import SearchService
+
 from bazaar.core.models import Yara
 from bazaar.core.tasks import analyze, retrohunt
-from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
+from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy, transform_hl_results
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import get_similarity_matrix, generate_world_map, \
-    transform_hl_results, get_sample_timeline, get_andro_cfg_storage_path
+    get_sample_timeline, get_andro_cfg_storage_path
 from bazaar.core.utils import compute_status
 from .forms import YaraCreateForm
 
@@ -120,7 +122,7 @@ class ReportView(View):
             if similar_samples:
                 res = []
                 for sha256, score in similar_samples:
-                    apk = get_sample_light(sha256)
+                    apk = SearchService.light_sample_search(sha256)
                     try:
                         vt = apk[0]['source']['vt']
                     except:
@@ -155,13 +157,11 @@ class ReportView(View):
 
 
 def report_status_view(request, sha256):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     try:
-        status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256)["_source"]
-        status = compute_status(status)
-    except:
-        return redirect(reverse_lazy('front:home'))
-    return JsonResponse(status)
+        report_status = ReportService.get_status(sha256)
+    except Exception:
+        redirect(reverse_lazy('front:home'))
+    return JsonResponse(report_status)
 
 
 def basic_url_download_view(request):
@@ -207,7 +207,7 @@ def similarity_search_view(request, sha256=''):
         if form.is_valid():
             results = form.do_search(sha256)
             for sha256, score in results:
-                apk = get_sample_light(sha256)
+                apk = SearchService.light_sample_search(sha256)
                 try:
                     vt = apk[0]['source']['vt']
                 except:
@@ -239,9 +239,8 @@ def export_report_view(request, sha256):
         return redirect(reverse_lazy('front:home'))
 
     if request.method == 'GET':
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
         try:
-            result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
+            result = ReportService.get_report(sha256)
             response = JsonResponse(result)
             response['Content-Disposition'] = f'attachment; filename=pithus_report_{sha256}.json'
             return response
@@ -394,38 +393,17 @@ def get_rules(request):
             for match in private_matches:
                 if match['_source']['rule'] == str(rule.id):
                     m = match['_source']
-                    m['sample'] = get_sample_light(match['_source']['matches']['apk_id'])
+                    m['sample'] = SearchService.light_sample_search(match['_source']['matches']['apk_id'])
                     my_rule['matches'].append(m)
         elif not rule.is_private and public_matches:
             for match in public_matches:
                 if match['_source']['rule'] == str(rule.id):
                     m = match['_source']
-                    m['sample'] = get_sample_light(match['_source']['matches']['apk_id'])
+                    m['sample'] = SearchService.light_sample_search(match['_source']['matches']['apk_id'])
                     my_rule['matches'].append(m)
         my_rules.append(my_rule)
 
     return my_rules
-
-
-def get_sample_light(sha256):
-    query = {
-        "query": {
-            "match": {
-                "apk_hash": sha256
-            }
-        },
-        "_source": ["apk_hash", "sha256", "uploaded_at", "icon_base64", "handle", "app_name",
-                    "version_code", "size", "dexofuzzy.apk", "quark.threat_level", "vt", "malware_bazaar",
-                    "is_signed", "frosting_data.is_frosted", "features"],
-        "size": 1,
-    }
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
-    try:
-        results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
-        results = transform_hl_results(results)
-        return results
-    except Exception:
-        return []
 
 
 def my_retrohunt_view(request, uuid):

@@ -3,9 +3,9 @@ from io import BytesIO
 from tempfile import NamedTemporaryFile
 
 from django.conf import settings
-from elasticsearch import Elasticsearch
 from PIL import Image, ImageFont, ImageDraw, ImageColor
 
+from bazaar.core.services.report import ReportService
 from bazaar.front.utils import generate_world_map
 
 
@@ -55,9 +55,8 @@ def rounded_rectangle(image_draw: ImageDraw, xy, corner_radius, fill=None, outli
 
 
 def generate_og_card(sha256, fp):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     try:
-        result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
+        result = ReportService.get_report(sha256)
 
         tabs = [
             {

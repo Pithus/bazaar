@@ -250,7 +250,7 @@ def test_my_rule_create_view(yara_rule, user: User, rf: RequestFactory):
     assert response.status_code == 302
     assert response.url == "/rules/"
 
-def  test_my_rule_edit_view_unauth(rf: RequestFactory):
+def test_my_rule_edit_view_unauth(rf: RequestFactory):
     request = rf.get("/rules/")
     request.user = AnonymousUser()
 
@@ -260,7 +260,7 @@ def  test_my_rule_edit_view_unauth(rf: RequestFactory):
 
 @pytest.mark.django_db
 @patch("bazaar.front.view.Yara.objects.get")
-def  test_my_rule_edit_view_get(mock_yara_get, user: User, rf: RequestFactory):
+def test_my_rule_edit_view_get(mock_yara_get, user: User, rf: RequestFactory):
     request = rf.get(f"/rules/{uuid}")
     request.user = user
 
@@ -280,7 +280,7 @@ def  test_my_rule_edit_view_get(mock_yara_get, user: User, rf: RequestFactory):
 @pytest.mark.django_db
 @patch("bazaar.front.view.Yara.objects.get")
 @patch("bazaar.front.view.delete_es_matches")
-def  test_my_rule_edit_view_post(mock_es_delete, mock_yara_get, yara_rule, user: User, rf: RequestFactory):
+def test_my_rule_edit_view_post(mock_es_delete, mock_yara_get, yara_rule, user: User, rf: RequestFactory):
     request = rf.post(f"/rules/{uuid}", yara_rule)
     request.user = user
     request.session = {}

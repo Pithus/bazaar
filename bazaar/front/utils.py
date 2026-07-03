@@ -11,18 +11,6 @@ from django.conf import settings
 from elasticsearch import Elasticsearch
 
 
-def transform_hl_results(results):
-    ret = []
-    for doc in results['hits']['hits']:
-        d = {}
-        for k, v in doc.items():
-            if k.startswith('_'):
-                k = k[1:]
-            d[k] = v
-        ret.append(d)
-    return ret
-
-
 def append_dexofuzzy_similarity(results, key, top_n=5):
     """
     Add dexofuzzy similarity info into a transformed result dict

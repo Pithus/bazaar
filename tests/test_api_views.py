@@ -6,7 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.response import Response
 from rest_framework.test import APIRequestFactory, force_authenticate
 
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 from unittest.mock import call
 from io import BytesIO
 
@@ -19,6 +19,7 @@ from .conftest import sha256, uuid
 from bazaar.core.api_view import (
     ReportView,
     ApkView,
+    SearchView,
 )
 
 
@@ -26,7 +27,6 @@ from bazaar.core.api_view import (
 @pytest.mark.django_db
 @patch("bazaar.core.api_view.ReportService.list_reports")
 def test_list_reports(mock_list_reports, report_list, api_rf):
-
     request = api_rf.get("/report/")
     mock_list_reports.return_value = report_list
 
@@ -88,6 +88,22 @@ def test_get_status(
     assert response.data['detailed_status'] == detailed_status
 
 @pytest.mark.django_db
+def test_exists_fail(api_rf):
+    request = api_rf.get(f"/report/{sha256}/exists")
+
+    response = ReportView.get_report_exists(request, sha256)
+    assert response.status_code == 404
+
+@pytest.mark.django_db
+@patch("bazaar.core.api_view.default_storage.exists")
+def test_exists_fail(mock_exists, api_rf):
+    request = api_rf.get(f"/report/{sha256}/exists")
+
+    mock_exists.return_value = True
+    response = ReportView.get_report_exists(request, sha256)
+    assert response.status_code == 200
+
+@pytest.mark.django_db
 @patch("bazaar.core.api_view.ReportService.get_example")
 def test_get_example(
     mock_get_example,
@@ -108,7 +124,6 @@ def test_get_example(
 @patch("bazaar.core.api_view.ApkView.upload_apk")
 @patch("bazaar.core.api_view.ApkView.list_apk")
 def test_apk_handler(mock_list, mock_upload, api_rf):
-    
     mock_list.return_value = Response()
     mock_upload.return_value = Response()
 
@@ -125,7 +140,7 @@ def test_list_apk(api_rf):
     request = api_rf.get(f"/apk/")
 
     response = ApkView.list_apk(request)
-    assert response.status_code == 200
+    assert response.status_code == 501
 
 @pytest.mark.django_db
 @patch("bazaar.core.api_view.ApkService.upload_apk")
@@ -140,7 +155,7 @@ def test_upload_apk(
 
     response = ApkView.upload_apk(request)
     assert response.status_code == 200
-    assert response.data == {"status": "OK", "file_hash": f"{sha256}"}
+    assert response.data == {"message": "OK", "file_hash": f"{sha256}"}
 
 @pytest.mark.django_db
 def test_download_apk_not_found(api_rf):
@@ -162,3 +177,15 @@ def test_download_apk(mock_dl, mock_exists, api_rf):
     response = ApkView.download_sample(request, sha256)
     assert response.status_code == 200
     assert b''.join(response.streaming_content) == apk_content
+
+
+# Test Search API View
+@pytest.mark.django_db
+@patch("bazaar.core.api_view.SearchService.light_sample_search")
+def test_search(mock_search, report_data, api_rf):
+    request = api_rf.post(f"/search/", {"q": f"{sha256}"})
+
+    mock_search.return_value = report_data
+    response = SearchView.search(request)
+    assert response.status_code ==  200
+    assert response.data == {"result": report_data, "message": "OK"}

@@ -1,4 +1,5 @@
 import pytest
+from io import BytesIO
 
 from bazaar.users.models import User
 from tests.factories import UserFactory
@@ -34,7 +35,7 @@ def api_rf(user):
 
 
 # Test Data
-sha256 = "f2ca1bb6c7e907d06dafe4687e579fce76b37e4e93b7605022da52e6ccc26fd2"
+sha256 = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
 uuid = 'fa9c0834-7f94-474a-88d2-25e0f936d71c'
 
 @pytest.fixture
@@ -80,8 +81,8 @@ def detailed_status():
 @pytest.fixture
 def report_status():
     yield {
-        "in_error": True,
-        "success": False,
+        "in_error": False,
+        "success": True,
         "analysis_launched": True,
         "running": False
     }
@@ -119,3 +120,19 @@ def report_list():
             "apk_hash": "c886a5311950247f46c8348765113b8d113505ceff6b52ae91e4e7547bc4a26e"
         },
     ]
+
+@pytest.fixture
+def fake_apk():
+    class FakeApk(BytesIO):
+        def __init__(self, content: bytes, name='test.apk'):
+            super().__init__(content)
+            self.size = len(content)
+            self.name = name
+            self.content = content
+
+        def chunks(self, size=10):
+            while n := len(self.content) > 0:
+                content = self.content[:size]
+                self.content = self.content[size:]
+                yield content
+    return FakeApk(b"test")

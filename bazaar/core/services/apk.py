@@ -36,6 +36,7 @@ class ApkService:
         
         with NamedTemporaryFile() as tmp:
             for chunk in apk.chunks():
+                print(chunk)
                 tmp.write(chunk)
             tmp.seek(0)
 
