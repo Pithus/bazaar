@@ -5,7 +5,7 @@ from tempfile import NamedTemporaryFile
 from django.conf import settings
 from PIL import Image, ImageFont, ImageDraw, ImageColor
 
-from bazaar.core.services.report import ReportService
+from bazaar.core.services import ReportService
 from bazaar.front.utils import generate_world_map
 
 

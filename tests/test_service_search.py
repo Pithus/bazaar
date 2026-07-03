@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from .conftest import sha256, uuid
 
-from bazaar.core.services.search import SearchService
+from bazaar.core.services import SearchService
 
 @patch("bazaar.core.services.search.Elasticsearch.search")
 def test_search(mock_es_search):

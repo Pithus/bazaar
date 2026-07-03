@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 
 from .conftest import sha256, uuid
 
-from bazaar.core.services.apk import ApkService
+from bazaar.core.services import ApkService
 
 def test_list_apk():
     assert ApkService.list_apk() == []
@@ -18,12 +18,10 @@ def test_upload_apk(mock_is_android, mock_exists, mock_save, mock_analyze, fake_
     mock_exists.return_value = False
     mock_save.return_value = None
     mock_analyze.return_value = None
-
     assert ApkService.upload_apk(fake_apk) == sha256
 
-
 @patch("bazaar.core.services.apk.requests.get")
-@patch("bazaar.core.services.apk.ApkService.upload_apk")
+@patch("bazaar.core.services.apk.upload_apk")
 def test_upload_from_url(mock_upload, mock_get):
     mock_upload.return_value = sha256
     response_mock = Mock()

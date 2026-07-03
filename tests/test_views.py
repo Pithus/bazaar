@@ -91,11 +91,12 @@ def test_basic_url_download_redirect(user: User, rf: RequestFactory):
     assert response.url == "/"
 
 @pytest.mark.django_db
-@patch("bazaar.core.api_view.ApkService.upload_apk")
-@patch("bazaar.core.api_view.requests.get")
-def test_basic_url_download_redirect(
+@patch("bazaar.front.view.ApkService.upload_apk")
+@patch("bazaar.front.view.requests.get")
+def test_basic_url_download_ok(
     mock_get,
     mock_service_upload,
+    fake_apk,
     user: User,
     rf: RequestFactory
 ):
@@ -104,7 +105,7 @@ def test_basic_url_download_redirect(
 
     response_mock = Mock()
     response_mock.status_code = 200
-    response_mock.raw.return_value = BytesIO(b'apk file test data')
+    response_mock.raw = fake_apk
     mock_get.return_value = response_mock
     mock_service_upload.return_value = sha256
 

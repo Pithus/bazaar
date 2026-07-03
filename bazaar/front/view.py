@@ -26,9 +26,9 @@ from pygments.formatters import HtmlFormatter
 from pygments.lexers.jvm import JavaLexer
 from androcfg.code_style import U39bStyle
 
-from bazaar.core.services.report import ReportService
-from bazaar.core.services.apk import ApkService
-from bazaar.core.services.search import SearchService
+from bazaar.core.services import ReportService
+from bazaar.core.services import ApkService
+from bazaar.core.services import SearchService
 
 from bazaar.core.models import Yara
 from bazaar.core.tasks import analyze, retrohunt

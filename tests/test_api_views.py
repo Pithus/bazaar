@@ -165,8 +165,8 @@ def test_download_apk_not_found(api_rf):
     assert response.status_code == 404
 
 @pytest.mark.django_db
-@patch("bazaar.core.services.apk.ApkService.sample_exists")
-@patch("bazaar.core.services.apk.ApkService.download_sample")
+@patch("bazaar.core.services.ApkService.sample_exists")
+@patch("bazaar.core.services.ApkService.download_sample")
 def test_download_apk(mock_dl, mock_exists, api_rf):
     request = api_rf.get(f"/apk/{sha256}")
 

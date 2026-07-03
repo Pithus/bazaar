@@ -14,9 +14,10 @@ from rest_framework.response import Response
 import rest_framework
 from rest_framework.throttling import UserRateThrottle
 
-from bazaar.core.services.report import ReportService
-from bazaar.core.services.apk import ApkService, ApkException
-from bazaar.core.services.search import SearchService
+from bazaar.core.services import ReportService
+from bazaar.core.services import ApkService
+from bazaar.core.services.apk import ApkException
+from bazaar.core.services import SearchService
 
 from bazaar.core.tasks import analyze
 from bazaar.core.utils import get_sha256_of_file

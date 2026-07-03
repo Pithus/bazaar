@@ -3,7 +3,7 @@ from django import forms
 from django.conf import settings
 from elasticsearch import Elasticsearch
 
-from bazaar.core.services.search import SearchService
+from bazaar.core.services import SearchService
 from bazaar.core.utils import   get_matching_items_by_dexofuzzy, \
                                 get_matching_items_by_ssdeep, \
                                 compute_genetic_analysis, \
