@@ -6,7 +6,6 @@ from django.urls import reverse
 from django_q.models import Schedule
 from django_q.tasks import schedule
 
-from bazaar.core.tasks import *
 from bazaar.core.utils import upload_sample_to_malware_bazaar
 
 

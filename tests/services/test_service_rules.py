@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch, Mock
 
-from .conftest import sha256, uuid
+from ..conftest import sha256, uuid
 
 from bazaar.core.services import RulesService
 

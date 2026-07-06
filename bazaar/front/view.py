@@ -33,7 +33,8 @@ from bazaar.core.services import RulesService
 from bazaar.core.services import GenomService
 
 from bazaar.core.models import Yara
-from bazaar.core.tasks import analyze, retrohunt
+from bazaar.core.tasks import analyze
+from bazaar.core.modules.threat_hunting import retrohunt
 from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy, transform_hl_results
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm
 from bazaar.front.og import generate_og_card

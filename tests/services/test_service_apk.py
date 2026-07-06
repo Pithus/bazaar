@@ -2,7 +2,7 @@ import pytest
 from io import BytesIO
 from unittest.mock import Mock, patch
 
-from .conftest import sha256, uuid
+from ..conftest import sha256, uuid
 
 from bazaar.core.services import ApkService
 
