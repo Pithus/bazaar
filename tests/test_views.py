@@ -280,7 +280,7 @@ def test_my_rule_edit_view_get(mock_yara_get, user: User, rf: RequestFactory):
 
 @pytest.mark.django_db
 @patch("bazaar.front.view.Yara.objects.get")
-@patch("bazaar.front.view.delete_es_matches")
+@patch("bazaar.core.services.rules.delete_es_matches")
 def test_my_rule_edit_view_post(mock_es_delete, mock_yara_get, yara_rule, user: User, rf: RequestFactory):
     request = rf.post(f"/rules/{uuid}", yara_rule)
     request.user = user
@@ -313,7 +313,7 @@ def test_my_rule_delete_view_unauth(rf: RequestFactory):
 @pytest.mark.django_db
 @patch("bazaar.front.view.Yara.objects.get")
 @patch("bazaar.front.view.Yara.delete")
-@patch("bazaar.front.view.delete_es_matches")
+@patch("bazaar.core.services.rules.delete_es_matches")
 def test_my_rule_delete_view(mock_es_delete, mock_yara_delete, mock_yara_get, user: User, rf: RequestFactory):
     request = rf.get(f"/rules/{uuid}/delete")
     request.user = user
@@ -350,10 +350,12 @@ def test_my_retrohunt_view_unauth(rf: RequestFactory):
 
 @pytest.mark.django_db
 @patch("bazaar.front.view.messages.success")
-def test_my_retrohunt_view(mock_messages, user: User, rf: RequestFactory):
+@patch("bazaar.front.view.async_task")
+def test_my_retrohunt_view(mock_async, mock_messages, user: User, rf: RequestFactory):
     request = rf.get(f"/rules/{uuid}/retro")
     request.user = user
 
+    mock_async.return_value = True
     mock_messages.return_value = True
 
     response = my_retrohunt_view(request, uuid)

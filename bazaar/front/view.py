@@ -29,6 +29,8 @@ from androcfg.code_style import U39bStyle
 from bazaar.core.services import ReportService
 from bazaar.core.services import ApkService
 from bazaar.core.services import SearchService
+from bazaar.core.services import RulesService
+from bazaar.core.services import GenomService
 
 from bazaar.core.models import Yara
 from bazaar.core.tasks import analyze, retrohunt
@@ -262,10 +264,10 @@ def my_rules_view(request):
         return redirect(reverse_lazy('front:home'))
 
     my_rules = None
-    if request.method == 'GET':
-        my_rules = get_rules(request)
-
     owner = request.user
+    if request.method == 'GET':
+        my_rules = RulesService.get_rules(owner)
+
     token, _ = Token.objects.get_or_create(user=owner)
 
     return render(request, 'front/yara_rules/my_rules.html', context={'my_rules': my_rules, 'my_token': token.key})
@@ -309,14 +311,13 @@ def my_rule_edit_view(request, uuid):
             new_rule.owner = request.user
             new_rule.last_update = timezone.now()
             new_rule.save()
-            delete_es_matches(request, rule)
+            RulesService.delete_es_matches(request.user, rule)
             messages.success(request, 'Your rule has been updated!')
         except Exception:
             return render(request, 'front/yara_rules/my_rule_edit.html', {'form': new_rule})
         return redirect(reverse_lazy('front:my_rules'))
     else:
         return HttpResponseBadRequest()
-
 
 def my_rule_delete_view(request, uuid=None):
     if not request.user.is_authenticated:
@@ -325,85 +326,13 @@ def my_rule_delete_view(request, uuid=None):
     if request.method == 'GET':
         rule = Yara.objects.get(id=uuid)
         try:
-            delete_es_matches(request, rule)
+            RulesService.delete_es_matches(request.user, rule)
             rule.delete()
             messages.success(request, 'Your rule has been deleted.')
             return redirect(reverse_lazy('front:my_rules'))
         except Exception as e:
-            logging.exception(e)
+            messages.warning(request, 'An error occured while deleting your rule.')
             return redirect(reverse_lazy('front:my_rules'))
-
-
-def delete_es_matches(request, rule):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
-    public_es_index, private_es_index = Yara.get_es_index_names(request.user)
-    q = {'query': {
-        'match': {
-            'rule': rule.id,
-        }
-    }}
-    if rule.is_private:
-        try:
-            es.delete_by_query(index=private_es_index, body=q)
-        except Exception as e:
-            logging.exception(e)
-    elif not rule.is_private:
-        try:
-            es.delete_by_query(index=public_es_index, body=q)
-        except Exception as e:
-            logging.exception(e)
-    else:
-        pass
-
-    return
-
-
-def get_rules(request):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
-    yara_rules = Yara.objects.filter(owner=request.user)
-    public_es_index, private_es_index = Yara.get_es_index_names(request.user)
-    q = {
-        'query': {
-            'terms': {
-                'owner': [request.user.id]
-            }
-        },
-        'size': 5000,
-    }
-
-    public_matches, private_matches = None, None
-    try:
-        private_matches = es.search(index=private_es_index, body=q)['hits']['hits']
-    except:
-        pass
-
-    try:
-        public_matches = es.search(index=public_es_index, body=q)['hits']['hits']
-    except:
-        pass
-
-    my_rules = []
-    for rule in yara_rules:
-        my_rule = {
-            'rule': rule,
-            'matching_date': '',
-            'matches': [],
-        }
-        if rule.is_private and private_matches:
-            for match in private_matches:
-                if match['_source']['rule'] == str(rule.id):
-                    m = match['_source']
-                    m['sample'] = SearchService.light_sample_search(match['_source']['matches']['apk_id'])
-                    my_rule['matches'].append(m)
-        elif not rule.is_private and public_matches:
-            for match in public_matches:
-                if match['_source']['rule'] == str(rule.id):
-                    m = match['_source']
-                    m['sample'] = SearchService.light_sample_search(match['_source']['matches']['apk_id'])
-                    my_rule['matches'].append(m)
-        my_rules.append(my_rule)
-
-    return my_rules
 
 
 def my_retrohunt_view(request, uuid):
@@ -411,10 +340,10 @@ def my_retrohunt_view(request, uuid):
         return redirect(reverse_lazy('front:home'))
     # TODO: add a cap on user use
     try:
-        async_task(retrohunt, uuid)
+        async_task(retrohunt, request)
         messages.success(request, 'The retrohunt has been launched.')
     except Exception as e:
-        logging.exception(e)
+        messages.warning(request, 'An error occured launching retrohunt.')
 
     return redirect(reverse_lazy('front:my_rules'))
 
@@ -437,24 +366,7 @@ def get_andgrocfg_code(request, sha256, foo):
 
 
 def get_genom(request):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
-    entire_genom = []
-    query={"query": {"match_all": {}}}
-    reports = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
-
-    for report in reports:
-        report = report['_source']
-        sha256 = report['sha256']
-        genom = None
-        threat = 'unknown'
-        try:
-            genom = report['andro_cfg']['genom']
-            threat = report['vt_report']['attributes']['popular_threat_classification']['suggested_threat_label']
-        except Exception as e:
-            logging.error(f'Get Genom: {e}')
-        if genom:
-            entire_genom.append(f'{sha256}-{threat},{genom}')
-
-    response = HttpResponse('\n'.join(entire_genom), content_type='text/csv')
+    genom = GenomService.get_genom()
+    response = HttpResponse('\n'.join(genom), content_type='text/csv')
     response['Content-Disposition'] = f'inline; filename=pithus_genom.csv'
     return response
