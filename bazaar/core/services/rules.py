@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from elasticsearch import Elasticsearch
 
+from bazaar.core.services import SearchService
 from bazaar.core.models import Yara
 
 
