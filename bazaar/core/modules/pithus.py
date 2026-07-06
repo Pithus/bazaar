@@ -8,6 +8,7 @@ import uuid
 import zipfile
 import re
 import dexofuzzy
+import requests
 import yara
 from datetime import datetime
 from tempfile import NamedTemporaryFile
@@ -19,6 +20,7 @@ from google_play_scraper import app
 from django.conf import settings
 from django.core.files.storage import default_storage
 from bazaar.core.fingerprinting import ApplicationSignature
+from bazaar.core.utils import strings_from_apk
 
 from elasticsearch import Elasticsearch
 
@@ -71,7 +73,6 @@ def extract_attributes(sha256):
         sign = ApplicationSignature.compute_from_apk(f.name)
         package = sign.handle
         sign = sign.to_dict()
-
         a = APK(f.name)
         sign['uploaded_at'] = datetime.now()
         sign['sha256'] = sha256
@@ -105,6 +106,7 @@ def extract_attributes(sha256):
 
 
 def extract_classes(sha256):
+
     start = time.time()
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_classes': 1}},
               retry_on_conflict=5)
@@ -121,7 +123,7 @@ def extract_classes(sha256):
         s1 = time.time()
         a, d, dx = AnalyzeAPK(f.name)
         s2 = time.time()
-        print(f'AnalyzeAPK took {s2 - s1}')
+        logging.debug(f'AnalyzeAPK took {s2 - s1}')
 
         # Extract classes
         s1 = time.time()
@@ -138,7 +140,7 @@ def extract_classes(sha256):
                       retry_on_conflict=5)
             return {'status': 'failed', 'info': str(e)}
         s2 = time.time()
-        print(f'Cleanup took {s2 - s1}')
+        logging.debug(f'Cleanup took {s2 - s1}')
 
         java_classes = ' '.join(class_names)
 
@@ -158,7 +160,7 @@ def extract_classes(sha256):
               retry_on_conflict=5)
 
     stop = time.time()
-    print(f'extract_classes took {stop - start}')
+    logging.info(f'extract_classes took {stop - start}')
 
     return {'status': 'success', 'info': ''}
 
@@ -191,20 +193,20 @@ def frosting_analysis(sha256):
             }
 
             for b in a._v2_blocks:
-                if b in BLOCK_TYPES.keys():
+                if b.id in BLOCK_TYPES.keys():
                     frosting_data['v2_signature_blocks'].append(
                         {
-                            'value': str(hex(b)),
-                            'comment': BLOCK_TYPES[b],
-                            'content': binascii.b2a_base64(a._v2_blocks[b]).decode('utf-8').strip()
+                            'value': str(hex(b.id)),
+                            'comment': BLOCK_TYPES[b.id],
+                            'content': binascii.b2a_base64(b.data).decode('utf-8').strip()
                         }
                     )
                 else:
                     frosting_data['v2_signature_blocks'].append(
                         {
-                            'value': str(hex(b)),
+                            'value': str(hex(b.id)),
                             'comment': 'Unknown',
-                            'content': binascii.b2a_base64(a._v2_blocks[b]).decode('utf-8').strip()
+                            'content': binascii.b2a_base64(b.data).decode('utf-8').strip()
                         }
                     )
             es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={
