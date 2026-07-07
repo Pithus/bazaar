@@ -49,7 +49,7 @@ def analyze(sha256, force=False):
         return {'status': 'success', 'info': ''}
 
     # Schedule all other tasks
-    package = extract_attributes(sha256)
+    package = pithus.extract_attributes(sha256)
     if package:
         _prepare(sha256)
         async_task(mobsf.analysis, sha256)

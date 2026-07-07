@@ -138,7 +138,7 @@ class ReportView(View):
             hunting_matches = Yara.find_public_hunting_matches(sha)
 
             # Adapt caching depending on the status of the analysis
-            cache_retention_time = 5
+            cache_retention_time = 2
             if not status['running']:
                 cache_retention_time = 600
 
@@ -163,7 +163,7 @@ def report_status_view(request, sha256):
     try:
         report_status = ReportService.get_status(sha256)
     except Exception:
-        redirect(reverse_lazy('front:home'))
+        return redirect(reverse_lazy('front:home'))
     return JsonResponse(report_status)
 
 

@@ -234,7 +234,6 @@ def get_google_play_info(package):
     return {'status': 'error', 'info': f'Unable to retrieve Google Play details of {package}'}
 
 
-
 def extract_ioc(sha256):
     with NamedTemporaryFile() as f:
         f.write(default_storage.open(sha256).read())

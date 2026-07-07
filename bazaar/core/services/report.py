@@ -29,7 +29,6 @@ def get_report(sha256) -> {}:
         es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
         report = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
     except Exception as e:
-        logging.error(e)
         raise
     return report
 
@@ -38,7 +37,6 @@ def get_detailed_status(sha256):
         es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
         detailed_status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256)['_source']
     except Exception as e:
-        logging.error(e)
         raise
     return detailed_status
 
@@ -47,7 +45,6 @@ def get_status(sha256) -> {}:
         detailed_status = get_detailed_status(sha256)
         report_status = compute_status(detailed_status)
     except Exception as e:
-        logging.error(e)
         raise
     return report_status
 
@@ -63,6 +60,5 @@ def get_example() -> {}:
         }
         example = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=q)['hits']['hits'][0]['_source']
     except Exception as e:
-        logging.error(e)
         raise
     return example

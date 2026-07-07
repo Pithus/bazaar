@@ -89,6 +89,8 @@ class ReportView:
             )
 
     @api_view(["GET"])
+    @authentication_classes([])
+    @permission_classes([])
     @staticmethod
     def get_report_status(request, sha256) -> Response:
         try:

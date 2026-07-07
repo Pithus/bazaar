@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from androguard.core.androconf import is_android
 
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, NotFoundError
 
 from bazaar.core.utils import get_sha256_of_file
 from bazaar.core.services import ReportService
@@ -27,13 +27,11 @@ def list_apk():
 
 def upload_apk(apk):
 
-    print(apk)
     if apk.size > settings.MAX_APK_UPLOAD_SIZE:
         raise ApkException("File too large")
     
     with NamedTemporaryFile() as tmp:
         for chunk in apk.chunks():
-            print(chunk)
             tmp.write(chunk)
         tmp.seek(0)
 
@@ -45,6 +43,8 @@ def upload_apk(apk):
             try:
                 if ReportService.get_status(sha256)["analysis_launched"] == False:
                     analyze(sha256, force=True)
+            except NotFoundError as e:
+                analyze(sha256)
             except Exception as e:
                 logging.error(e)
                 raise

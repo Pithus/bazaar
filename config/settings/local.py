@@ -62,3 +62,5 @@ INSTALLED_APPS += ["django_extensions"]  # noqa F405
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]['user'] = '100/minute'
