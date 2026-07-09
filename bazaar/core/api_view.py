@@ -1,6 +1,7 @@
 import logging
 import hashlib
 import requests
+import json
 
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -172,7 +173,6 @@ class ApkView:
             )
 
     # Not sure if this is a good idea to implement, leaving NOT IMPLEMENTED for now
-    @api_view(["GET"])
     @staticmethod
     def list_apk(request) -> Response:
         return Response(
@@ -228,7 +228,14 @@ class SearchView:
                 status=rest_framework.status.HTTP_406_NOT_ACCEPTABLE
             )
         q = user_query.get('q')
+        try:
+            result = SearchService.search(q)
+        except json.decoder.JSONDecodeError as e:
+            return Response(
+                {"message": "Invalid JSON"},
+                status=rest_framework.status.HTTP_400_BAD_REQUEST
+            )
         return Response(
-            {"message": "OK", "result": SearchService.light_sample_search(q)},
+            {"message": "OK", "result": result},
             status=rest_framework.status.HTTP_200_OK
         )

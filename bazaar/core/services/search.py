@@ -1,4 +1,5 @@
 import logging
+import json
 
 from django.conf import settings
 from elasticsearch import Elasticsearch
@@ -13,7 +14,7 @@ def search(search_query):
         "query": {
             "query_string": {
                 "default_field": "sha256",
-                "query": search_query
+                "query": search_query,
             }
         },
         "highlight": {
