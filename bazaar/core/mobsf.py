@@ -30,7 +30,7 @@ class MobSF:
         multipart_data = {'file': (filename, file, 'application/octet-stream')}
         headers = {'Authorization': self.__apikey}
 
-        r = requests.post(f'{self.__server}/api/v1/upload', files=multipart_data, headers=headers)
+        r = requests.post(f'{self.__server}/api/v1/upload', files=multipart_data, headers=headers, timeout=120)
 
         if r.status_code == 200:
             response = r.json()
@@ -45,7 +45,7 @@ class MobSF:
         """
         logger.debug(f"Requesting {self.__server} to scan {data['hash']}")
         headers = {'Authorization': self.__apikey}
-        r = requests.post(f'{self.__server}/api/v1/scan', data=data, headers=headers)
+        r = requests.post(f'{self.__server}/api/v1/scan', data=data, headers=headers, timeout=10)
         return r.json()
 
     def scans(self, page=1, page_size=100):
@@ -56,7 +56,7 @@ class MobSF:
                    'page_size': page_size}
         headers = {'Authorization': self.__apikey}
 
-        r = requests.get(f'{self.__server}/api/v1/scans', params=payload, headers=headers)
+        r = requests.get(f'{self.__server}/api/v1/scans', params=payload, headers=headers, timeout=10)
 
         return r.json()
 
@@ -65,7 +65,7 @@ class MobSF:
         logger.debug(f'Requesting JSON report for scan {data["hash"]}')
         headers = {'Authorization': self.__apikey}
         data = {'hash': data['hash']}
-        r = requests.post(f'{self.__server}/api/v1/report_json', data=data, headers=headers)
+        r = requests.post(f'{self.__server}/api/v1/report_json', data=data, headers=headers, timeout=10)
 
         return r.json()
 
@@ -76,6 +76,6 @@ class MobSF:
         headers = {'Authorization': self.__apikey}
         data = {'hash': data["hash"]}
 
-        r = requests.post(f'{self.__server}/api/v1/delete_scan', data=data, headers=headers)
+        r = requests.post(f'{self.__server}/api/v1/delete_scan', data=data, headers=headers, timeout=10)
 
         return r.json()

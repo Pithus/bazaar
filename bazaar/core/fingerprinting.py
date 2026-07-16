@@ -22,7 +22,7 @@ class Certificate:
 
     def __init__(self, cert):
         self.fingerprint = binascii.hexlify(cert.sha1).decode('ascii').lower()
-        md5_digest = hashlib.md5(cert.dump()).digest()
+        md5_digest = hashlib.md5(cert.dump(), usedforsecurity=False).digest()
         self.fingerprint_md5 = binascii.hexlify(md5_digest).decode('ascii').lower()
         self.fingerprint_sha1 = binascii.hexlify(cert.sha1).decode('ascii').lower()
         self.fingerprint_sha256 = binascii.hexlify(cert.sha256).decode('ascii').lower()
@@ -63,8 +63,8 @@ def get_check_sums_of_file(file_path):
     :return: list of tuple
     """
     BLOCKSIZE = 65536
-    md5 = hashlib.md5()
-    sha1 = hashlib.sha1()
+    md5 = hashlib.md5(usedforsecurity=False)
+    sha1 = hashlib.sha1(usedforsecurity=False)
     sha256 = hashlib.sha256()
     with open(file_path, 'rb') as apk:
         chunk = apk.read(BLOCKSIZE)
@@ -84,8 +84,8 @@ def get_check_sums_of_file_as_dict(file_path):
     :return: list of tuple
     """
     BLOCKSIZE = 65536
-    md5 = hashlib.md5()
-    sha1 = hashlib.sha1()
+    md5 = hashlib.md5(usedforsecurity=False)
+    sha1 = hashlib.sha1(usedforsecurity=False)
     sha256 = hashlib.sha256()
     with open(file_path, 'rb') as apk:
         chunk = apk.read(BLOCKSIZE)
@@ -121,7 +121,7 @@ def compute_uaid(apk):
     parts = [apk.get_package()]
     for c in get_certificates(apk):
         parts.append(c.fingerprint.upper())
-    return sha1(' '.join(parts).encode('utf-8')).hexdigest().lower()
+    return sha1(' '.join(parts).encode('utf-8'), usedforsecurity=False).hexdigest().lower()
 
 
 def icon_to_base64(apk_path, icon_path):

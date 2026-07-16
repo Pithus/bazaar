@@ -183,7 +183,7 @@ def upload_sample_to_malware_bazaar(sha256):
                     'json_data': (None, json.dumps(data), 'application/json'),
                     'file': (open(f.name, 'rb'))
                 }
-                response = requests.post('https://mb-api.abuse.ch/api/v1/', files=files, verify=True, headers=headers)
+                response = requests.post('https://mb-api.abuse.ch/api/v1/', files=files, verify=True, headers=headers, timeout=120)
                 if response.ok:
                     json_response = response.json()
                     if not 'query_status' in json_response:

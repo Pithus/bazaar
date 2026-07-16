@@ -31,7 +31,7 @@ es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, request_timeout=30, max_retries
 def exodus_analysis(classes):
     start = time.time()
     exodus_url = 'https://reports.exodus-privacy.eu.org/api/trackers'
-    r = requests.get(exodus_url)
+    r = requests.get(exodus_url, timeout=10)
     data = r.json()
     tracker_signatures = []
     for id, obj in data['trackers'].items():
