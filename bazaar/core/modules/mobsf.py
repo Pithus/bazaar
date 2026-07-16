@@ -60,7 +60,7 @@ def analysis(sha256):
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': 1}},
               retry_on_conflict=5)
     server = 'http://mobsf:8000'
-    token = '515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9'
+    token = '515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9' # nosec: Internal token only
     mobsf = MobSF(token, server)
 
     try:
