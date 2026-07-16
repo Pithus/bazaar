@@ -181,9 +181,9 @@ def test_download_apk(mock_dl, mock_exists, api_rf):
 
 # Test Search API View
 @pytest.mark.django_db
-@patch("bazaar.core.api_view.SearchService.light_sample_search")
+@patch("bazaar.core.api_view.SearchService.search")
 def test_search(mock_search, report_data, api_rf):
-    request = api_rf.post(f"/search/", {"q": f"{sha256}"})
+    request = api_rf.post(f"/search/", {"q": f"sha256:{sha256}"})
 
     mock_search.return_value = report_data
     response = SearchView.search(request)
