@@ -8,4 +8,4 @@ register = template.Library()
 def do(s):
     # Marking nosec because this is called  only on NIAP analysis returned data
     # DO NOT USE for other uncontrolled data.
-    return mark_safe(s.replace(',', '<br>')) # nosec
+    return mark_safe(s.replace(',', '<br>'))  # nosec

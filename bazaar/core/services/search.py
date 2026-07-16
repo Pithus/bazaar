@@ -1,12 +1,11 @@
 import logging
-import json
 
 from django.conf import settings
 from elasticsearch import Elasticsearch
-from bazaar.core.utils import   get_matching_items_by_dexofuzzy, \
-                                get_matching_items_by_ssdeep, \
-                                get_matching_items_by_ssdeep_func, \
-                                transform_hl_results
+from bazaar.core.utils import get_matching_items_by_dexofuzzy, \
+    get_matching_items_by_ssdeep, \
+    get_matching_items_by_ssdeep_func, \
+    transform_hl_results
 
 
 def search(search_query):
@@ -39,12 +38,16 @@ def search(search_query):
                     "is_signed", "frosting_data.is_frosted", "features", "andro_cfg"],
         "size": 50,
     }
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
     try:
         results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
         return results
     except Exception:
         return []
+
 
 def light_sample_search(sha256):
     query = {
@@ -58,13 +61,17 @@ def light_sample_search(sha256):
                     "is_signed", "frosting_data.is_frosted", "features"],
         "size": 1,
     }
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
     try:
         results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
         results = transform_hl_results(results)
         return results
     except Exception:
         return []
+
 
 def similarity_search(search_hash, algorithm, ignore_sha=''):
     results = []

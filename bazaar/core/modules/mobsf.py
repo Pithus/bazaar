@@ -12,7 +12,10 @@ from tld import get_tld, is_tld
 from elasticsearch import Elasticsearch
 
 
-es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, request_timeout=30, max_retries=5, retry_on_timeout=True, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+es = Elasticsearch(
+    settings.ELASTICSEARCH_HOSTS,
+    basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+)
 
 
 def _check_tld(d):
@@ -25,7 +28,7 @@ def _check_tld(d):
                 res.append(v)
             else:
                 continue
-        except:
+        except Exception:
             continue
 
     return res
@@ -49,7 +52,7 @@ def _check_urls(d):
                     res.append(i)
                 else:
                     continue
-            except:
+            except Exception:
                 continue
 
     return res
@@ -60,7 +63,7 @@ def analysis(sha256):
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': 1}},
               retry_on_conflict=5)
     server = 'http://mobsf:8000'
-    token = '515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9' # nosec: Internal token only
+    token = '515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9'  # nosec: Internal token only
     mobsf = MobSF(token, server)
 
     try:
@@ -98,7 +101,7 @@ def analysis(sha256):
                     'url_analysis': _check_urls(report['urls']),
                     'browsable_activities': _dict_to_list(report['browsable_activities']),
                     'detailed_permissions': _dict_to_list(report['permissions']),
-                    'android_api_analysis':updated_report_api,
+                    'android_api_analysis': updated_report_api,
                     'code_analysis': _dict_to_list(report['code_analysis']),
                     'niap_analysis': _dict_to_list(report['niap_analysis']),
                     'domains_analysis': _check_tld(_dict_to_list(report['domains'])),

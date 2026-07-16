@@ -1,31 +1,19 @@
 import logging
-import hashlib
-import requests
 import json
 
-from django.conf import settings
 from django.core.files.storage import default_storage
 from django.core.cache import cache
-from django.http import JsonResponse, HttpResponse, FileResponse
-from rest_framework.reverse import reverse_lazy
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import api_view, authentication_classes, permission_classes, throttle_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.http import FileResponse
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 import rest_framework
-from rest_framework.throttling import UserRateThrottle
+from elasticsearch.exceptions import NotFoundError
 
 from bazaar.core.services import ReportService
 from bazaar.core.services import ApkService
 from bazaar.core.services.apk import ApkException
 from bazaar.core.services import SearchService
-
-from bazaar.core.tasks import analyze
-from bazaar.core.utils import get_sha256_of_file
-from bazaar.core.utils import transform_hl_results
-
-from androguard.core.androconf import is_android
-from tempfile import NamedTemporaryFile
 
 
 @api_view(['GET', 'POST'])
@@ -47,10 +35,10 @@ class ReportView:
                 },
                 status=rest_framework.status.HTTP_200_OK,
             )
-        except Exception as e:
+        except Exception:
             return Response(
                 {"status": "Internal Server Error"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=rest_framework.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
     @api_view(["GET"])
@@ -82,8 +70,7 @@ class ReportView:
                 },
                 status=rest_framework.status.HTTP_200_OK,
             )
-        except Exception as e:
-            raise
+        except Exception:
             return Response(
                 {"message": "Internal Server Error"},
                 status=rest_framework.status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -105,7 +92,12 @@ class ReportView:
                 },
                 status=rest_framework.status.HTTP_200_OK,
             )
-        except:
+        except NotFoundError:
+            return Response(
+                {"message": "Report Not Found"},
+                status=rest_framework.status.HTTP_404_NOT_FOUND,
+            )
+        except Exception:
             return Response(
                 {"message": "Internal Server Error"},
                 status=rest_framework.status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -118,20 +110,22 @@ class ReportView:
     def get_report_exists(request, sha256) -> Response:
         try:
             if default_storage.exists(sha256):
-                return Response({
+                return Response(
+                    {
                         "message": "OK",
                         "requested_hash": sha256,
                     },
                     status=rest_framework.status.HTTP_200_OK,
                 )
             else:
-                return Response({
+                return Response(
+                    {
                         "message": "No report found.",
                         "requested_hash": sha256,
                     },
                     status=rest_framework.status.HTTP_404_NOT_FOUND,
                 )
-        except:
+        except Exception:
             return Response(
                 {"status": "Internal Server Error"},
                 status=rest_framework.status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -190,7 +184,7 @@ class ApkView:
                 {"message": f"{e}"},
                 status=rest_framework.status.HTTP_400_BAD_REQUEST
             )
-        except Exception as e:
+        except Exception:
             return Response(
                 status=rest_framework.status.HTTP_500_INTERNAL_SERVER_ERROR
             )
@@ -230,7 +224,7 @@ class SearchView:
         q = user_query.get('q')
         try:
             result = SearchService.search(q)
-        except json.decoder.JSONDecodeError as e:
+        except json.decoder.JSONDecodeError:
             return Response(
                 {"message": "Invalid JSON"},
                 status=rest_framework.status.HTTP_400_BAD_REQUEST

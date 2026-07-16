@@ -1,4 +1,3 @@
-import binascii
 import gc
 import logging
 
@@ -6,7 +5,6 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.utils import timezone
 from django_q.tasks import async_task
-from django_q.tasks import schedule
 from elasticsearch import Elasticsearch
 
 from bazaar.core.modules import (
@@ -21,7 +19,12 @@ from bazaar.core.modules import (
 )
 
 
-es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, request_timeout=30, max_retries=5, retry_on_timeout=True, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+es = Elasticsearch(
+    settings.ELASTICSEARCH_HOSTS,
+    request_timeout=30, max_retries=5,
+    retry_on_timeout=True,
+    basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+)
 
 
 def _prepare(sha256):

@@ -1,14 +1,8 @@
 import logging
 from django import forms
-from django.conf import settings
-from elasticsearch import Elasticsearch
 
 from bazaar.core.services import SearchService
-from bazaar.core.utils import   get_matching_items_by_dexofuzzy, \
-                                get_matching_items_by_ssdeep, \
-                                compute_genetic_analysis, \
-                                get_matching_items_by_ssdeep_func, \
-                                transform_hl_results
+from bazaar.core.utils import compute_genetic_analysis, transform_hl_results
 from bazaar.front.utils import append_dexofuzzy_similarity, get_aggregations
 
 from django.forms import ModelForm
@@ -23,7 +17,7 @@ class SimilaritySearchForm(forms.Form):
     def do_search(self, sha=''):
         algorithm = self.cleaned_data['algorithm']
         hash = self.cleaned_data['hash'].strip()
-        
+
         return SearchService.similarity_search(hash, algorithm, ignore_sha=sha)
 
 

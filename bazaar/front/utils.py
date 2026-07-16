@@ -31,7 +31,7 @@ def append_dexofuzzy_similarity(results, key, top_n=5):
                     if sim > 0:
                         matches.append(
                             {'score': sim, 'sha256': sample['source']['sha256'], 'handle': sample['source']['handle']})
-            except Exception as e:
+            except Exception:
                 pass
 
         matches = sorted(matches, key=lambda ele: ele['score'], reverse=True)
@@ -87,10 +87,10 @@ def generate_world_map(domains, to_png=False, fp=None):
             if d['geolocation']['country_short']:
                 c = d['geolocation']['country_short'].lower()
                 if c in countries:
-                    countries[c] +=1
+                    countries[c] += 1
                 else:
                     countries[c] = 1
-        except:
+        except Exception:
             pass
     custom_style = Style(
         foreground='#a991d4',
@@ -115,7 +115,10 @@ def generate_world_map(domains, to_png=False, fp=None):
 
 
 def get_sample_timeline(sha256):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
 
     sample = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
     # parse_datetime(str(sample.get('uploaded_at'))).astimezone(pytz.UTC)
@@ -148,15 +151,17 @@ def get_sample_timeline(sha256):
             {
                 'id': 'vt_first_seen',
                 'title': 'First submission on VT',
-                'date': datetime.utcfromtimestamp(sample.get('vt_report').get('attributes').get('first_submission_date')).astimezone(
-                    pytz.UTC)
+                'date': datetime.utcfromtimestamp(
+                    sample.get('vt_report').get('attributes').get('first_submission_date')).astimezone(pytz.UTC)
             }
         )
         timeline.append(
             {
                 'id': 'vt_last_seen',
                 'title': 'Last submission on VT',
-                'date': datetime.utcfromtimestamp(sample.get('vt_report').get('attributes').get('last_submission_date')).astimezone(pytz.UTC)
+                'date': datetime.utcfromtimestamp(
+                    sample.get('vt_report').get('attributes').get('last_submission_date')
+                ).astimezone(pytz.UTC)
             }
         )
     except Exception:
@@ -168,7 +173,8 @@ def get_sample_timeline(sha256):
                 'id': 'bundle_lowest_date',
                 'title': 'Oldest file found in APK',
                 'date': parse_datetime(
-                    str(sample.get('vt_report').get('attributes').get('bundle_info').get('lowest_datetime'))).astimezone(pytz.UTC)
+                    str(sample.get('vt_report').get('attributes').get('bundle_info').get('lowest_datetime'))
+                ).astimezone(pytz.UTC)
             }
         )
     except Exception:
@@ -180,15 +186,16 @@ def get_sample_timeline(sha256):
                 'id': 'bundle_highest_date',
                 'title': 'Latest file found in APK',
                 'date': parse_datetime(
-                    str(sample.get('vt_report').get('attributes').get('bundle_info').get('highest_datetime'))).astimezone(
-                    pytz.UTC)
+                    str(sample.get('vt_report').get('attributes').get('bundle_info').get('highest_datetime'))
+                ).astimezone(pytz.UTC)
             }
         )
     except Exception:
         pass
 
-    timeline.sort(key = lambda x:x['date'])
+    timeline.sort(key=lambda x: x['date'])
     return timeline
+
 
 def get_andro_cfg_storage_path(sha256):
     return f'andro_cfg_{sha256}'

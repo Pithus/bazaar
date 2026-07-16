@@ -1,8 +1,7 @@
-import logging
 import os
 import shutil
 from datetime import datetime, timedelta
-import re
+
 from tempfile import NamedTemporaryFile
 from tqdm import tqdm
 
@@ -16,7 +15,10 @@ from quark import freshquark
 from elasticsearch import Elasticsearch
 
 
-es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, request_timeout=30, max_retries=5, retry_on_timeout=True, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+es = Elasticsearch(
+    settings.ELASTICSEARCH_HOSTS,
+    basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+)
 
 
 def run_freshquark():
@@ -36,7 +38,9 @@ def analysis(sha256):
 
         rules_path = 'quark-rules'
         rules_list = os.listdir(rules_path)
-        if datetime.now() - datetime.fromtimestamp(os.stat(os.path.join(rules_path, rules_list[0])).st_mtime) >= timedelta(days=1):
+        if datetime.now() - datetime.fromtimestamp(
+            os.stat(os.path.join(rules_path, rules_list[0])).st_mtime
+        ) >= timedelta(days=1):
             run_freshquark()
             rules_list = os.listdir(rules_path)
 

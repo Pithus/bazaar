@@ -1,12 +1,16 @@
 from time import sleep
 import logging
-from django.core.management.base import BaseCommand, CommandError
+from elasticsearch import Elasticsearch
+
+from django.conf import settings
+from django.core.management.base import BaseCommand
+from django_q.tasks import async_task
+
 from elasticsearch.helpers.actions import scan
 
 from bazaar.core.modules import (
     androcfg,
     apkid,
-    exodus,
     malware_bazaar,
     mobsf,
     pithus,
@@ -15,6 +19,13 @@ from bazaar.core.modules import (
     threat_hunting,
     virus_total,
 )
+
+
+es = Elasticsearch(
+    settings.ELASTICSEARCH_HOSTS,
+    basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+)
+
 
 class Command(BaseCommand):
     help = 'Update existing reports'
@@ -28,10 +39,10 @@ class Command(BaseCommand):
         tasks = options['tasks']
         reports = []
         if '*' in sha256:
-            for report in scan(es,
-                                  query={"query": {"match_all": {}},"_source": ["uploaded_at", "sha256"]},
-                                  index=settings.ELASTICSEARCH_APK_INDEX,
-                                  ):
+            for report in scan(
+                es, query={"query": {"match_all": {}}, "_source": ["uploaded_at", "sha256"]},
+                index=settings.ELASTICSEARCH_APK_INDEX,
+            ):
                 reports.append(report['_source'])
 
             reports = sorted(reports, key=lambda x: x.get('uploaded_at'), reverse=True)
@@ -61,7 +72,7 @@ class Command(BaseCommand):
                 pithus.frosting_analysis(sha256)
             if 'v' in tasks:
                 print(f'Start vt_analysis for {sha256}')
-                vt.analysis(sha256)
+                virus_total.analysis(sha256)
                 sleep(15)
             if 'a' in tasks:
                 print(f'Start apkid_analysis for {sha256}')
@@ -77,7 +88,7 @@ class Command(BaseCommand):
                 async_task(quarkengine.analysis, sha256)
             if 'g' in tasks:
                 print(f'Start andro_cfg for {sha256}')
-                andro_cfg(sha256, force=True)
+                androcfg(sha256, force=True)
             if 'y' in tasks:
                 print(f'Start yara_analysis for {sha256}')
                 threat_hunting.yara_analysis(sha256)

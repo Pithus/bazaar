@@ -4,10 +4,15 @@ from django.conf import settings
 from elasticsearch import Elasticsearch
 
 
+es = Elasticsearch(
+    settings.ELASTICSEARCH_HOSTS,
+    basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+)
+
+
 def get_genom():
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
     entire_genom = []
-    query={
+    query = {
         "query": {"match_all": {}},
         "_source": ["sha256", "vt_report", "andro_cfg"],
     }

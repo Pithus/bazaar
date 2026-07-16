@@ -1,11 +1,15 @@
 import json
+import logging
 
 from django.conf import settings
 from elasticsearch import Elasticsearch
 
 
 def init_es():
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
     try:
         with open('bazaar/es_mappings/apk_analysis.json') as mapping:
             apk_analysis_settings = json.load(mapping)
@@ -14,15 +18,13 @@ def init_es():
         es.indices.create(index=settings.ELASTICSEARCH_GP_INDEX)
         es.indices.create(index=settings.ELASTICSEARCH_TASKS_INDEX)
     except Exception as e:
-        print(e)
-        pass
+        logging.error(e)
     try:
         with open('bazaar/es_mappings/vt_mapping.json') as mapping:
             vt_reports_settings = json.load(mapping)
         es.indices.create(index=settings.ELASTICSEARCH_VT_INDEX, body=vt_reports_settings)
     except Exception:
         pass
-
 
 
 def init_fuzzy_match_es():
@@ -64,10 +66,13 @@ def init_fuzzy_match_es():
         }
     }
 
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
     try:
         es.indices.create(index=settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, body=index_settings)
         es.indices.create(index=settings.ELASTICSEARCH_SSDEEP_APK_INDEX, body=index_settings)
         es.indices.create(index=settings.ELASTICSEARCH_SSDEEP_MANIFEST_INDEX, body=index_settings)
-    except Exception as e:
+    except Exception:
         pass

@@ -3,6 +3,7 @@ import logging
 import zipfile
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 
+import dexofuzzy
 import ssdeep
 
 from django.conf import settings
@@ -12,7 +13,10 @@ from bazaar.core.utils import insert_fuzzy_hash
 from elasticsearch import Elasticsearch
 
 
-es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, request_timeout=30, max_retries=5, retry_on_timeout=True, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+es = Elasticsearch(
+    settings.ELASTICSEARCH_HOSTS,
+    basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+)
 
 
 def analysis(sha256):
@@ -99,4 +103,3 @@ def analysis(sha256):
               retry_on_conflict=5)
 
     return {'status': 'success', 'info': ''}
-

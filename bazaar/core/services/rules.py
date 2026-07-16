@@ -8,11 +8,14 @@ from bazaar.core.models import Yara
 
 
 def get_rules(user):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
     yara_rules = Yara.objects.filter(owner=user)
     public_es_index, private_es_index = Yara.get_es_index_names(user)
     q = {
-    'query': {
+        'query': {
             'terms': {
                 'owner': [user.id]
             }
@@ -23,12 +26,12 @@ def get_rules(user):
     public_matches, private_matches = None, None
     try:
         private_matches = es.search(index=private_es_index, body=q)['hits']['hits']
-    except:
+    except Exception:
         pass
 
     try:
         public_matches = es.search(index=public_es_index, body=q)['hits']['hits']
-    except:
+    except Exception:
         pass
 
     my_rules = []
@@ -56,7 +59,10 @@ def get_rules(user):
 
 
 def delete_es_matches(user, rule):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
     public_es_index, private_es_index = Yara.get_es_index_names(user)
     q = {'query': {
         'match': {

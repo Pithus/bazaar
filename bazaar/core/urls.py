@@ -1,6 +1,10 @@
 from django.urls import path
 
-from bazaar.core.api_view import *
+from bazaar.core.api_view import (
+    ReportView,
+    ApkView,
+    SearchView
+)
 
 app_name = "core"
 urlpatterns = [

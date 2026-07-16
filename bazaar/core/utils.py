@@ -4,8 +4,7 @@ import re
 import logging
 
 import dexofuzzy
-from django.utils import timezone
-from tempfile import NamedTemporaryFile, TemporaryDirectory
+from tempfile import NamedTemporaryFile
 import ssdeep
 import requests
 from androguard.core import apk
@@ -15,9 +14,8 @@ from django.urls import reverse
 from django.utils.html import escape
 from elasticsearch import Elasticsearch
 import numpy
-from scipy.cluster.hierarchy import dendrogram, linkage, to_tree
+from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.spatial.distance import pdist
-import pandas as pd
 from http.client import responses as http_responses
 from enum import Enum
 
@@ -33,7 +31,7 @@ def compute_status(status):
             error = error or v == -1
             running = running or v == 1 or v == 0
             if v == 2:
-                analysis_launched = True # if at least one step succeeded, the analysis was launched
+                analysis_launched = True  # if at least one step succeeded, the analysis was launched
     return {
         'in_error': error,
         'success': success,
@@ -154,8 +152,12 @@ class MalwareBazaarUploadStatus(Enum):
     FAILURE = False
     FAILURE_ALREADY_KNOWN = 'file_already_known'
 
+
 def upload_sample_to_malware_bazaar(sha256):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
     try:
         result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
         if not result or 'vt' not in result:
@@ -183,31 +185,45 @@ def upload_sample_to_malware_bazaar(sha256):
                     'json_data': (None, json.dumps(data), 'application/json'),
                     'file': (open(f.name, 'rb'))
                 }
-                response = requests.post('https://mb-api.abuse.ch/api/v1/', files=files, verify=True, headers=headers, timeout=120)
+                response = requests.post(
+                    'https://mb-api.abuse.ch/api/v1/',
+                    files=files, verify=True, headers=headers, timeout=120
+                )
                 if response.ok:
                     json_response = response.json()
-                    if not 'query_status' in json_response:
-                        logging.error(f"Unexpected result from Malware Bazaar API, no 'query_status' received.")
+                    if 'query_status' not in json_response:
+                        logging.error("Unexpected result from Malware Bazaar API, no 'query_status' received.")
                         return MalwareBazaarUploadStatus.FAILURE
 
                     elif json_response['query_status'] == 'inserted':
-                        logging.info(f"Upload to Malware Bazaar: Sample {sha256} marked as [inserted]. Check again later.")
+                        logging.info(
+                            f"Upload to Malware Bazaar: Sample {sha256} marked as [inserted]. \
+                            Check again later."
+                        )
                         return MalwareBazaarUploadStatus.SUCCESS
 
                     elif json_response['query_status'] == 'file_already_known':
-                        logging.warn(f"Upload to Malware Bazaar failed because file is already known.")
-                        # Upload failed because file is already known at MB, 
+                        logging.warn("Upload to Malware Bazaar failed because file is already known.")
+                        # Upload failed because file is already known at MB,
                         # but if we're it means we couldn't find a report
                         return MalwareBazaarUploadStatus.FAILURE_ALREADY_KNOWN
                     else:
-                        logging.error(f"Failed to upload to Malware Bazaar: query_status: {json_response['query_status']}")
+                        logging.error(
+                            f"Failed to upload to Malware Bazaar: query_status: {json_response['query_status']}"
+                        )
                         return MalwareBazaarUploadStatus.FAILURE
 
                 else:
-                    logging.error(f"Request to Malware Bazaar failed with error code: {response.status_code} {http_responses[response.status_code]}")
+                    logging.error(
+                        f"Request to Malware Bazaar failed with error code: {response.status_code} \
+                        {http_responses[response.status_code]}"
+                    )
                     return MalwareBazaarUploadStatus.FAILURE
         else:
-            logging.warn(f"Malware Bazaar: not uploading because a report for this file already exists, or the file is not flagged as malicious by VirusTotal")
+            logging.warn(
+                "Malware Bazaar: not uploading because a report for this file already exists, \
+                or the file is not flagged as malicious by VirusTotal"
+            )
     except Exception as e:
         logging.error(f'Malware Bazaar: {e}')
     return MalwareBazaarUploadStatus.FAILURE
@@ -217,7 +233,10 @@ def insert_fuzzy_hash(hash_value, sha256, index):
     chunksize, chunk, double_chunk = hash_value.split(':')
     chunksize = int(chunksize)
 
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
 
     document = {'chunk_size': chunksize, 'chunk': chunk, 'double_chunk': double_chunk, 'sha256': sha256}
 
@@ -229,7 +248,10 @@ def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
     chunksize, chunk, double_chunk = ssdeep_value.split(':')
     chunksize = int(chunksize)
 
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
 
     query = {
         'query': {
@@ -272,7 +294,9 @@ def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
 
     for record in results['hits']['hits']:
         if record['_source']['sha256'] != sha256:
-            chunk_size, chunk, double_chunk = record['_source']['chunk_size'], record['_source']['chunk'], record['_source']['double_chunk']
+            chunk_size = record['_source']['chunk_size']
+            chunk = record['_source']['chunk']
+            double_chunk = record['_source']['double_chunk']
             record_ssdeep = f'{chunk_size}:{chunk}:{double_chunk}'
             ssdeep_grade = ssdeep.compare(record_ssdeep, ssdeep_value)
 
@@ -285,7 +309,10 @@ def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
 def get_matching_items_by_ssdeep_func(ssdeep_value, threshold_grade, index, sha256):
     chunksize, chunk, double_chunk = ssdeep_value.split(':')
     chunksize = int(chunksize)
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
     query = {
         "query": {
             "bool": {
@@ -341,7 +368,10 @@ def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha
     chunksize, chunk, double_chunk = dexofuzzy_value.split(':')
     chunksize = int(chunksize)
 
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
 
     query = {
         'query': {
@@ -384,7 +414,9 @@ def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha
 
     for record in results['hits']['hits']:
         if record['_source']['sha256'] != sha256:
-            chunk_size, chunk, double_chunk = record['_source']['chunk_size'], record['_source']['chunk'], record['_source']['double_chunk']
+            chunk_size = record['_source']['chunk_size']
+            chunk = record['_source']['chunk']
+            double_chunk = record['_source']['double_chunk']
             record_dexofuzzy = f'{chunk_size}:{chunk}:{double_chunk}'
             dexofuzzy_grade = dexofuzzy.compare(record_dexofuzzy, dexofuzzy_value)
 
@@ -411,7 +443,7 @@ def compute_genetic_analysis(results):
             genom = r['andro_cfg']['genom']
             data[app] = [int(x.strip()) for x in genom.split(',')]
         except Exception:
-            pass # No genom found
+            pass  # No genom found
 
     distances = pdist(list(data.values()))  # compute distance over all dimensions
     normalized_dist = normalize(distances)
@@ -424,6 +456,7 @@ def compute_genetic_analysis(results):
     x["labels"] = list(data.keys())
 
     return x
+
 
 def transform_hl_results(results):
     ret = []

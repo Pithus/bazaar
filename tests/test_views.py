@@ -8,6 +8,7 @@ from django.utils import timezone
 from unittest.mock import Mock, patch
 from unittest.mock import call
 from io import BytesIO
+import json
 
 from bazaar.users.models import User
 from bazaar.front.forms import YaraCreateForm
@@ -49,12 +50,11 @@ def test_get(rf: RequestFactory):
     assert response.status_code == 302
     assert response.url == "/"
 
+
 @pytest.mark.django_db
 @patch("bazaar.front.view.ReportService.get_status")
 @patch("bazaar.front.view.ReportService.get_report")
-@patch("bazaar.front.view.Elasticsearch.get")
 def test_get_report(
-    mock_es_get,
     mock_get_report,
     mock_get_status,
     report_data,
@@ -67,7 +67,6 @@ def test_get_report(
 
     mock_get_report.return_value = report_data
     mock_get_status.return_value = report_status
-    mock_es_get.return_value = {"_source": report_data}
 
     response = ReportView.as_view()(
         request,
@@ -90,11 +89,10 @@ def test_basic_url_download_redirect(user: User, rf: RequestFactory):
     assert response.status_code == 302
     assert response.url == "/"
 
+
 @pytest.mark.django_db
-@patch("bazaar.front.view.ApkService.upload_apk")
-@patch("bazaar.front.view.requests.get")
+@patch("bazaar.front.view.ApkService.upload_from_url")
 def test_basic_url_download_ok(
-    mock_get,
     mock_service_upload,
     fake_apk,
     user: User,
@@ -103,10 +101,6 @@ def test_basic_url_download_ok(
     request = rf.post(f"/url/", data={"url": f"https://127.0.0.1/test.apk"})
     request.user = user
 
-    response_mock = Mock()
-    response_mock.status_code = 200
-    response_mock.raw = fake_apk
-    mock_get.return_value = response_mock
     mock_service_upload.return_value = sha256
 
     response = basic_url_download_view(request)
@@ -123,6 +117,7 @@ def test_basic_upload_view_get(user: User, rf: RequestFactory):
     response = basic_upload_view(request)
     assert response.status_code == 302
     assert response.url == "/"
+
 
 @pytest.mark.django_db
 @patch("bazaar.core.api_view.ApkService.upload_apk")
@@ -162,6 +157,7 @@ def test_download_sample_view_unauth(rf: RequestFactory):
     assert response.status_code == 302
     assert response.url == "/"
 
+
 @pytest.mark.django_db
 @patch("bazaar.front.view.default_storage.exists")
 @patch("bazaar.front.view.default_storage.open")
@@ -186,27 +182,28 @@ def test_export_report_unauth(rf: RequestFactory):
     assert response.status_code == 302
     assert response.url == "/"
 
+
 @pytest.mark.django_db
-@patch("bazaar.front.view.Elasticsearch.get")
-def test_export_report_view(mock_es_get, user: User, rf: RequestFactory):
+@patch("bazaar.front.view.ReportService.get_report")
+def test_export_report_view(mock_rs_get, user: User, rf: RequestFactory, report_data):
     request = rf.get(f"/report/{sha256}/json")
     request.user = user
 
-    mock_es_get.return_value = {"_source":
-        {"json": "value"}
+    mock_rs_get.return_value = {"_source":
+        report_data,
     }
 
     response = export_report_view(request, sha256)
     assert response.status_code == 200
-    assert response.content == b'{"json": "value"}'
+    assert json.loads(response.content)["_source"] == report_data
 
 
 # Test OGCard
-@patch("bazaar.front.view.Elasticsearch.get")
-def test_og_card_view(mock_es_get, report_data, rf: RequestFactory):
+@patch("bazaar.front.view.generate_og_card")
+def test_og_card_view(mock_gen, report_data, rf: RequestFactory):
     request = rf.get(f"/report/{sha256}/card")
 
-    mock_es_get.return_value = {"_source": report_data}
+    mock_gen.return_value = True
     response = og_card_view(request, sha256)
 
     assert response.status_code == 200
@@ -222,6 +219,7 @@ def  test_my_rules_view_unauth(rf: RequestFactory):
     assert response.status_code == 302
     assert response.url == "/"
 
+
 @pytest.mark.django_db
 def  test_my_rules_view(user: User, rf: RequestFactory):
     request = rf.get("/rules/")
@@ -230,6 +228,7 @@ def  test_my_rules_view(user: User, rf: RequestFactory):
     response = my_rules_view(request)
     assert response.status_code == 200
 
+
 def test_my_rule_create_view_unauth(rf: RequestFactory):
     request = rf.post("/rules/")
     request.user = AnonymousUser()
@@ -237,6 +236,7 @@ def test_my_rule_create_view_unauth(rf: RequestFactory):
     response = my_rule_create_view(request)
     assert response.status_code == 302
     assert response.url == "/"
+
 
 @pytest.mark.django_db
 def test_my_rule_create_view(yara_rule, user: User, rf: RequestFactory):
@@ -251,6 +251,7 @@ def test_my_rule_create_view(yara_rule, user: User, rf: RequestFactory):
     assert response.status_code == 302
     assert response.url == "/rules/"
 
+
 def test_my_rule_edit_view_unauth(rf: RequestFactory):
     request = rf.get("/rules/")
     request.user = AnonymousUser()
@@ -258,6 +259,7 @@ def test_my_rule_edit_view_unauth(rf: RequestFactory):
     response = my_rule_edit_view(request, None)
     assert response.status_code == 302
     assert response.url == "/"
+
 
 @pytest.mark.django_db
 @patch("bazaar.front.view.Yara.objects.get")
@@ -277,6 +279,7 @@ def test_my_rule_edit_view_get(mock_yara_get, user: User, rf: RequestFactory):
     response = my_rule_edit_view(request, uuid)
     assert response.status_code == 200
     assert b"rule TestYaraRule {condition: true}" in response.content
+
 
 @pytest.mark.django_db
 @patch("bazaar.front.view.Yara.objects.get")
@@ -302,6 +305,7 @@ def test_my_rule_edit_view_post(mock_es_delete, mock_yara_get, yara_rule, user: 
     assert response.status_code == 302
     assert response.url == '/rules/'
 
+
 def test_my_rule_delete_view_unauth(rf: RequestFactory):
     request = rf.get(f"/rules/{uuid}/delete")
     request.user = AnonymousUser()
@@ -309,6 +313,7 @@ def test_my_rule_delete_view_unauth(rf: RequestFactory):
     response = my_rule_delete_view(request, uuid)
     assert response.status_code == 302
     assert response.url == '/'
+
 
 @pytest.mark.django_db
 @patch("bazaar.front.view.Yara.objects.get")
@@ -337,6 +342,7 @@ def test_my_rule_delete_view(mock_es_delete, mock_yara_delete, mock_yara_get, us
     assert response.status_code == 302
     assert response.url == '/rules/'
 
+
 def test_my_retrohunt_view_unauth(rf: RequestFactory):
     request = rf.get(f"/rules/{uuid}/retro")
     request.user = AnonymousUser()
@@ -347,6 +353,7 @@ def test_my_retrohunt_view_unauth(rf: RequestFactory):
     response = my_retrohunt_view(request, uuid)
     assert response.status_code == 302
     assert response.url == '/'
+
 
 @pytest.mark.django_db
 @patch("bazaar.front.view.messages.success")

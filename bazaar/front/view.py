@@ -1,9 +1,6 @@
 import logging
 from tempfile import NamedTemporaryFile
-import requests
-import hashlib
 
-from androguard.core.androconf import is_android
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
@@ -17,8 +14,7 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from django_q.tasks import async_task
-from elasticsearch import Elasticsearch
-from elasticsearch.helpers.actions import scan
+
 from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse_lazy
 from pygments import highlight
@@ -33,17 +29,14 @@ from bazaar.core.services import RulesService
 from bazaar.core.services import GenomService
 
 from bazaar.core.models import Yara
-from bazaar.core.tasks import analyze
 from bazaar.core.modules.pithus import retrohunt
-from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy, transform_hl_results
+from bazaar.core.utils import get_matching_items_by_dexofuzzy
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import get_similarity_matrix, generate_world_map, \
     get_sample_timeline, get_andro_cfg_storage_path
-from bazaar.core.utils import compute_status
 from .forms import YaraCreateForm
 
-import json
 
 @method_decorator(csrf_exempt, name='dispatch')
 class HomeView(View):
@@ -128,7 +121,7 @@ class ReportView(View):
                     apk = SearchService.light_sample_search(sha256)
                     try:
                         vt = apk[0]['source']['vt']
-                    except:
+                    except Exception:
                         vt = None
                     res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
 
@@ -213,7 +206,7 @@ def similarity_search_view(request, sha256=''):
                 apk = SearchService.light_sample_search(sha256)
                 try:
                     vt = apk[0]['source']['vt']
-                except:
+                except Exception:
                     vt = None
 
                 res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
@@ -320,6 +313,7 @@ def my_rule_edit_view(request, uuid):
     else:
         return HttpResponseBadRequest()
 
+
 def my_rule_delete_view(request, uuid=None):
     if not request.user.is_authenticated:
         return redirect(reverse_lazy('front:home'))
@@ -331,7 +325,7 @@ def my_rule_delete_view(request, uuid=None):
             rule.delete()
             messages.success(request, 'Your rule has been deleted.')
             return redirect(reverse_lazy('front:my_rules'))
-        except Exception as e:
+        except Exception:
             messages.warning(request, 'An error occured while deleting your rule.')
             return redirect(reverse_lazy('front:my_rules'))
 
@@ -343,7 +337,7 @@ def my_retrohunt_view(request, uuid):
     try:
         async_task(retrohunt, request)
         messages.success(request, 'The retrohunt has been launched.')
-    except Exception as e:
+    except Exception:
         messages.warning(request, 'An error occured launching retrohunt.')
 
     return redirect(reverse_lazy('front:my_rules'))
@@ -369,5 +363,5 @@ def get_andgrocfg_code(request, sha256, foo):
 def get_genom(request):
     genom = GenomService.get_genom()
     response = HttpResponse('\n'.join(genom), content_type='text/csv')
-    response['Content-Disposition'] = f'inline; filename=pithus_genom.csv'
+    response['Content-Disposition'] = 'inline; filename=pithus_genom.csv'
     return response

@@ -3,7 +3,6 @@ import logging
 from tempfile import NamedTemporaryFile, TemporaryDirectory
 from django.core.files import File
 
-import dexofuzzy
 from androcfg.call_graph_extractor import CFG
 
 from django.conf import settings
@@ -13,7 +12,10 @@ from bazaar.front.utils import get_andro_cfg_storage_path
 from elasticsearch import Elasticsearch
 
 
-es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, request_timeout=30, max_retries=5, retry_on_timeout=True, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+es = Elasticsearch(
+    settings.ELASTICSEARCH_HOSTS,
+    basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+)
 
 
 def analysis(sha256, force=False):

@@ -7,11 +7,10 @@ import shutil
 import uuid
 import zipfile
 import re
-import dexofuzzy
 import requests
 import yara
 from datetime import datetime
-from tempfile import NamedTemporaryFile
+from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 from androguard.core.apk import APK
 from androguard.misc import AnalyzeAPK
@@ -19,13 +18,20 @@ from google_play_scraper import app
 
 from django.conf import settings
 from django.core.files.storage import default_storage
-from bazaar.core.fingerprinting import ApplicationSignature
-from bazaar.core.utils import strings_from_apk
+from django.utils import timezone
 
 from elasticsearch import Elasticsearch
+from elasticsearch.helpers.actions import scan
+
+from bazaar.core.fingerprinting import ApplicationSignature
+from bazaar.core.utils import strings_from_apk
+from bazaar.core.models import Yara
 
 
-es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, request_timeout=30, max_retries=5, retry_on_timeout=True, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
+es = Elasticsearch(
+    settings.ELASTICSEARCH_HOSTS,
+    basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+)
 
 
 def exodus_analysis(classes):
@@ -136,8 +142,10 @@ def extract_classes(sha256):
                     'Ljava/'):  # and _lcheck(class_name) and class_name not in class_names:
                     class_names.append(str(class_name))
         except Exception as e:
-            es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_classes': -1}},
-                      retry_on_conflict=5)
+            es.update(
+                index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_classes': -1}},
+                retry_on_conflict=5
+            )
             return {'status': 'failed', 'info': str(e)}
         s2 = time.time()
         logging.debug(f'Cleanup took {s2 - s1}')
@@ -209,9 +217,11 @@ def frosting_analysis(sha256):
                             'content': binascii.b2a_base64(b.data).decode('utf-8').strip()
                         }
                     )
-            es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={
-                'doc': {'frosting_data': frosting_data}}, retry_on_conflict=5)
-        except Exception as e:
+            es.update(
+                index=settings.ELASTICSEARCH_APK_INDEX, id=sha256,
+                body={'doc': {'frosting_data': frosting_data}}, retry_on_conflict=5
+            )
+        except Exception:
             pass
 
 
@@ -261,7 +271,7 @@ def execute_single_yara_rule(rule_id, sha256):
 
     try:
         es.indices.create(index=es_index, ignore=400)
-    except Exception as e:
+    except Exception:
         pass
 
     try:
@@ -298,7 +308,7 @@ def execute_single_yara_rule(rule_id, sha256):
                             res_struct['matches']['matching_files'].append(file.replace(tmp, ''))
                             res_struct['matches']['inner_rules'].extend([str(f) for f in found])
                             logging.info(res_struct)
-                    except Exception as e:
+                    except Exception:
                         pass
     except Exception:
         return

@@ -2,8 +2,7 @@ import base64
 from io import BytesIO
 from tempfile import NamedTemporaryFile
 
-from django.conf import settings
-from PIL import Image, ImageFont, ImageDraw, ImageColor
+from PIL import Image, ImageFont, ImageDraw
 
 from bazaar.core.services import ReportService
 from bazaar.front.utils import generate_world_map
@@ -28,30 +27,40 @@ def rounded_rectangle(image_draw: ImageDraw, xy, corner_radius, fill=None, outli
         fill=fill,
         outline=outline
     )
-    image_draw.pieslice([upper_left_point, (upper_left_point[0] + corner_radius * 2, upper_left_point[1] + corner_radius * 2)],
-                        180,
-                        270,
-                        fill=fill,
-                        outline=outline
-                        )
-    image_draw.pieslice([(bottom_right_point[0] - corner_radius * 2, bottom_right_point[1] - corner_radius * 2), bottom_right_point],
-                        0,
-                        90,
-                        fill=fill,
-                        outline=outline
-                        )
-    image_draw.pieslice([(upper_left_point[0], bottom_right_point[1] - corner_radius * 2), (upper_left_point[0] + corner_radius * 2, bottom_right_point[1])],
-                        90,
-                        180,
-                        fill=fill,
-                        outline=outline
-                        )
-    image_draw.pieslice([(bottom_right_point[0] - corner_radius * 2, upper_left_point[1]), (bottom_right_point[0], upper_left_point[1] + corner_radius * 2)],
-                        270,
-                        360,
-                        fill=fill,
-                        outline=outline
-                        )
+    image_draw.pieslice(
+        [upper_left_point, (upper_left_point[0] + corner_radius * 2, upper_left_point[1] + corner_radius * 2)],
+        180,
+        270,
+        fill=fill,
+        outline=outline
+    )
+    image_draw.pieslice(
+        [(bottom_right_point[0] - corner_radius * 2, bottom_right_point[1] - corner_radius * 2), bottom_right_point],
+        0,
+        90,
+        fill=fill,
+        outline=outline
+    )
+    image_draw.pieslice(
+        [
+            (upper_left_point[0], bottom_right_point[1] - corner_radius * 2),
+            (upper_left_point[0] + corner_radius * 2, bottom_right_point[1])
+        ],
+        90,
+        180,
+        fill=fill,
+        outline=outline
+    )
+    image_draw.pieslice(
+        [
+            (bottom_right_point[0] - corner_radius * 2, upper_left_point[1]),
+            (bottom_right_point[0], upper_left_point[1] + corner_radius * 2)
+        ],
+        270,
+        360,
+        fill=fill,
+        outline=outline
+    )
 
 
 def generate_og_card(sha256, fp):
@@ -94,15 +103,15 @@ def generate_og_card(sha256, fp):
                     'danger': True,
                 })
 
-        icon_size = (200,200)
-        map_size = (1000,360)
-        fa = ImageFont.truetype('bazaar/static/fonts/font-awesome/webfonts/fa-solid-900.ttf', 28)
+        icon_size = (200, 200)
+        map_size = (1000, 360)
+        fa = ImageFont.truetype('bazaar/static/fonts/font-awesome/webfonts/fa-solid-900.ttf', 28)  # noqa: F841
         fa_48 = ImageFont.truetype('bazaar/static/fonts/font-awesome/webfonts/fa-solid-900.ttf', 48)
         font_18 = ImageFont.truetype('bazaar/static/fonts/opensans/OpenSans-Regular.ttf', 28)
         font_24 = ImageFont.truetype('bazaar/static/fonts/opensans/OpenSans-Regular.ttf', 34)
         font_48 = ImageFont.truetype('bazaar/static/fonts/opensans/OpenSans-Regular.ttf', 48)
 
-        white = (255, 255, 255)
+        white = (255, 255, 255)  # noqa: F841
         gray = (89, 89, 89)
         purple_primary = (89, 49, 150)
         purple_secondary = (169, 145, 212)
@@ -126,15 +135,15 @@ def generate_og_card(sha256, fp):
             left = 40
             if draw_icon:
                 im.paste(icon, (40, top), icon)
-                left += icon.width+10
+                left += icon.width + 10
 
             with NamedTemporaryFile() as tmp_png:
                 generate_world_map(result['domains_analysis'], to_png=True, fp=tmp_png.name)
                 try:
                     map = Image.open(tmp_png.name)
                     map.thumbnail(map_size, Image.ANTIALIAS)
-                    im.paste(map, box=(int((im.width-map.width)/2), 300))
-                    map_drawn = True
+                    im.paste(map, box=(int((im.width - map.width) / 2), 300))
+                    map_drawn = True  # noqa: F841
                 except Exception:
                     pass
 
@@ -146,42 +155,40 @@ def generate_og_card(sha256, fp):
             # SHA256
             top += 50
             draw.text((left, top), '#', font=font_18, fill=gray)
-            draw.text((left+20, top), result['sha256'], font=font_18, fill=purple_primary)
+            draw.text((left + 20, top), result['sha256'], font=font_18, fill=purple_primary)
 
             # Tabs
             top += 70
-            tab_width = int(((im.width - 2*40) / len(tabs)) - 2 * len(tabs))
-            left_inc = (im.width - 2*40 - len(tabs)*tab_width) / (len(tabs)-1)
+            tab_width = int(((im.width - 2 * 40) / len(tabs)) - 2 * len(tabs))
+            left_inc = (im.width - 2 * 40 - len(tabs) * tab_width) / (len(tabs) - 1)
             tab_left = 40
             tab_height = 120
             for tab in tabs:
                 bg_color, fg_color, md_color = purple_faded, purple_primary, purple_secondary
                 if tab['danger']:
                     bg_color, fg_color, md_color = red_faded, red_primary, red_secondary
-                rounded_rectangle(draw, [(tab_left, top), (tab_left+tab_width, top+tab_height)], 10, fill=bg_color)
-                draw.text((tab_left+10, top+10), tab['text'], font=fa_48, fill=md_color)
-                l,t,r,b = font_48.getbbox(str(tab['value']))
+                rounded_rectangle(draw, [(tab_left, top), (tab_left + tab_width, top + tab_height)], 10, fill=bg_color)
+                draw.text((tab_left + 10, top + 10), tab['text'], font=fa_48, fill=md_color)
+                l, t, r, b = font_48.getbbox(str(tab['value']))
                 w = r - l
                 h = t - b
-                txt_left = tab_left+tab_width/2-w/2
-                draw.text((txt_left, top+50), str(tab['value']), font=font_48, fill=fg_color)
-                tab_left += tab_width+int(left_inc)
+                txt_left = tab_left + tab_width / 2 - w / 2
+                draw.text((txt_left, top + 50), str(tab['value']), font=font_48, fill=fg_color)
+                tab_left += tab_width + int(left_inc)
 
             top += 80
             try:
                 threat = result['malware_bazaar']['vendor_intel']['ReversingLabs']['threat_name']
-                l,t,r,b = font_48.getbbox(threat)
+                l, t, r, b = font_48.getbbox(threat)
                 w = r - l
                 h = t - b
-                txt_left = im.width/2-w/2
-                txt_top = top + (im.height-top)/2-h/2
+                txt_left = im.width / 2 - w / 2
+                txt_top = top + (im.height - top) / 2 - h / 2
                 draw.text((txt_left, txt_top), threat, font=font_48, fill=red_secondary)
             except Exception:
                 pass
 
-
             im.save(fp, "PNG")
-
 
     except Exception as e:
         raise e
