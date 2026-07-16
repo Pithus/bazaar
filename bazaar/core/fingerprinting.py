@@ -275,7 +275,8 @@ class ApplicationSignature(object):
                 parsed = urllib.parse.urlparse(url)
                 if parsed.scheme not in ("http", "https"):
                     raise ValueError(f"Unsupported URL scheme: {parsed.scheme}")
-                urllib.request.urlretrieve(url, apk.name)  # nosec: B310 we check the scheme above
+                # We checked the url scheme right above, so skip Bandit's warning
+                urllib.request.urlretrieve(url, apk.name)  # nosec: B310
                 return ApplicationSignature.compute_from_apk(apk.name)
             except Exception:
                 return None
