@@ -17,9 +17,9 @@ class UserFactory(DjangoModelFactory):
         upper_case=True,
         lower_case=True,
     )
-    
+
     @post_generation
-    def password(self, create: bool, extracted: Sequence[Any], **kwargs):
+    def password(self, create: bool, extracted: Sequence[Any], **kwargs):  # noqa: F811
         if extracted:
             self.set_password(extracted)
         else:

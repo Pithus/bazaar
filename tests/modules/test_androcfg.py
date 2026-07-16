@@ -1,11 +1,11 @@
-import os
 import pytest
-from unittest.mock import patch, Mock, call
+from unittest.mock import patch
 
-from ..conftest import sha256, uuid
+from ..conftest import sha256
 
 from django.core.files import File
 from bazaar.core.modules import androcfg
+
 
 @pytest.mark.slow
 @patch("bazaar.core.modules.androcfg.default_storage")
@@ -15,7 +15,6 @@ def test_androcfg(mock_es_get, mock_es_update, mock_storage, report_data):
 
     with open("/app/tests/_data/test.apk", 'rb') as apk:
 
-        
         mock_storage.size.return_value = 1024
         mock_storage.open.return_value = apk
         mock_storage.save.return_value = True

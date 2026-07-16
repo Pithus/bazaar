@@ -1,10 +1,8 @@
-import os
-import pytest
-from unittest.mock import patch, Mock, call
-
-from ..conftest import sha256, uuid
+from unittest.mock import patch
+from ..conftest import sha256
 
 from bazaar.core.modules import apkid
+
 
 @patch("bazaar.core.modules.apkid.default_storage")
 @patch("bazaar.core.modules.apkid.Elasticsearch.update")

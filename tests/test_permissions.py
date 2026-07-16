@@ -1,9 +1,6 @@
-import os
 import pytest
-from io import BytesIO
 
 from .conftest import sha256, uuid
-from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 
 from bazaar.core.api_view import (
@@ -15,8 +12,6 @@ from bazaar.core.api_view import (
 from bazaar.front.view import (
     HomeView,
     ReportView,
-    export_report_view,
-    og_card_view,
     report_status_view,
     basic_url_download_view,
     basic_upload_view,
@@ -32,18 +27,6 @@ from bazaar.front.view import (
     get_andgrocfg_code,
     get_genom
 )
-
-class MetaIter(type):
-    def __iter__(self):
-        for attr in dir(self):
-            if not attr.startswith("__"):
-                yield attr
-
-
-class IterableMock(Mock, metaclass=MetaIter):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(args, kwargs)
 
 
 @pytest.mark.django_db
@@ -76,8 +59,7 @@ class IterableMock(Mock, metaclass=MetaIter):
         basic_url_download_view, "/url/", [], {},
         marks=pytest.mark.skip(reason="No auth required")
     ),
-    (download_sample_view, f"/apk/{sha256}", [sha256], {}
-    ),
+    (download_sample_view, f"/apk/{sha256}", [sha256], {}),
     pytest.param(
         similarity_search_view, f"/similar/{sha256}", [], {"sha256": sha256},
         marks=pytest.mark.skip(reason="No auth required")
@@ -94,7 +76,7 @@ class IterableMock(Mock, metaclass=MetaIter):
     ),
 ])
 def test_permissions(rf, user, view, url, args, kwargs):
-  
+
     request = rf.get(url)
     request.user = AnonymousUser()
 

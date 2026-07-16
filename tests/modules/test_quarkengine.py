@@ -1,11 +1,11 @@
-import os
 import pytest
-from unittest.mock import patch, Mock, call
+from unittest.mock import patch
 
-from ..conftest import sha256, uuid
+from ..conftest import sha256
 from django.conf import settings
 
 from bazaar.core.modules import quarkengine
+
 
 @pytest.mark.slow
 @patch("bazaar.core.modules.quarkengine.run_freshquark")

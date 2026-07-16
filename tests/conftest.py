@@ -3,7 +3,6 @@ from io import BytesIO
 
 from bazaar.users.models import User
 from tests.factories import UserFactory
-from rest_framework.authtoken.models import Token
 from rest_framework.test import APIRequestFactory, force_authenticate
 
 
@@ -11,9 +10,11 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 def media_storage(settings, tmpdir):
     settings.MEDIA_ROOT = tmpdir.strpath
 
+
 @pytest.fixture
 def user() -> User:
     return UserFactory()
+
 
 @pytest.fixture
 def api_rf(user):
@@ -37,6 +38,7 @@ def api_rf(user):
 # Test Data
 sha256 = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
 uuid = 'fa9c0834-7f94-474a-88d2-25e0f936d71c'
+
 
 @pytest.fixture
 def report_data():
@@ -65,6 +67,7 @@ def report_data():
         },
     }
 
+
 @pytest.fixture
 def detailed_status():
     yield {
@@ -78,6 +81,7 @@ def detailed_status():
         "mobsf_analysis": 2
     }
 
+
 @pytest.fixture
 def report_status():
     yield {
@@ -86,6 +90,7 @@ def report_status():
         "analysis_launched": True,
         "running": False
     }
+
 
 @pytest.fixture
 def yara_rule():
@@ -104,6 +109,7 @@ def yara_rule():
         "is_private": True
     }
 
+
 @pytest.fixture
 def report_list():
     yield [
@@ -121,6 +127,7 @@ def report_list():
         },
     ]
 
+
 @pytest.fixture
 def fake_apk():
     class FakeApk(BytesIO):
@@ -131,7 +138,7 @@ def fake_apk():
             self.content = content
 
         def chunks(self, size=10):
-            while n := len(self.content) > 0:
+            while len(self.content) > 0:
                 content = self.content[:size]
                 self.content = self.content[size:]
                 yield content

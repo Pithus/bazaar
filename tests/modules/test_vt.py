@@ -1,11 +1,10 @@
-import os
-import pytest
-from unittest.mock import patch, Mock, call
+from unittest.mock import patch
 
-from ..conftest import sha256, uuid
+from ..conftest import sha256
 from django.conf import settings
 
 from bazaar.core.modules import virus_total
+
 
 @patch("bazaar.core.modules.virus_total.Elasticsearch.update")
 def test_virus_total(mock_es_update):

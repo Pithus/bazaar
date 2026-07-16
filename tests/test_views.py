@@ -3,15 +3,12 @@ from django.test import RequestFactory
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages.storage.fallback import FallbackStorage
-from django.utils import timezone
 
-from unittest.mock import Mock, patch
-from unittest.mock import call
+from unittest.mock import patch, call
 from io import BytesIO
 import json
 
 from bazaar.users.models import User
-from bazaar.front.forms import YaraCreateForm
 from bazaar.core.models import Yara
 
 from .conftest import sha256, uuid
@@ -42,7 +39,7 @@ def test_get(self, rf: RequestFactory):
 
 
 # Test cases for Report View
-def test_get(rf: RequestFactory):
+def test_report_view(rf: RequestFactory):
     view = ReportView()
     request = rf.get("/report/")
 
@@ -98,7 +95,7 @@ def test_basic_url_download_ok(
     user: User,
     rf: RequestFactory
 ):
-    request = rf.post(f"/url/", data={"url": f"https://127.0.0.1/test.apk"})
+    request = rf.post("/url/", data={"url": "https://127.0.0.1/test.apk"})
     request.user = user
 
     mock_service_upload.return_value = sha256
@@ -128,7 +125,7 @@ def test_basic_upload_view_post(
 ):
     mock_file = SimpleUploadedFile("test.apk", b"filecontent")
 
-    request = rf.post(f"/apk/", {"apk": mock_file})
+    request = rf.post("/apk/", {"apk": mock_file})
     request.user = user
     mock_service_upload.return_value = sha256
 
@@ -176,7 +173,7 @@ def test_download_sample_view(mock_open, mock_exists, user: User, rf: RequestFac
 # Test Export Report
 def test_export_report_unauth(rf: RequestFactory):
     request = rf.get(f"/report/{sha256}/json")
-    request.user =  AnonymousUser()
+    request.user = AnonymousUser()
 
     response = export_report_view(request, sha256)
     assert response.status_code == 302
@@ -189,7 +186,8 @@ def test_export_report_view(mock_rs_get, user: User, rf: RequestFactory, report_
     request = rf.get(f"/report/{sha256}/json")
     request.user = user
 
-    mock_rs_get.return_value = {"_source":
+    mock_rs_get.return_value = {
+        "_source":
         report_data,
     }
 
@@ -211,7 +209,7 @@ def test_og_card_view(mock_gen, report_data, rf: RequestFactory):
 
 
 # Test Rules
-def  test_my_rules_view_unauth(rf: RequestFactory):
+def test_my_rules_view_unauth(rf: RequestFactory):
     request = rf.get("/rules/")
     request.user = AnonymousUser()
 
@@ -221,7 +219,7 @@ def  test_my_rules_view_unauth(rf: RequestFactory):
 
 
 @pytest.mark.django_db
-def  test_my_rules_view(user: User, rf: RequestFactory):
+def test_my_rules_view(user: User, rf: RequestFactory):
     request = rf.get("/rules/")
     request.user = user
 

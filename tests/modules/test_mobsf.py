@@ -1,11 +1,11 @@
-import os
 import pytest
-from unittest.mock import patch, Mock, call
+from unittest.mock import patch
 
-from ..conftest import sha256, uuid
+from ..conftest import sha256
 from django.conf import settings
 
 from bazaar.core.modules import mobsf
+
 
 @pytest.mark.slow
 @patch("bazaar.core.modules.mobsf.default_storage")

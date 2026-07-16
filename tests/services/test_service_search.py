@@ -1,15 +1,16 @@
-import pytest
 from unittest.mock import patch
 
-from ..conftest import sha256, uuid
+from ..conftest import sha256
 
 from bazaar.core.services import SearchService
+
 
 @patch("bazaar.core.services.search.Elasticsearch.search")
 def test_search(mock_es_search):
     fake_results = ['fake', 'test', 'results']
     mock_es_search.return_value = fake_results
     assert SearchService.search('fake query') == fake_results
+
 
 @patch("bazaar.core.services.search.Elasticsearch.search")
 def test_light_sample_search(mock_es_search):
@@ -32,9 +33,7 @@ def test_similarity_search(mock_func, mock_ssdeep, mock_dexo):
         'func_hash': mock_func,
     }
     search_hash = 'fake_hash'
-    
-    search_results = []
-    
+
     for alg in algorithms_map.keys():
         result = SearchService.similarity_search(search_hash, alg, sha256)
         assert result == fake_results

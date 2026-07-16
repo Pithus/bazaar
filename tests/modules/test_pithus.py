@@ -1,20 +1,20 @@
-import os
 import pytest
-from unittest.mock import patch, Mock, call
+from unittest.mock import patch
 
-from ..conftest import sha256, uuid
+from ..conftest import sha256
 from django.conf import settings
 
 from bazaar.core.modules import pithus
 
+
 @pytest.mark.parametrize("function, doc_key, result_keys", [
-	(pithus.extract_ioc, 'iocs', ['urls_list', 'url_nf', 'emails_nf', 'secrets',]),
+    (pithus.extract_ioc, 'iocs', ['urls_list', 'url_nf', 'emails_nf', 'secrets',]),
     pytest.param(pithus.extract_attributes, None, [
-        'sha256','handle', 'app_name', 'uaid', 'version_name', 'version_code',
+        'sha256', 'handle', 'app_name', 'uaid', 'version_name', 'version_code',
         'icon_hash', 'apk_hash', 'icon_base64', 'sha1', 'md5', 'certificates',
         'uploaded_at', 'sha256', 'activities', 'features', 'libraries', 'main_activity',
         'min_sdk_version', 'max_sdk_version', 'target_sdk_version', 'permissions',
-        'aosp_permissions',  'third_party_permissions', 'providers', 'receivers',
+        'aosp_permissions', 'third_party_permissions', 'providers', 'receivers',
         'services', 'is_valid', 'is_signed', 'is_signed_v1', 'is_signed_v2', 'is_signed_v3'
     ], marks=pytest.mark.slow),
     (pithus.frosting_analysis, 'frosting_data', ['is_frosted', 'v2_signature_blocks']),
@@ -58,7 +58,7 @@ def test_extract_classes(mock_es_exists, mock_es_update, mock_storage):
         mock_es_exists.return_value = True
         mock_es_update.return_value = True
         mock_storage.open.return_value = apk
-        
+
         pithus.extract_classes(sha256)
 
         for call in mock_es_update.call_args_list:
@@ -69,4 +69,3 @@ def test_extract_classes(mock_es_exists, mock_es_update, mock_storage):
                     result += 1
 
     assert result == 2
-
