@@ -6,6 +6,8 @@ import zipfile
 from hashlib import sha256, sha1
 from io import BytesIO
 from tempfile import NamedTemporaryFile
+import urllib.request
+import urllib.parse
 
 from PIL import Image
 from androguard.util import set_log
@@ -266,10 +268,13 @@ class ApplicationSignature(object):
         :param url: the location of the APK to be analyzed
         :return: the ApplicationSignature, None if the URL is invalid
         """
-        import urllib.request
+
         with NamedTemporaryFile() as apk:
             try:
-                urllib.request.urlretrieve(url, apk.name)
+                parsed = urllib.parse.urlparse(url)
+                if parsed.scheme not in ("http", "https"):
+                    raise ValueError(f"Unsupported URL scheme: {parsed.scheme}")
+                urllib.request.urlretrieve(url, apk.name) # nosec: B310 we check the scheme above
                 return ApplicationSignature.compute_from_apk(apk.name)
             except Exception:
                 return None
