@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block whole_content %}
+
+<div class="container">
+  <h1>Instance Status</h1>
+  <button type="button" onclick="refreshStatus()" class="btn btn-primary text-white">refresh</button>
+
+  <div id="instance-status">
+  </div>
+</div>
+
+{% endblock whole_content %}
+{% block js_head %}
+{{block.super}}
+
+<script>
+    async function getStatus() {
+    let apiUrl = `/api/status`;
+
+    response = await fetch(apiUrl);
+    return response.json();
+    }
+
+    function beautifyStatus(JsonStatus, onlyFails=false) {
+    htmlDoc = '<br>';
+    for (var key in JsonStatus) {
+        if (key == "django_q_workers") {
+            continue
+        }
+        if (JsonStatus[key]['status'] === true) {
+        htmlDoc += `<span style="color: green">&#10003;</span> ${key}<br>`;
+        } else {
+        htmlDoc += `<span style="color: red">&#10007;</span> ${key}: ${JsonStatus[key]['message']}<br>`;
+        }
+    }
+    return htmlDoc
+    }
+
+    async function refreshStatus() {
+        let statusDom = document.querySelector("#instance-status")
+        statusDom.innerHTML = "<br>Loading info..."
+        let status = await getStatus();
+        statusDom.innerHTML = beautifyStatus(status.status);
+    }
+
+    document.addEventListener("DOMContentLoaded", async function(event) {
+        await refreshStatus()
+    });
+
+  </script>
+
+{% endblock js_head %}

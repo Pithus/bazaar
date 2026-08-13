@@ -3,7 +3,8 @@ from django.urls import path
 from bazaar.core.api_view import (
     ReportView,
     ApkView,
-    SearchView
+    SearchView,
+    StatusView
 )
 
 app_name = "core"
@@ -16,4 +17,5 @@ urlpatterns = [
     path("apk/", view=ApkView.apk_handler, name="api-apk-handler"),
     path("apk/<str:sha256>", view=ApkView.download_sample, name="api-apk-download"),
     path("search/", view=SearchView.search, name="api-seach"),
+    path("status", view=StatusView.get, name="instance-view")
 ]

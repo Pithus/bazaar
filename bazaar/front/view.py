@@ -365,3 +365,7 @@ def get_genom(request):
     response = HttpResponse('\n'.join(genom), content_type='text/csv')
     response['Content-Disposition'] = 'inline; filename=pithus_genom.csv'
     return response
+
+
+def instance_status(request):
+    return render(request, 'front/instance_status.html')

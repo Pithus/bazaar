@@ -372,3 +372,7 @@ MALWARE_BAZAAR_API_KEY = env("MALWARE_BAZAAR_API_KEY", default="None")
 
 # Monitoring
 PROMETHEUS_EXPORT_MIGRATIONS = False
+
+MOBSF_SERVER = env("MOBSF_SERVER", default="http://mobsf:8000")
+# Default token for internal use only
+MOBSF_TOKEN = env("MOBSF_API_KEY", default='515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9')  # nosec

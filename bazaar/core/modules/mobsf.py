@@ -62,10 +62,7 @@ def analysis(sha256):
 
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': 1}},
               retry_on_conflict=5)
-    server = 'http://mobsf:8000'
-    #  Internal token only
-    token = '515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9'  # nosec
-    mobsf = MobSF(token, server)
+    mobsf = MobSF(settings.MOBSF_SERVER, settings.MOBSF_TOKEN)
 
     try:
         with NamedTemporaryFile() as f:

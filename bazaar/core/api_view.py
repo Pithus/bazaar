@@ -4,6 +4,7 @@ import json
 from django.core.files.storage import default_storage
 from django.core.cache import cache
 from django.http import FileResponse
+from django.conf import settings
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -15,6 +16,15 @@ from bazaar.core.services import ApkService
 from bazaar.core.services.apk import ApkException
 from bazaar.core.services import SearchService
 
+# Status page imports
+from bazaar.core.mobsf import MobSF
+from elasticsearch import Elasticsearch
+from redis import Redis
+from django_q.status import Stat
+from django.db import connection
+import requests
+import vt
+from http.client import responses as http_responses
 
 @api_view(['GET', 'POST'])
 def hello_world(request):
@@ -231,5 +241,88 @@ class SearchView:
             )
         return Response(
             {"message": "OK", "result": result},
+            status=rest_framework.status.HTTP_200_OK
+        )
+
+
+class StatusView:
+
+    @api_view(['GET'])
+    @authentication_classes([])
+    @permission_classes([AllowAny])
+    @staticmethod
+    def get(request):
+
+        status = {}
+        message = "OK"
+        if connection.ensure_connection() is None:
+            dbstatus = True
+        else:
+            dbstatus = False
+            message = "Failed to establish connection to the database"
+        status["db"] = {"status": dbstatus, "message": message}
+
+        es = Elasticsearch(
+            settings.ELASTICSEARCH_HOSTS,
+            basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+        )
+        try:
+            es.info(request_timeout=3)
+            esstatus = True
+            message = "OK"
+        except Exception as e:
+            esstatus = False
+            message = str(e)
+        status["elasticsearch"] = {"status": esstatus, "message": message}
+
+        rdstatus = Redis.from_url(settings.Q_CLUSTER["redis"]).ping()
+        if rdstatus:
+            message = "OK"
+        else:
+            message = "Cannot reach redis service."
+        status["redis"] = {"status": rdstatus, "message": message}
+
+        workers = {}
+        clusters = Stat.get_all()
+        for cluster in clusters:
+            workers[str(cluster.cluster_id)[:8]] = cluster.status
+        status["django_q_workers"] = workers
+
+        msf_code = MobSF(settings.MOBSF_TOKEN, settings.MOBSF_SERVER).status()
+        if msf_code == 200:
+            msfstatus = True
+            message = "OK"
+        else:
+            msfstatus = False
+            message = http_responses[msf_code]
+        status["mobsf"] = {"status": msfstatus, "message": message}
+
+        headers = {"Auth-Key": settings.MALWARE_BAZAAR_API_KEY}
+        data = {"query": "get_info"}
+        try:
+            r = requests.post("https://mb-api.abuse.ch/api/v1/", headers=headers, data=data)
+            if r.status_code == 200:
+                mbstatus = True
+                message = "OK"
+            else:
+                mbstatus = False
+                message = http_responses[r.status_code]
+        except Exception as e:
+            mbstatus = False
+            message = str(e)
+        status["malware_bazaar_api_connection"] = {"status": mbstatus, "message": message}
+
+        vtclient = vt.Client(settings.VT_API_KEY)
+        try:
+            vtclient.get_json("/files/9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08")
+            vtstatus = True
+            message = "OK"
+        except Exception as e:
+            vtstatus = False
+            message = e.message
+        status["virustotal_api_connection"] = {"status": vtstatus, "message": message}
+
+        return Response(
+            {"message": "OK", "status": status},
             status=rest_framework.status.HTTP_200_OK
         )
