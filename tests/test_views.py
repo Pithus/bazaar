@@ -31,7 +31,7 @@ from bazaar.front.view import (
 
 
 # Test cases for Home View
-def test_get(self, rf: RequestFactory):
+def test_get(rf: RequestFactory):
     view = HomeView()
     request = rf.get("/")
 
@@ -51,7 +51,9 @@ def test_report_view(rf: RequestFactory):
 @pytest.mark.django_db
 @patch("bazaar.front.view.ReportService.get_status")
 @patch("bazaar.front.view.ReportService.get_report")
+@patch("bazaar.front.view.get_sample_timeline")
 def test_get_report(
+    mock_get_sample_timeline,
     mock_get_report,
     mock_get_status,
     report_data,
@@ -62,6 +64,7 @@ def test_get_report(
     request = rf.get(f"/report/{sha256}")
     request.user = user
 
+    mock_get_sample_timeline.return_value = []
     mock_get_report.return_value = report_data
     mock_get_status.return_value = report_status
 

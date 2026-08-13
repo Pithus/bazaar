@@ -74,5 +74,5 @@ def get_example() -> {}:
         }
         example = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=q)['hits']['hits'][0]['_source']
     except Exception:
-        raise
+        return None
     return example

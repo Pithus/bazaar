@@ -27,4 +27,5 @@ def test_virus_total(mock_es_update):
             ]:
                 assert k in doc.keys()
                 result += 1
-    assert result > 0
+
+    assert result > 0, "VirusTotal did not return any data, this is normal behaviour if no VT API key is set."
