@@ -31,9 +31,9 @@
             continue
         }
         if (JsonStatus[key]['status'] === true) {
-        htmlDoc += `<span style="color: green">&#10003;</span> ${key}<br>`;
+        htmlDoc += `<span style="color: green">&#10003;</span>${key.replace(/_/g, " ")}<br>`;
         } else {
-        htmlDoc += `<span style="color: red">&#10007;</span> ${key}: ${JsonStatus[key]['message']}<br>`;
+        htmlDoc += `<span style="color: red">&#10007;</span> ${key.replace(/_/g, " ")}: ${JsonStatus[key]['message']}<br>`;
         }
     }
     return htmlDoc
