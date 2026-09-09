@@ -301,7 +301,7 @@ class StatusView:
         headers = {"Auth-Key": settings.MALWARE_BAZAAR_API_KEY}
         data = {"query": "get_info"}
         try:
-            r = requests.post("https://mb-api.abuse.ch/api/v1/", headers=headers, data=data, tiemout=600)
+            r = requests.post("https://mb-api.abuse.ch/api/v1/", headers=headers, data=data, timeout=600)
             if r.status_code == 200:
                 mbstatus = True
                 message = "OK"
