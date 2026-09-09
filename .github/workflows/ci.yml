@@ -34,7 +34,7 @@ jobs:
           pip install flake8
 
       - name: Lint with flake8
-        run: flake8
+        run: flake8 bazaar tests config
 
   bandit:
     runs-on: ubuntu-latest

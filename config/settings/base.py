@@ -353,11 +353,11 @@ ELASTICSEARCH_SSDEEP_MANIFEST_INDEX = 'ssdeep_manifest'
 Q_CLUSTER = {
     'name': 'Backend',
     'workers': 4,
-    'retry': 20*60,
+    'retry': 20 * 60,
     'recycle': 1,
     'max_attempts': 5,
     'guard_cycle': 10,
-    'timeout': 19*60,
+    'timeout': 19 * 60,
     'compress': True,
     'save_limit': 25,
     'max_rss': 1024 * 1024,

@@ -118,7 +118,7 @@ def analysis(sha256):
 
     try:
         del response, to_store
-    except:
+    except Exception:
         pass
     del mobsf
     gc.collect()

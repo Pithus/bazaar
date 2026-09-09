@@ -1,4 +1,4 @@
-from .base import *  # noqa
+from .base import REST_FRAMEWORK
 from .base import env
 
 # GENERAL
@@ -62,5 +62,4 @@ INSTALLED_APPS += ["django_extensions"]  # noqa F405
 
 # Your stuff...
 # ------------------------------------------------------------------------------
-
 REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]['user'] = '100/minute'

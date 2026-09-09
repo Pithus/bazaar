@@ -2,9 +2,10 @@ import logging
 
 import requests
 
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 DEFAULT_SERVER = 'http://127.0.0.1:8000'
+
 
 class MobSF:
     """Represents a MobSF instance."""
@@ -23,7 +24,7 @@ class MobSF:
         return self.__apikey
 
     def status(self):
-        return requests.get(self.__server).status_code
+        return requests.get(self.__server, timeout=10).status_code
 
     def upload(self, filename, file):
         """Upload an app."""
