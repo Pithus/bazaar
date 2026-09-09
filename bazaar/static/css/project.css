@@ -7301,6 +7301,11 @@ samp {
   overflow-x: auto;
   white-space: nowrap; }
 
+.overflow-box img {
+  display: block;
+  max-width: none;
+  height: auto; }
+
 .border-right {
   border-right: 1px solid #EDEDED !important; }
   @media (max-width: 767.98px) {

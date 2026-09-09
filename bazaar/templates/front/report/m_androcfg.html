@@ -23,7 +23,7 @@
             </div>
             {% if r.cfg_file %}
               <div class="col-md-5 text-center">
-                <a class="btn btn-sm btn-link p-0 text-decoration-none" target="_blank"
+                <a class="btn btn-sm btn-link p-0 text-decoration-none open-img-modal" data-toggle="modal" data-target="#imgModal" target="_blank"
                   href="{% url "front:get_andgrocfg_code" sha256 r.cfg_file %}.png">
                   <img src="{% url "front:get_andgrocfg_code" sha256 r.cfg_file %}.png" class="img-fluid mb-4"
                       style="max-height: 8em;">
@@ -53,6 +53,26 @@
   </div>
 </div>
 
+<div class="modal fade" id="imgModal" tabindex="-1" role="dialog" aria-labelledby="codeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imgModalLabel">Call Graph</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center p-0">
+        <div class="overflow-box">
+          <center>
+            <img id="modalImage" src="" alt="Image">
+          </center>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   document.addEventListener('DOMContentLoaded', function () {
   
@@ -66,7 +86,6 @@
                     if (!response.ok) {
                         throw new Error('Failed to load content');
                     }
-                    console.log(response.text);
                     return response.text();
                 })
                 .then(function (html) {
@@ -83,6 +102,13 @@
                 });
         });
     });
+
+    document.querySelectorAll('.open-img-modal').forEach(function (link) {
+      link.addEventListener('click', function () {
+          document.getElementById('modalImage').src = link.href;
+      });
+    });
+  
   });
 </script>
 {% endif %}
