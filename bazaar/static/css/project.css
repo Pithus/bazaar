@@ -402,7 +402,8 @@ hr {
   border-top: 1px solid rgba(0, 0, 0, 0.1); }
 
 small,
-.small {
+.small,
+.inline-doc {
   font-size: 80%;
   font-weight: 400; }
 
@@ -7307,3 +7308,6 @@ samp {
       border-right: none !important; } }
 .border-secondary {
   border-color: #A991D4 !important; }
+
+.inline-doc {
+  color: #868e96; }

@@ -72,7 +72,7 @@
           {% endif %}
           {% if result.source.vt and result.source.vt.malicious > 0 %}
             <span class="small text-danger">
-                <i class="fas fa-exclamation-circle"></i>
+                <i class="fas fa-exclamation-circle" data-toggle="tooltip" data-placement="top" title="Detection by VirusTotal"></i>
                 {{ result.source.vt.malicious }}/{{ result.source.vt.total }}
               </span>
             <div class="progress" style="height: 2px;">
@@ -80,15 +80,20 @@
                    aria-valuenow="{{ result.source.vt.malicious }}" aria-valuemin="0"
                    aria-valuemax="{{ result.source.vt.total }}"></div>
             </div>
+
           {% endif %}
           {% if result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name %}
             <span class="small text-danger">
-              <i class="fa fa-bug"></i> {{ result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name }}<br>
+              <i class="fa fa-bug"></i> {{ result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name }}
             </span>
+            <i class="fa fa-question-circle inline-doc" data-toggle="tooltip" data-placement="top"
+                title="Detection by Malware Bazaar"></i><br>
           {% endif %}
           {% if result.source.quark %}
             <span class="small text-muted">Threat level: </span>
-            {% include "front/report/m_severity_alt.html" with s=result.source.quark.threat_level class="small" %}<br>
+            {% include "front/report/m_severity_alt.html" with s=result.source.quark.threat_level class="small" %}
+            <i class="fa fa-question-circle inline-doc" data-toggle="tooltip" data-placement="top"
+                title="Estimation by Quark-Engine"></i><br>
           {% endif %}
 
 

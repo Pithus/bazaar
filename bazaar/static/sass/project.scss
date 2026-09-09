@@ -71,3 +71,9 @@ samp {
 .border-secondary {
   border-color: #A991D4 !important;
 }
+
+.inline-doc {
+  @extend .small;
+
+  color: $gray-600;
+}
