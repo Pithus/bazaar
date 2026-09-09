@@ -1,0 +1,21 @@
+{
+    "crime": "Get SMS address and send it through http",
+    "permission": [],
+    "api": [
+        {
+            "descriptor": "()Ljava/lang/String;",
+            "class": "Landroid/telephony/SmsMessage;",
+            "method": "getOriginatingAddress"
+        },
+        {
+            "descriptor": "()Ljava/io/OutputStream;",
+            "class": "Ljava/net/HttpURLConnection;",
+            "method": "getOutputStream"
+        }
+    ],
+    "score": 0.02,
+    "label": [
+        "sms",
+        "http"
+    ]
+}

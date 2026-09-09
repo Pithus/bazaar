@@ -1,0 +1,20 @@
+{
+    "crime": "Create InetSocketAddress object and connecting to it",
+    "permission": [],
+    "api": [
+        {
+            "descriptor": "(Ljava/lang/String; I)V",
+            "class": "Ljava/net/InetSocketAddress;",
+            "method": "<init>"
+        },
+        {
+            "descriptor": "(Ljava/net/SocketAddress;)V",
+            "class": "Ljava/net/Socket;",
+            "method": "connect"
+        }
+    ],
+    "score": -0.68,
+    "label": [
+        "socket"
+    ]
+}

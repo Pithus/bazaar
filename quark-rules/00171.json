@@ -1,0 +1,20 @@
+{
+    "crime": "Compare network operator with a string",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/telephony/TelephonyManager;",
+            "method": "getNetworkOperatorName",
+            "descriptor": "()Ljava/lang/String;"
+        },
+        {
+            "class": "Ljava/lang/String;",
+            "method": "equals",
+            "descriptor": "(Ljava/lang/Object;)Z"
+        }
+    ],
+    "score": -0.13,
+    "label": [
+        "network"
+    ]
+}

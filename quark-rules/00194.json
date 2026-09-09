@@ -1,0 +1,20 @@
+{
+    "crime": "Set the audio source (MIC) and recorded file format",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "setAudioSource",
+            "descriptor": "(I)V"
+        },
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "setOutputFormat",
+            "descriptor": "(I)V"
+        }
+    ],
+    "score": -0.56,
+    "label": [
+        "record"
+    ]
+}

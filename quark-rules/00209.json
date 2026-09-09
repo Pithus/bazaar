@@ -1,0 +1,20 @@
+{
+    "crime": "Get pixels from the latest rendered image",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/media/ImageReader;",
+            "method": "acquireLatestImage",
+            "descriptor": "()Landroid/media/Image;"
+        },
+        {
+            "class": "Landroid/media/Image;",
+            "method": "getPlanes",
+            "descriptor": "()[Landroid/media/Image$Plane;"
+        }
+    ],
+    "score": 1.13,
+    "label": [
+        "collection"
+    ]
+}

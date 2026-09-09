@@ -1,0 +1,22 @@
+{
+    "crime": "Send HTTP POST request and receive response",
+    "permission": [],
+    "api": [
+        {
+            "class": "Ljava/net/HttpURLConnection;",
+            "method": "getOutputStream",
+            "descriptor": "()Ljava/io/OutputStream;"
+        },
+        {
+            "class": "Ljava/net/HttpURLConnection;",
+            "method": "getInputStream",
+            "descriptor": "()Ljava/io/InputStream;"
+        }
+    ],
+    "score": 1.78,
+    "label": [
+        "network",
+        "http",
+        "command"
+    ]
+}

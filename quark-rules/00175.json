@@ -1,0 +1,20 @@
+{
+    "crime": "Get notification manager and cancel notifications",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "getSystemService",
+            "descriptor": "(Ljava/lang/String;)Ljava/lang/Object;"
+        },
+        {
+            "class": "Landroid/app/NotificationManager;",
+            "method": "cancelAll",
+            "descriptor": "()V"
+        }
+    ],
+    "score": -1.19,
+    "label": [
+        "notification"
+    ]
+}

@@ -1,0 +1,22 @@
+{
+    "crime": "Hide the current app's icon",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "getPackageName",
+            "descriptor": "()Ljava/lang/String;"
+        },
+        {
+            "class": "Landroid/content/pm/PackageManager;",
+            "method": "setComponentEnabledSetting",
+            "descriptor": "(Landroid/content/ComponentName; I I)V"
+        }
+    ],
+    "score": 1.01,
+    "label": [
+        "persistence",
+        "evasion",
+        "icon-hide"
+    ]
+}

@@ -3,15 +3,17 @@
     <div class="card-body p-2">
       <div class="row">
         <div class="col-md-8 text-truncate border-right border-secondary">
-          <div class="">
+          <div class="text-truncate">
             <a class="h4" href="{% url 'front:report'  result.source.apk_hash %}">
               <samp>{{ result.source.handle }}</samp>
             </a>
             <br>
-            <i class="fas fa-hashtag"></i>
-            <a class="" href="{% url 'front:report'  result.source.apk_hash %}">
-              <code>{{ result.source.apk_hash }}</code>
-            </a>
+            <div class="overflow-box">
+              <i class="fas fa-hashtag"></i>
+              <a class="" href="{% url 'front:report'  result.source.apk_hash %}">
+                <code>{{ result.source.apk_hash }}</code>
+              </a>
+            </div>
             <br>
             {% if result.source.icon_base64 %}
               <img class="" src="data:image/png;base64,{{ result.source.icon_base64 }}" width="20px"
@@ -53,7 +55,7 @@
                      data-placement="top" title="Has been frosted"></i>
               {% endif %}
             </div>
-            <div class="col-md-4">
+            <div class="col">
               {% if user.is_authenticated %}
                 <div class="text-right">
                   <a href="{% url 'front:download_sample' result.source.apk_hash %}" class="" data-toggle="tooltip"
@@ -70,7 +72,7 @@
           {% endif %}
           {% if result.source.vt and result.source.vt.malicious > 0 %}
             <span class="small text-danger">
-                <i class="fas fa-exclamation-circle"></i>
+                <i class="fas fa-exclamation-circle" data-toggle="tooltip" data-placement="top" title="Detection by VirusTotal"></i>
                 {{ result.source.vt.malicious }}/{{ result.source.vt.total }}
               </span>
             <div class="progress" style="height: 2px;">
@@ -78,14 +80,22 @@
                    aria-valuenow="{{ result.source.vt.malicious }}" aria-valuemin="0"
                    aria-valuemax="{{ result.source.vt.total }}"></div>
             </div>
-          {% elif result.source.quark %}
-            <span class="small text-muted">Threat level: </span>
-            {% include "front/report/m_severity_alt.html" with s=result.source.quark.threat_level class="small" %}<br>
+
           {% endif %}
           {% if result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name %}
-            <span class="small text-danger"><i
-                    class="fa fa-bug"></i> {{ result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name }}</span>
+            <span class="small text-danger">
+              <i class="fa fa-bug"></i> {{ result.source.malware_bazaar.vendor_intel.ReversingLabs.threat_name }}
+            </span>
+            <i class="fa fa-question-circle inline-doc" data-toggle="tooltip" data-placement="top"
+                title="Detection by Malware Bazaar"></i><br>
           {% endif %}
+          {% if result.source.quark %}
+            <span class="small text-muted">Threat level: </span>
+            {% include "front/report/m_severity_alt.html" with s=result.source.quark.threat_level class="small" %}
+            <i class="fa fa-question-circle inline-doc" data-toggle="tooltip" data-placement="top"
+                title="Estimation by Quark-Engine"></i><br>
+          {% endif %}
+
 
           {% if result.sim %}
             <div class="mt-2">

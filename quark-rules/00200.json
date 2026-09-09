@@ -1,0 +1,24 @@
+{
+    "crime": "Query data from the contact list",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/ContentResolver;",
+            "method": "query",
+            "descriptor": "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;",
+            "match_keywords": [
+                "Phone"
+            ]
+        },
+        {
+            "class": "Landroid/database/Cursor;",
+            "method": "getColumnIndex",
+            "descriptor": "(Ljava/lang/String;)I"
+        }
+    ],
+    "score": -0.61,
+    "label": [
+        "collection",
+        "contact"
+    ]
+}

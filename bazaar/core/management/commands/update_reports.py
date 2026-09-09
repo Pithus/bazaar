@@ -1,9 +1,30 @@
 from time import sleep
 import logging
-from django.core.management.base import BaseCommand, CommandError
+from elasticsearch import Elasticsearch
+
+from django.conf import settings
+from django.core.management.base import BaseCommand
+from django_q.tasks import async_task
+
 from elasticsearch.helpers.actions import scan
 
-from bazaar.core.tasks import *
+from bazaar.core.modules import (
+    androcfg,
+    apkid,
+    malware_bazaar,
+    mobsf,
+    pithus,
+    quarkengine,
+    similarity,
+    threat_hunting,
+    virus_total,
+)
+
+
+es = Elasticsearch(
+    settings.ELASTICSEARCH_HOSTS,
+    basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+)
 
 
 class Command(BaseCommand):
@@ -18,10 +39,10 @@ class Command(BaseCommand):
         tasks = options['tasks']
         reports = []
         if '*' in sha256:
-            for report in scan(es,
-                                  query={"query": {"match_all": {}},"_source": ["uploaded_at", "sha256"]},
-                                  index=settings.ELASTICSEARCH_APK_INDEX,
-                                  ):
+            for report in scan(
+                es, query={"query": {"match_all": {}}, "_source": ["uploaded_at", "sha256"]},
+                index=settings.ELASTICSEARCH_APK_INDEX,
+            ):
                 reports.append(report['_source'])
 
             reports = sorted(reports, key=lambda x: x.get('uploaded_at'), reverse=True)
@@ -42,35 +63,35 @@ class Command(BaseCommand):
         try:
             if 'm' in tasks:
                 print(f'Start mobsf_analysis for {sha256}')
-                async_task(mobsf_analysis, sha256)
+                async_task(mobsf.analysis, sha256)
             if 'b' in tasks:
                 print(f'Start malware_bazaar_analysis for {sha256}')
-                malware_bazaar_analysis(sha256)
+                malware_bazaar.analysis(sha256)
             if 'f' in tasks:
                 print(f'Start frosting_analysis for {sha256}')
-                frosting_analysis(sha256)
+                pithus.frosting_analysis(sha256)
             if 'v' in tasks:
                 print(f'Start vt_analysis for {sha256}')
-                vt_analysis(sha256)
+                virus_total.analysis(sha256)
                 sleep(15)
             if 'a' in tasks:
                 print(f'Start apkid_analysis for {sha256}')
-                async_task(apkid_analysis, sha256)
+                async_task(apkid.analysis, sha256)
             if 's' in tasks:
                 print(f'Start ssdeep_analysis for {sha256}')
-                ssdeep_analysis(sha256)
+                similarity.analysis(sha256)
             if 'c' in tasks:
                 print(f'Start extract_classes for {sha256}')
-                async_task(extract_classes, sha256)
+                async_task(pithus.extract_classes, sha256)
             if 'q' in tasks:
                 print(f'Start quark_analysis for {sha256}')
-                async_task(quark_analysis, sha256)
+                async_task(quarkengine.analysis, sha256)
             if 'g' in tasks:
                 print(f'Start andro_cfg for {sha256}')
-                andro_cfg(sha256, force=True)
+                androcfg(sha256, force=True)
             if 'y' in tasks:
                 print(f'Start yara_analysis for {sha256}')
-                yara_analysis(sha256)
+                threat_hunting.yara_analysis(sha256)
 
         except Exception as e:
             logging.exception(e)

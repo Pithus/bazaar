@@ -1,37 +1,114 @@
 {% if andro_cfg %}
   <h3>Control flow graphs analysis</h3>
-  <p class="text-muted small">Information computed by
-    <a class="small" target="_blank" href="https://github.com/pithus/bazaar">Pithus</a>.
-  </p>
 
-  {% for r in andro_cfg.rules %}
-    <div class="row">
-      <div class="col-md-12">
-        <h4>{{ r.rule.title }}</h4>
-        <div class="row">
-          <div class="col-md-7">
-            <ul>
-              {% for f in r.findings %}
-                <li>
-                  <a class="btn btn-sm btn-link p-0 text-decoration-none" target="_blank"
-                     href="{% url "front:get_andgrocfg_code" sha256 f.evidence_file %}">{{f.call_by}}</a>
-                <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:similarity_search' %}?hash={{ f.dexofuzzy_hash }}&algorithm=func_hash">
-                <i class="nf nf-oct-search"></i></a>
-                </li>
-                {% endfor %}
-            </ul>
-          </div>
-          {% if r.cfg_file %}
-            <div class="col-md-5 text-center">
-              <a class="btn btn-sm btn-link p-0 text-decoration-none" target="_blank"
-                 href="{% url "front:get_andgrocfg_code" sha256 r.cfg_file %}.png">
-                <img src="{% url "front:get_andgrocfg_code" sha256 r.cfg_file %}.png" class="img-fluid mb-4"
-                     style="max-height: 8em;">
-              </a>
+    <p class="text-muted small">Information computed by
+      <a class="small" target="_blank" href="https://github.com/pithus/bazaar">Pithus</a>.
+    </p>
+    {% for r in andro_cfg.rules %}
+      <div class="row">
+        <div class="col-md-12">
+          <h4>{{ r.rule.title }}</h4>
+          <div class="row">
+            <div class="col-md-7 overflow-box">
+              <ul>
+                {% for f in r.findings %}
+                  <li>
+                    <a class="btn btn-sm btn-link p-0 text-decoration-none open-code-modal" data-toggle="modal" data-target="#codeModal" target="_blank"
+                      href="{% url "front:get_andgrocfg_code" sha256 f.evidence_file %}">{{f.call_by}}</a>
+                  <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:similarity_search' %}?hash={{ f.dexofuzzy_hash|urlencode }}&algorithm=func_hash">
+                  <i class="nf nf-oct-search"></i></a>
+                  </li>
+                  {% endfor %}
+              </ul>
             </div>
-          {% endif %}
+            {% if r.cfg_file %}
+              <div class="col-md-5 text-center">
+                <a class="btn btn-sm btn-link p-0 text-decoration-none open-img-modal" data-toggle="modal" data-target="#imgModal" target="_blank"
+                  href="{% url "front:get_andgrocfg_code" sha256 r.cfg_file %}.png">
+                  <img src="{% url "front:get_andgrocfg_code" sha256 r.cfg_file %}.png" class="img-fluid mb-4"
+                      style="max-height: 8em;">
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+
+<div class="modal fade" id="codeModal" tabindex="-1" role="dialog" aria-labelledby="codeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="codeModalLabel">Code View</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="codeModalBody">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="imgModal" tabindex="-1" role="dialog" aria-labelledby="codeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imgModalLabel">Call Graph</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center p-0">
+        <div class="overflow-box">
+          <center>
+            <img id="modalImage" src="" alt="Image">
+          </center>
         </div>
       </div>
     </div>
-  {% endfor %}
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  
+    document.querySelectorAll('.open-code-modal').forEach(function (link) {
+        link.addEventListener('click', function () {
+            const url = link.href;
+            const modalBody = document.getElementById('codeModalBody');
+
+            fetch(url)
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Failed to load content');
+                    }
+                    return response.text();
+                })
+                .then(function (html) {
+                    modalBody.innerHTML = html;
+                })
+                .catch(function (error) {
+                    console.error(error);
+
+                    modalBody.innerHTML = `
+                        <div class="alert alert-danger">
+                            Failed to load the content.
+                        </div>
+                    `;
+                });
+        });
+    });
+
+    document.querySelectorAll('.open-img-modal').forEach(function (link) {
+      link.addEventListener('click', function () {
+          document.getElementById('modalImage').src = link.href;
+      });
+    });
+  
+  });
+</script>
 {% endif %}

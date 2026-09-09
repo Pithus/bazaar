@@ -1,0 +1,23 @@
+{
+    "crime": "Get current camera paremeters and change the setting.",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/hardware/Camera;",
+            "method": "getParameters",
+            "descriptor": "()Landroid/hardware/Camera$Parameters;"
+        },
+        {
+            "class": "Landroid/hardware/Camera;",
+            "method": "setParameters",
+            "descriptor": "(Landroid/hardware/Camera$Parameters;)V"
+        }
+    ],
+    "score": -0.5,
+    "label": [
+        "camera"
+    ],
+    "malware": [
+        "4b65291d3453664b214cf2b0cfd0cd5d"
+    ]
+}

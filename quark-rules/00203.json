@@ -1,0 +1,23 @@
+{
+    "crime": "Put a phone number into an intent",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/net/Uri;",
+            "method": "parse",
+            "descriptor": "(Ljava/lang/String;)Landroid/net/Uri;"
+        },
+        {
+            "class": "Landroid/content/Intent;",
+            "method": "setData",
+            "descriptor": "(Landroid/net/Uri;)Landroid/content/Intent;",
+            "match_keywords": [
+                "tel:"
+            ]
+        }
+    ],
+    "score": -0.22,
+    "label": [
+        "control"
+    ]
+}

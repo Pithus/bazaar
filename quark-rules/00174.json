@@ -1,0 +1,21 @@
+{
+    "crime": "Get all accounts by type and put them in a JSON object",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/accounts/AccountManager;",
+            "method": "getAccountsByType",
+            "descriptor": "(Ljava/lang/String;)[Landroid/accounts/Account;"
+        },
+        {
+            "class": "Lorg/json/JSONObject;",
+            "method": "put",
+            "descriptor": "(Ljava/lang/String; Ljava/lang/Object;)Lorg/json/JSONObject;"
+        }
+    ],
+    "score": -0.29,
+    "label": [
+        "accounts",
+        "collection"
+    ]
+}

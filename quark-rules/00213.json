@@ -1,0 +1,20 @@
+{
+    "crime": "Get device latitude and check if logging is enabled",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/location/Location;",
+            "method": "getLatitude",
+            "descriptor": "()D"
+        },
+        {
+            "class": "Landroid/util/Log;",
+            "method": "isLoggable",
+            "descriptor": "(Ljava/lang/String; I)Z"
+        }
+    ],
+    "score": 0.0,
+    "label": [
+        "collection"
+    ]
+}

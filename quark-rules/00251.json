@@ -1,0 +1,20 @@
+{
+    "crime": "Listen for user clicks on a UI element",
+    "permission": [],
+    "api": [
+        {
+            "descriptor": "(I)Landroid/view/View;",
+            "class": "Landroid/view/View;",
+            "method": "findViewById"
+        },
+        {
+            "descriptor": "(Landroid/view/View$OnClickListener;)V",
+            "class": "Landroid/view/View;",
+            "method": "setOnClickListener"
+        }
+    ],
+    "score": 0.24,
+    "label": [
+        "collection"
+    ]
+}

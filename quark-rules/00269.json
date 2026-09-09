@@ -1,0 +1,20 @@
+{
+    "crime": "Compress bitmap",
+    "permission": [],
+    "api": [
+        {
+            "class": "Ljava/io/ByteArrayOutputStream;",
+            "method": "<init>",
+            "descriptor": "()V"
+        },
+        {
+            "class": "Landroid/graphics/Bitmap;",
+            "method": "compress",
+            "descriptor": "(Landroid/graphics/Bitmap$CompressFormat; I Ljava/io/OutputStream;)Z"
+        }
+    ],
+    "score": -0.88,
+    "label": [
+        "screen"
+    ]
+}

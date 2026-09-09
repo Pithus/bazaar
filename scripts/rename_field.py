@@ -7,7 +7,10 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 from elasticsearch import Elasticsearch
 
-es = Elasticsearch([settings.ELASTICSEARCH_HOST], timeout=30, max_retries=5, retry_on_timeout=True)
+es = Elasticsearch(
+    settings.ELASTICSEARCH_HOSTS,
+    basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+)
 original_index = settings.ELASTICSEARCH_APK_INDEX
 tmp_index = f'{original_index}_tmp'
 
@@ -27,7 +30,7 @@ es.indices.create(index=tmp_index, body=new_mapping)
 # Get all APKs
 _, hashes = default_storage.listdir('.')
 for hash in hashes:
-    if es.exists(original_index, id=hash):
+    if es.exists(index=original_index, id=hash):
         result = es.get(index=original_index, id=hash)['_source']
         es.index(index=tmp_index, id=hash, body=result)
 

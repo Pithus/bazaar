@@ -1,0 +1,21 @@
+{
+    "crime": "Resolve field via reflection",
+    "permission": [],
+    "api": [
+        {
+            "class": "Ljava/lang/Object;",
+            "method": "getClass",
+            "descriptor": "()Ljava/lang/Class;"
+        },
+        {
+            "class": "Ljava/lang/Class;",
+            "method": "getDeclaredField",
+            "descriptor": "(Ljava/lang/String;)Ljava/lang/reflect/Field;"
+        }
+    ],
+    "score": 1.71,
+    "label": [
+        "reflection",
+        "evasion"
+    ]
+}

@@ -1,0 +1,21 @@
+{
+    "crime": "Write file content to an output stream",
+    "permission": [],
+    "api": [
+        {
+            "class": "Ljava/io/FileInputStream;",
+            "method": "<init>",
+            "descriptor": "(Ljava/lang/String;)V"
+        },
+        {
+            "class": "Ljava/io/DataOutputStream;",
+            "method": "write",
+            "descriptor": "([BII)V"
+        }
+    ],
+    "score": -0.17,
+    "label": [
+        "network",
+        "file"
+    ]
+}

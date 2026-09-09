@@ -1,0 +1,21 @@
+{
+    "crime": "Get the package info of a particular app",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "getPackageManager",
+            "descriptor": "()Landroid/content/pm/PackageManager;"
+        },
+        {
+            "class": "Landroid/content/pm/PackageManager;",
+            "method": "getPackageInfo",
+            "descriptor": "(Ljava/lang/String; I)Landroid/content/pm/PackageInfo;"
+        }
+    ],
+    "score": 0.33,
+    "label": [
+        "collection",
+        "applications"
+    ]
+}

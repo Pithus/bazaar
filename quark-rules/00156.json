@@ -1,0 +1,23 @@
+{
+    "crime": "Acquire lock on Power Manager",
+    "permission": [
+        "android.permission.WAKE_LOCK"
+    ],
+    "api": [
+        {
+            "class": "Landroid/os/PowerManager;",
+            "method": "newWakeLock",
+            "descriptor": "(I Ljava/lang/String;)Landroid/os/PowerManager$WakeLock;"
+        },
+        {
+            "class": "Landroid/os/PowerManager$WakeLock;",
+            "method": "acquire",
+            "descriptor": "()V"
+        }
+    ],
+    "score": -1.58,
+    "label": [
+        "lock",
+        "power manager"
+    ]
+}

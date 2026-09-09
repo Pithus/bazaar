@@ -1,0 +1,23 @@
+{
+    "crime": "Schedule a periodic job",
+    "permission": [
+        "android.permission.RECEIVE_BOOT_COMPLETED"
+    ],
+    "api": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "getSystemService",
+            "descriptor": "(Ljava/lang/String;)Ljava/lang/Object;",
+            "match_keywords": [
+                "jobscheduler"
+            ]
+        },
+        {
+            "class": "Landroid/app/job/JobScheduler;",
+            "method": "schedule",
+            "descriptor": "(Landroid/app/job/JobInfo;)I"
+        }
+    ],
+    "label": [],
+    "score": -1.5
+}

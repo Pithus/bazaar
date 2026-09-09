@@ -1,0 +1,20 @@
+{
+    "crime": "Query device data with ContentResolver",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/ContentResolver;",
+            "method": "query",
+            "descriptor": "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;"
+        },
+        {
+            "class": "Landroid/database/Cursor;",
+            "method": "getString",
+            "descriptor": "(I)Ljava/lang/String;"
+        }
+    ],
+    "score": 0.62,
+    "label": [
+        "collection"
+    ]
+}

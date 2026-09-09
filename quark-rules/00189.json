@@ -1,0 +1,26 @@
+{
+    "crime": "Get the content of a SMS message",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/ContentResolver;",
+            "method": "query",
+            "descriptor": "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;",
+            "match_keywords": [
+                "sms"
+            ]
+        },
+        {
+            "class": "Landroid/database/Cursor;",
+            "method": "getColumnIndex",
+            "descriptor": "(Ljava/lang/String;)I",
+            "match_keywords": [
+                "body"
+            ]
+        }
+    ],
+    "score": -0.62,
+    "label": [
+        "sms"
+    ]
+}

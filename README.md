@@ -73,7 +73,7 @@ from django.conf import settings
 from elasticsearch import Elasticsearch
 import json
 
-es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+es = Elasticsearch(settings.ELASTICSEARCH_HOSTS, basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD))
 mapping = json.load(open('bazaar/es_mappings/apk_analysis.json'))
 es.indices.put_mapping(index=settings.ELASTICSEARCH_APK_INDEX, body=mapping.get('mappings'))
 ```

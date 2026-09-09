@@ -1,0 +1,21 @@
+{
+    "crime": "Enumerate installed applications",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/pm/PackageManager;",
+            "method": "getInstalledApplications",
+            "descriptor": "(I)Ljava/util/List;"
+        },
+        {
+            "class": "Ljava/util/List;",
+            "method": "iterator",
+            "descriptor": "()Ljava/util/Iterator;"
+        }
+    ],
+    "score": 0.89,
+    "label": [
+        "applications",
+        "collection"
+    ]
+}

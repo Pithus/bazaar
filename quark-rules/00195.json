@@ -1,0 +1,21 @@
+{
+    "crime": "Set the output path of the recorded file",
+    "permission": [],
+    "api": [
+        {
+            "class": "Ljava/io/File;",
+            "method": "getAbsolutePath",
+            "descriptor": "()Ljava/lang/String;"
+        },
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "setOutputFile",
+            "descriptor": "(Ljava/lang/String;)V"
+        }
+    ],
+    "score": -0.46,
+    "label": [
+        "record",
+        "file"
+    ]
+}

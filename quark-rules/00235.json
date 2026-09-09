@@ -1,0 +1,23 @@
+{
+    "crime": "Monitor outgoing phone call",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Intent;",
+            "method": "getAction",
+            "descriptor": "()Ljava/lang/String;"
+        },
+        {
+            "class": "Ljava/lang/String;",
+            "method": "equals",
+            "descriptor": "(Ljava/lang/Object;)Z",
+            "match_keywords": [
+                "android.intent.action.NEW_OUTGOING_CALL"
+            ]
+        }
+    ],
+    "score": 0.98,
+    "label": [
+        "collection"
+    ]
+}

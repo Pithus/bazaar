@@ -1,0 +1,20 @@
+{
+    "crime": "Read clipboard",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/ClipboardManager;",
+            "method": "getPrimaryClip",
+            "descriptor": "()Landroid/content/ClipData;"
+        },
+        {
+            "class": "Landroid/content/ClipData;",
+            "method": "getItemAt",
+            "descriptor": "(I)Landroid/content/ClipData$Item;"
+        }
+    ],
+    "score": -2.05,
+    "label": [
+        "keylogging"
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "crime": "Get bounds in screen of an AccessibilityNodeInfo and perform action",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/view/accessibility/AccessibilityNodeInfo;",
+            "method": "getBoundsInScreen",
+            "descriptor": "(Landroid/graphics/Rect;)V"
+        },
+        {
+            "class": "Landroid/view/accessibility/AccessibilityNodeInfo;",
+            "method": "performAction",
+            "descriptor": "(I)Z"
+        }
+    ],
+    "score": 0.63,
+    "label": [
+        "accessibility service"
+    ]
+}

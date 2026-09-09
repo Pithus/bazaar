@@ -1,0 +1,20 @@
+{
+    "crime": "Capture view",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/graphics/Canvas;",
+            "method": "<init>",
+            "descriptor": "(Landroid/graphics/Bitmap;)V"
+        },
+        {
+            "class": "Landroid/view/View;",
+            "method": "draw",
+            "descriptor": "(Landroid/graphics/Canvas;)V"
+        }
+    ],
+    "score": -0.09,
+    "label": [
+        "screen"
+    ]
+}

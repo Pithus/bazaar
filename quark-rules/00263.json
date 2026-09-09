@@ -1,0 +1,18 @@
+{
+    "crime": "Retrieve the application context and add a view to the window manager.",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "getApplicationContext",
+            "descriptor": "()Landroid/content/Context;"
+        },
+        {
+            "class": "Landroid/view/WindowManager;",
+            "method": "addView",
+            "descriptor": "(Landroid/view/View; Landroid/view/ViewGroup$LayoutParams;)V"
+        }
+    ],
+    "score": -0.1,
+    "label": []
+}

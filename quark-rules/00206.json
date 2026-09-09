@@ -1,0 +1,20 @@
+{
+    "crime": "Check if the text of the view contains the given string",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/view/accessibility/AccessibilityNodeInfo;",
+            "method": "getText",
+            "descriptor": "()Ljava/lang/CharSequence;"
+        },
+        {
+            "class": "Ljava/lang/String;",
+            "method": "contains",
+            "descriptor": "(Ljava/lang/CharSequence;)Z"
+        }
+    ],
+    "score": -0.09,
+    "label": [
+        "accessibility service"
+    ]
+}

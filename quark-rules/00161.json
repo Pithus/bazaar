@@ -1,0 +1,20 @@
+{
+    "crime": "Perfom accessibility service action on accessibility node info",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/view/accessibility/AccessibilityNodeInfo;",
+            "method": "getParent",
+            "descriptor": "()Landroid/view/accessibility/AccessibilityNodeInfo;"
+        },
+        {
+            "class": "Landroid/view/accessibility/AccessibilityNodeInfo;",
+            "method": "performAction",
+            "descriptor": "(I)Z"
+        }
+    ],
+    "score": 0.25,
+    "label": [
+        "accessibility service"
+    ]
+}

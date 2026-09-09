@@ -13,7 +13,7 @@
             "method": "getLastKnownLocation"
         }
     ],
-    "score": 1,
+    "score": -0.7,
     "label": [
         "collection",
         "location"

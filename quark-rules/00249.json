@@ -1,0 +1,24 @@
+{
+    "crime": "Read the payment data stored in an NFC card",
+    "permission": [],
+    "api": [
+        {
+            "descriptor": "([B)[B",
+            "class": "Landroid/nfc/tech/IsoDep;",
+            "method": "transceive",
+            "match_keywords": [
+                "00A404000E325041592E5359532E444446303100"
+            ]
+        },
+        {
+            "descriptor": "(Ljava/lang/String;)V",
+            "class": "Landroid/content/Intent;",
+            "method": "<init>"
+        }
+    ],
+    "score": 0.29,
+    "label": [
+        "collection",
+        "nfc"
+    ]
+}

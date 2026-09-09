@@ -1,4 +1,3 @@
-version: '3'
 
 volumes:
   pithus_production_postgres_data: {}
@@ -61,7 +60,7 @@ services:
     container_name: pithus_redis
 
   pithus_elasticsearch:
-    image: elasticsearch:7.7.0
+    image: elasticsearch:8.19.10
     hostname: elasticsearch
     container_name: pithus_els
     environment:

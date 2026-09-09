@@ -1,0 +1,23 @@
+{
+    "crime": "Query a URI and append the result into a string",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/ContentResolver;",
+            "method": "query",
+            "descriptor": "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;"
+        },
+        {
+            "class": "Ljava/lang/StringBuilder;",
+            "method": "append",
+            "descriptor": "(Ljava/lang/String;)Ljava/lang/StringBuilder;"
+        }
+    ],
+    "score": -0.05,
+    "label": [
+        "collection",
+        "sms",
+        "calllog",
+        "calendar"
+    ]
+}

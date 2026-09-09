@@ -1,0 +1,21 @@
+{
+    "crime": "Get application info and label",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/pm/PackageManager;",
+            "method": "getApplicationInfo",
+            "descriptor": "(Ljava/lang/String; I)Landroid/content/pm/ApplicationInfo;"
+        },
+        {
+            "class": "Landroid/content/pm/PackageManager;",
+            "method": "getApplicationLabel",
+            "descriptor": "(Landroid/content/pm/ApplicationInfo;)Ljava/lang/CharSequence;"
+        }
+    ],
+    "score": -1.23,
+    "label": [
+        "applications",
+        "collection"
+    ]
+}

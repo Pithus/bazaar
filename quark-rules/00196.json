@@ -1,0 +1,21 @@
+{
+    "crime": "Set the recorded file format and output path",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "setOutputFormat",
+            "descriptor": "(I)V"
+        },
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "setOutputFile",
+            "descriptor": "(Ljava/lang/String;)V"
+        }
+    ],
+    "score": -0.1,
+    "label": [
+        "record",
+        "file"
+    ]
+}

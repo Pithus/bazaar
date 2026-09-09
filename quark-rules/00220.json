@@ -1,0 +1,20 @@
+{
+    "crime": "Get the column index of device data and store a string in SharedPreferences",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/database/Cursor;",
+            "method": "getColumnIndex",
+            "descriptor": "(Ljava/lang/String;)I"
+        },
+        {
+            "class": "Landroid/content/SharedPreferences$Editor;",
+            "method": "putString",
+            "descriptor": "(Ljava/lang/String; Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;"
+        }
+    ],
+    "score": 0.77,
+    "label": [
+        "collection"
+    ]
+}

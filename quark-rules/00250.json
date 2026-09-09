@@ -1,0 +1,20 @@
+{
+    "crime": "Create a UI layout from XML",
+    "permission": [],
+    "api": [
+        {
+            "descriptor": "(Landroid/content/Context;)Landroid/view/LayoutInflater;",
+            "class": "Landroid/view/LayoutInflater;",
+            "method": "from"
+        },
+        {
+            "descriptor": "(I Landroid/view/ViewGroup; Z)Landroid/view/View;",
+            "class": "Landroid/view/LayoutInflater;",
+            "method": "inflate"
+        }
+    ],
+    "score": 1.18,
+    "label": [
+        "screen"
+    ]
+}

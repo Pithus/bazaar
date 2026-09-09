@@ -1,0 +1,21 @@
+{
+    "crime": "Connect to a URL and send sensitive data got from resolver",
+    "permission": [],
+    "api": [
+        {
+            "descriptor": "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;",
+            "class": "Landroid/content/ContentResolver;",
+            "method": "query"
+        },
+        {
+            "descriptor": "()Ljava/io/OutputStream;",
+            "class": "Ljava/net/HttpURLConnection;",
+            "method": "getOutputStream"
+        }
+    ],
+    "score": -0.34,
+    "label": [
+        "privacy",
+        "connection"
+    ]
+}

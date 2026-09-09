@@ -1,34 +1,38 @@
-FROM python:3.8-slim-buster
+FROM python:3.13.10-trixie
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
-RUN apt-get update \
+RUN apt update \
   # dependencies for building Python packages
-  && apt-get install -y build-essential \
+  && apt install -y build-essential \
   # psycopg2 dependencies
-  && apt-get install -y libpq-dev \
+  && apt install -y libpq-dev \
   # Translations dependencies
-  && apt-get install -y gettext \
+  && apt install -y gettext \
   # ssdeep dependencies
-  && apt-get install -y libffi-dev python3 python3-dev python3-pip libfuzzy-dev git libcairo2 graphviz\
+  && apt install -y libffi-dev python3 python3-dev python3-pip libfuzzy-dev git libcairo2 graphviz\
   # cleaning up unused files
-  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+  && apt purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
 RUN pip install --upgrade pip
-RUN pip install -r /requirements/local.txt 
 
-# Install APKiD https://github.com/rednaga/APKiD/blob/master/Dockerfile
-RUN git clone https://github.com/rednaga/APKiD.git && \
-  cd APKiD && \
-  git checkout 9abdce7c4fb0408ae9b00bd6cd25daaa96f57068 && \
-  python prep-release.py && \
-  python setup.py install && \
-  cd .. && \
-  rm -rf APKiD
+# Special SSDEEP edge case
+# AndroCFG requires ssdeep==3.4, but since setuptools dropped support of pkg_resources, install always fail
+# This is a temporary fix until:
+#   1) This PR gets merged https://github.com/DinoTools/python-ssdeep/pull/70
+#   2) AndroCFG bumps ssdeep requirements to version 3.4.2 specified in above patch
+RUN git clone https://github.com/DinoTools/python-ssdeep.git /python-ssdeep
+COPY ./requirements/ssdeep.patch /python-ssdeep/ssdeep.patch
+WORKDIR /python-ssdeep
+RUN git apply ssdeep.patch
+RUN python -m pip install /python-ssdeep
+WORKDIR /
+
+RUN pip install -r /requirements/local.txt 
 
 COPY ./compose/production/django/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint

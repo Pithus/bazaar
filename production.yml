@@ -1,4 +1,3 @@
-version: '3'
 
 volumes:
   production_postgres_data: {}
@@ -17,24 +16,34 @@ services:
       dockerfile: ./compose/production/django/Dockerfile
     image: bazaar_production_django
     depends_on:
-      - postgres
-      - redis
-      - elasticsearch
-      - minio
-      - mobsf
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+      mobsf:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
+      - ./.envs/.production/.elastic
     command: /start
 
   worker:
     <<: *django
     image: bazaar_production_worker
     depends_on:
-      - redis
-      - postgres
-      - elasticsearch
-      - minio
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_started
+      minio:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
     ports: []
     command: /start-worker
 
@@ -67,11 +76,12 @@ services:
     image: redis:5.0
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.19.10
     hostname: elasticsearch
+    env_file: ./.envs/.production/.elastic
     environment:
       - "discovery.type=single-node"
-      - "ES_JAVA_OPTS=-Xms6000m -Xmx6000m"
+      - "ES_JAVA_OPTS=-Xms6G -Xmx6G"
       - bootstrap.memory_lock=true
     ulimits:
       memlock:
@@ -79,16 +89,29 @@ services:
         hard: -1
     volumes:
       - production_elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --user elastic:$$ELASTICSEARCH_PASSWORD -X GET http://localhost:9200/_cluster/health?pretty | grep status | grep -Eq '(green|yellow)'"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 50
+      start_period: 20s
+
 
   mobsf:
-    image: opensecurity/mobile-security-framework-mobsf:v3.4.6
+    image: opensecurity/mobile-security-framework-mobsf:v4.4.6
     hostname: mobsf
     environment:
       - "MOBSF_API_ONLY=1"
       - "MOBSF_API_KEY=515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9"
+      - "MOBSF_NIAP_ENABLED=1"
+      - "MOBSF_CVSS_SCORE_ENABLED=1"
 
   minio:
-    image: minio/minio:RELEASE.2020-11-13T20-10-18Z
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
     volumes:
       - production_minio_data:/data
     env_file:

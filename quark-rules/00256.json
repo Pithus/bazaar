@@ -1,0 +1,25 @@
+{
+    "crime": "Read SMS message from PDU",
+    "permission": [
+        "android.permission.READ_SMS",
+        "android.permission.RECEIVE_SMS"
+    ],
+    "api": [
+        {
+            "class": "Landroid/telephony/SmsMessage;",
+            "method": "createFromPdu",
+            "descriptor": "([B Ljava/lang/String;)Landroid/telephony/SmsMessage;"
+        },
+        {
+            "class": "Landroid/telephony/SmsMessage;",
+            "method": "getMessageBody",
+            "descriptor": "()Ljava/lang/String;"
+        }
+    ],
+    "score": -0.1,
+    "label": [
+        "sms",
+        "collection",
+        "calllog"
+    ]
+}
