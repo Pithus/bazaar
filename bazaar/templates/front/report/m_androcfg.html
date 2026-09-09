@@ -13,7 +13,7 @@
               <ul>
                 {% for f in r.findings %}
                   <li>
-                    <a class="btn btn-sm btn-link p-0 text-decoration-none" target="_blank"
+                    <a class="btn btn-sm btn-link p-0 text-decoration-none open-content-modal" data-toggle="modal" data-target="#codeModal" target="_blank"
                       href="{% url "front:get_andgrocfg_code" sha256 f.evidence_file %}">{{f.call_by}}</a>
                   <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:similarity_search' %}?hash={{ f.dexofuzzy_hash|urlencode }}&algorithm=func_hash">
                   <i class="nf nf-oct-search"></i></a>
@@ -34,4 +34,56 @@
         </div>
       </div>
     {% endfor %}
+
+<!-- Modal -->
+<div class="modal fade" id="codeModal" tabindex="-1" role="dialog" aria-labelledby="codeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="codeModalLabel">Code View</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="codeModalBody">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  
+    document.querySelectorAll('.open-content-modal').forEach(function (link) {
+        link.addEventListener('click', function () {
+            const url = link.href;
+            const modalBody = document.getElementById('codeModalBody');
+
+            fetch(url)
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Failed to load content');
+                    }
+                    console.log(response.text);
+                    return response.text();
+                })
+                .then(function (html) {
+                    modalBody.innerHTML = html;
+                })
+                .catch(function (error) {
+                    console.error(error);
+
+                    modalBody.innerHTML = `
+                        <div class="alert alert-danger">
+                            Failed to load the content.
+                        </div>
+                    `;
+                });
+        });
+    });
+  });
+</script>
 {% endif %}
