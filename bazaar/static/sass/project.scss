@@ -59,3 +59,15 @@ samp {
   overflow-x: auto;
   white-space: nowrap;
 }
+
+.border-right {
+  border-right: 1px solid #EDEDED !important;
+
+  @include media-breakpoint-down(sm) {
+    border-right: none !important;
+  }
+}
+
+.border-secondary {
+  border-color: #A991D4 !important;
+}
