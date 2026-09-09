@@ -45,20 +45,24 @@
     </div>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function(event) {
+      async function refreshStatus() {
         let statusDom = document.querySelector("#report-status")
+        let status = await getStatus(taskId);
 
-        let interval = setInterval(async () => {
-          let status = await getStatus(taskId);
+        if (status.report_status.running == false) {
+          clearInterval(interval);
+          location.reload();
+        }
+        else {
+          statusDom.innerHTML = beautifyStatus(status.detailed_status);
+        }
+      }
 
-          if (status.report_status.running == false) {
-            clearInterval(interval);
-            location.reload();
-          }
-          else {
-            statusDom.innerHTML = beautifyStatus(status.detailed_status);
-          }
-        }, 1000);
+      document.addEventListener("DOMContentLoaded", async function(event) {
+        await refreshStatus();  
+        var interval = setInterval(async () => {
+            await refreshStatus();
+          }, 60000);
       });
     </script>
   {% elif status.in_error %}
