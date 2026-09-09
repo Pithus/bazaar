@@ -185,7 +185,8 @@ code,
 kbd,
 samp {
   font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 1em; }
+  font-size: 1em;
+}
 
 pre {
   margin-top: 0;
@@ -5757,7 +5758,8 @@ button.bg-dark:focus {
 
 .mt-5,
 .my-5 {
-  margin-top: 3.6rem !important; }
+  margin-top: 3.6rem !important; 
+}
 
 .mr-5,
 .mx-5 {
@@ -7298,4 +7300,11 @@ samp {
   padding: 0 18px;
   display: none;
   overflow: hidden;
+}
+
+.overflow-box {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
 }

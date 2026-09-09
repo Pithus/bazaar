@@ -175,28 +175,36 @@
       <div class="tab-pane" role="tabpanel" aria-labelledby="fingerprints-tab" id="fingerprints">
         <div class="col-md-12">
           <h3>File sums</h3>
-          {% include "front/report/m_file.html" with d=result %}
+          <div class="overflow-box">
+            {% include "front/report/m_file.html" with d=result %}
+          </div>
         </div>
         <div class="col-md-12">
           <h3>APKiD</h3>
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/rednaga/APKiD">APKiD</a>.
           </p>
-          {% include "front/report/m_apkid.html" with d=result %}
+          <div class="overflow-box">
+            {% include "front/report/m_apkid.html" with d=result %}
+          </div>
         </div>
         <div class="col-md-12">
           <h3>SSdeep</h3>
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/DinoTools/python-ssdeep">ssdeep</a>.
           </p>
-          {% include "front/report/m_ssdeep.html" with d=result %}
+          <div class="overflow-box">
+            {% include "front/report/m_ssdeep.html" with d=result %}
+          </div>
         </div>
         <div class="col-md-12">
           <h3>Dexofuzzy</h3>
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/ESTsecurity/Dexofuzzy">Dexofuzzy</a>.
           </p>
-          {% include "front/report/m_dexofuzzy.html" with d=result %}
+          <div class="overflow-box">
+            {% include "front/report/m_dexofuzzy.html" with d=result %}
+          </div>
         </div>
       </div>
 
@@ -207,7 +215,9 @@
               href="https://github.com/androguard/androguard">AndroGuard</a>
             and <a class="small" target="_blank" href="https://github.com/pithus/bazaar">Pithus</a>.
           </p>
-          {% include "front/report/m_apk.html" with d=result %}
+          <div class="overflow-box">
+            {% include "front/report/m_apk.html" with d=result %}
+          </div>
         </div>
 
         <div>
@@ -215,7 +225,9 @@
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/androguard/androguard">AndroGuard</a>.
           </p>
-          {% include "front/report/m_certificate.html" with d=result %}
+          <div class="overflow-box">
+            {% include "front/report/m_certificate.html" with d=result %}
+          </div>
         </div>
 
         {% include "front/report/m_file_analysis.html" with d=result %}
@@ -226,7 +238,9 @@
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
-          {% include "front/report/m_manifest.html" with d=result %}
+          <div class="overflow-box">
+            {% include "front/report/m_manifest.html" with d=result %}
+          </div>
         </div>
         {% endif %}
 
@@ -235,7 +249,9 @@
         <p class="text-muted small">Information computed with <a class="small" target="_blank"
             href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
         </p>
-        {% include "front/report/m_browsable_activities.html" with d=result %}
+        <div class="overflow-box">
+          {% include "front/report/m_browsable_activities.html" with d=result %}
+        </div>
         {% endif %}
 
         {% include "front/report/m_services_et_al.html" with d=result %}
@@ -248,7 +264,9 @@
           <p class="text-muted small">Information computed by <a class="small" target="_blank"
               href="https://github.com/pithus/bazaar">Pithus</a>.
           </p>
-          {% include "front/report/m_hunting.html" %}
+          <div class="overflow-box">
+            {% include "front/report/m_hunting.html" %}
+          </div>
         </div>
         {% endif %}
         {% if timeline %}
@@ -268,7 +286,9 @@
               possible malicious application.</p>
             <p>High similarity and different apparent names indicate that those applications are suspicious.</p>
           </div>
-          {% include "front/report/m_similar_samples.html" %}
+          <div class="overflow-box">
+            {% include "front/report/m_similar_samples.html" %}
+          </div>
         </div>
         {% endif %}
         {% endif %}
@@ -289,7 +309,7 @@
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
-          {% include "front/report/m_niap.html" with d=result %}
+            {% include "front/report/m_niap.html" with d=result %}
         </div>
         {% endif %}
 
@@ -316,7 +336,9 @@
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
-          {% include "front/report/m_network.html" with d=result %}
+          <div class="overflow-box">
+           {% include "front/report/m_network.html" with d=result %}
+          </div>
         </div>
         {% endif %}
 
@@ -326,7 +348,9 @@
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
-          {% include "front/report/m_domains.html" with d=result %}
+          <div class="overflow-box">
+            {% include "front/report/m_domains.html" with d=result %}
+          </div>
         </div>
         {% endif %}
 
@@ -336,7 +360,9 @@
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
-          {% include "front/report/m_url.html" with d=result %}
+          <div class="overflow-box">
+            {% include "front/report/m_url.html" with d=result %}
+          </div>
         </div>
         {% endif %}
       </div>
@@ -348,7 +374,9 @@
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
-          {% include "front/report/m_permissions.html" with d=result %}
+          <div class="overflow-box">
+            {% include "front/report/m_permissions.html" with d=result %}
+          </div>
         </div>
         {% endif %}
 
@@ -358,7 +386,9 @@
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/Exodus-Privacy/exodus-core">Exodus-core</a>.
           </p>
-          {% include "front/report/m_trackers.html" with d=result %}
+          <div class="overflow-box">
+            {% include "front/report/m_trackers.html" with d=result %}
+          </div>
         </div>
         {% endif %}
 
@@ -368,7 +398,9 @@
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/quark-engine/quark-engine">Quark-Engine</a>.
           </p>
-          {% include "front/report/m_quark.html" with d=result %}
+          <div class="overflow-box">
+            {% include "front/report/m_quark.html" with d=result %}
+          </div>
         </div>
         {% endif %}
 
@@ -379,7 +411,9 @@
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
-          {% include "front/report/m_api.html" with d=result %}
+          <div class="overflow-box">
+            {% include "front/report/m_api.html" with d=result %}
+          </div>
         </div>
         {% endif %}
       </div>

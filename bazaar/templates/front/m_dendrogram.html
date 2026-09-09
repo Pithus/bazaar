@@ -1,26 +1,25 @@
-<div class="row justify-content-center">
-  <center>
-  <div class="col-md-6 text-center">
-    <div id="genetic_analysis_dataviz" style="margin: 40px;"></div>
+<div class="row justify-content-center overflow-box">
+  <div class="col-md-11 text-center">
+    <div id="genetic_analysis_dataviz"></div>
   </div>
-  </center>
 </div>
 
 <script>
   {
     let data = JSON.parse(document.getElementById('genetic_analysis-data').textContent);
+    console.log(data);
     var coeff_x = 2;
     var coeff_y = 4;
 
-    var margin = 30;
+    var margin = 20;
     width = 650;
     var svg = d3.select("#genetic_analysis_dataviz")
             .append("svg")
-            .attr("width", width + 2*margin)
-            .attr("height", 40 + 10 * coeff_x * data['labels'].length + 2*margin)
+            .attr("width", width)
+            .attr("height", 10 * coeff_x * data['labels'].length + 2*margin)
             .append("g")
-            .attr("transform", "rotate(90, 0, 0) translate("+ margin +", "+ -width/2 +")")
-
+            .attr("transform", "rotate(90, 0, 0) translate("+ 0 +", "+ -(width/2) +")")
+            
     var links = []
     for (var i = 0; i < data.icoord.length; i++) {
       links[i] = {
@@ -43,11 +42,10 @@
             .enter()
             .append('path')
             .attr("d", function (d) {
-              return "M" + d.x[0] *
-                      coeff_x + "," + d.y[0] * coeff_y +
-                      "L" + d.x[1] * coeff_x + "," + d.y[1] * coeff_y +
-                      "L" + d.x[2] * coeff_x + "," + d.y[2] * coeff_y +
-                      "L" + d.x[3] * coeff_x + "," + d.y[3] * coeff_y;
+              return "M" + d.x[0] * coeff_x + "," + (d.y[0] * coeff_y - 10*coeff_y) +
+                     "L" + d.x[1] * coeff_x + "," + (d.y[1] * coeff_y - 10*coeff_y) +
+                     "L" + d.x[2] * coeff_x + "," + (d.y[2] * coeff_y - 10*coeff_y) +
+                     "L" + d.x[3] * coeff_x + "," + (d.y[3] * coeff_y - 10*coeff_y);
 
             })
             .style("fill", 'none')
@@ -70,7 +68,7 @@
               return "rotate(-90, " + d.x + "," + d.y + ") translate(10, 0)";
             })
             .attr("x", function (d) {
-              return d.x
+              return d.x + 10*coeff_y
             })
             .attr("y", function (d) {
               return d.y + 4
@@ -87,7 +85,7 @@
               return d.x
             })
             .attr('cy', function (d) {
-              return d.y
+              return d.y - 10*coeff_y
             })
             .style("fill", "#ae7bbe")
 
@@ -105,13 +103,6 @@
     svg.append('g')
             .attr('transform', 'rotate(-90, ' + data.max_y * coeff_y + ',0) translate(0, ' + translate_y + ')')
             .call(axis)
-
-    svg.append('text')
-             .attr("x", -200)
-             .attr("y", 0)
-             .style("font-size", "12px")
-             .style("text-decoration", "underline")
-             .text("Sample Similarity Graph").attr("transform", "rotate(-90)")
   }
 
 </script>
