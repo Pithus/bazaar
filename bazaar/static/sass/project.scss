@@ -24,3 +24,38 @@ samp {
   font-size: 0.9em;
 }
 
+.status-loader {
+  --color-1: #000;
+  --size: 0.13px;
+
+  width: calc(48 * var(--size));
+  height: calc(48 * var(--size));
+  border-radius: 50%;
+  display: inline-block;
+  border-top: calc(3 * var(--size)) solid var(--color-1);
+  border-right: calc(3 * var(--size)) solid transparent;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.report-status {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+}
+
+.overflow-box {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
+}

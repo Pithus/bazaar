@@ -55,7 +55,7 @@
                      data-placement="top" title="Has been frosted"></i>
               {% endif %}
             </div>
-            <div class="col-md-4">
+            <div class="col">
               {% if user.is_authenticated %}
                 <div class="text-right">
                   <a href="{% url 'front:download_sample' result.source.apk_hash %}" class="" data-toggle="tooltip"
