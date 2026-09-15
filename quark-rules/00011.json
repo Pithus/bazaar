@@ -13,7 +13,7 @@
             "descriptor": "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;"
         }
     ],
-    "score": 1.99,
+    "score": 2.36,
     "label": [
         "sms",
         "calllog",

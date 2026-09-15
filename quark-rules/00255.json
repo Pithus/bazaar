@@ -13,7 +13,7 @@
             "descriptor": "(Ljava/lang/Object;)Z"
         }
     ],
-    "score": -0.12,
+    "score": -0.16,
     "label": [
         "accessibility service",
         "control"

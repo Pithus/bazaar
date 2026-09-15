@@ -13,7 +13,7 @@
             "method": "isDirectory"
         }
     ],
-    "score": 0.29,
+    "score": 0.18,
     "label": [
         "file"
     ]
