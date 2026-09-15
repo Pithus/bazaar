@@ -16,7 +16,6 @@ from bazaar.core.modules import (
     pithus,
     quarkengine,
     similarity,
-    threat_hunting,
     virus_total,
 )
 
@@ -88,10 +87,10 @@ class Command(BaseCommand):
                 async_task(quarkengine.analysis, sha256)
             if 'g' in tasks:
                 print(f'Start andro_cfg for {sha256}')
-                androcfg(sha256, force=True)
+                async_task(androcfg.analysis(sha256, force=True))
             if 'y' in tasks:
                 print(f'Start yara_analysis for {sha256}')
-                threat_hunting.yara_analysis(sha256)
+                pithus.yara_analysis(sha256)
 
         except Exception as e:
             logging.exception(e)

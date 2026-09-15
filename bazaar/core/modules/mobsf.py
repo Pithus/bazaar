@@ -62,7 +62,7 @@ def analysis(sha256):
 
     es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': 1}},
               retry_on_conflict=5)
-    mobsf = MobSF(settings.MOBSF_SERVER, settings.MOBSF_TOKEN)
+    mobsf = MobSF(settings.MOBSF_TOKEN, settings.MOBSF_SERVER)
 
     try:
         with NamedTemporaryFile() as f:
