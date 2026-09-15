@@ -1,4 +1,4 @@
-from .base import *
+from .base import *  # noqa
 from .base import env
 
 # GENERAL
