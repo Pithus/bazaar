@@ -13,7 +13,7 @@
             "descriptor": "(Ljava/lang/String;)Ljava/lang/reflect/Field;"
         }
     ],
-    "score": 1.71,
+    "score": 1.6,
     "label": [
         "reflection",
         "evasion"
