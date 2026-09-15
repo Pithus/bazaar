@@ -97,7 +97,7 @@ services:
       start_period: 20s
 
   mobsf:
-    image: opensecurity/mobile-security-framework-mobsf:v4.4.6
+    image: opensecurity/mobile-security-framework-mobsf:v4.5.2
     hostname: mobsf
     ports:
       - 8181:8000
