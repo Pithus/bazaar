@@ -1,4 +1,4 @@
-from .base import *  # noqa
+from .base import *
 from .base import env
 
 # GENERAL
@@ -33,7 +33,7 @@ EMAIL_PORT = 1025
 # WhiteNoise
 # ------------------------------------------------------------------------------
 # http://whitenoise.evans.io/en/latest/django.html#using-whitenoise-in-development
-INSTALLED_APPS = ["whitenoise.runserver_nostatic"] + INSTALLED_APPS
+INSTALLED_APPS = ["whitenoise.runserver_nostatic"] + INSTALLED_APPS  # noqa F405
 
 
 # # django-debug-toolbar
@@ -62,4 +62,4 @@ INSTALLED_APPS += ["django_extensions"]  # noqa F405
 
 # Your stuff...
 # ------------------------------------------------------------------------------
-REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]['user'] = '100/minute'
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]['user'] = '100/minute'  # noqa F405
