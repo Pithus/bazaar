@@ -24,13 +24,14 @@ class MobSF:
         return self.__apikey
 
     def status(self):
-        return requests.post(f'{self.__server}/api/v1/tasks', timeout=1).status_code
+        return requests.post(f'{self.__server}/api/v1/tasks', timeout=10).status_code
 
     def upload(self, filename, file):
         """Upload an app."""
         logger.debug(f"Uploading {filename} to {self.__server}")
 
         multipart_data = {'file': (filename, file, 'application/octet-stream')}
+        headers = {'Authorization': self.__apikey}
 
         r = requests.post(f'{self.__server}/api/v1/upload', files=multipart_data, headers=headers, timeout=120)
 
