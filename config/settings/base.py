@@ -59,7 +59,7 @@ DJANGO_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "django.contrib.humanize", # Handy template tags
+    "django.contrib.humanize", # Handy template tags
     "django.contrib.admin",
     "django.forms",
 ]
@@ -70,6 +70,7 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.github",
+    "allauth.usersessions",
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
@@ -285,17 +286,20 @@ ACCOUNT_ADAPTER = "allauth.account.adapter.DefaultAccountAdapter"
 SOCIALACCOUNT_ADAPTER = "allauth.socialaccount.adapter.DefaultSocialAccountAdapter"
 
 SOCIALACCOUNT_PROVIDERS = {
-    "github": {
-        # For each provider, you can choose whether or not the
-        # email address(es) retrieved from the provider are to be
-        # interpreted as verified.
-        "VERIFIED_EMAIL": True,
-        "APP": {
-            "client_id": "<client id>",
-            "secret": "<secret>",
-        }
-    },
+    # "github": {
+    #     For each provider, you can choose whether or not the
+    #     email address(es) retrieved from the provider are to be
+    #     interpreted as verified.
+    #     /!\ Don't add this if you are using dango admin to set those settings.
+    #     "VERIFIED_EMAIL": True,
+    #     "APP": {
+    #         "client_id": "<client-id>",
+    #         "secret": "<secret>",
+    #     }
+    # },
 }
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # django-compressor
 # ------------------------------------------------------------------------------
@@ -376,3 +380,5 @@ PROMETHEUS_EXPORT_MIGRATIONS = False
 MOBSF_SERVER = env("MOBSF_SERVER", default="http://mobsf:8000")
 # Default token for internal use only
 MOBSF_TOKEN = env("MOBSF_API_KEY", default='515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9')  # nosec
+
+DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=3)  # noqa F405

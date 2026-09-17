@@ -74,6 +74,7 @@ services:
     environment:
       - "discovery.type=single-node"
       - "ES_JAVA_OPTS=-Xms2000m -Xmx2000m"
+      - "xpack.security.enabled=false"
     env_file:
       - ./.envs/.local/.elastic
     ulimits:
