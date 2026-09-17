@@ -1,7 +1,6 @@
 import logging
-
 import requests
-
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 DEFAULT_SERVER = 'http://127.0.0.1:8000'
