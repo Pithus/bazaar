@@ -289,13 +289,17 @@ class StatusView:
             workers[str(cluster.cluster_id)[:8]] = cluster.status
         status["django_q_workers"] = workers
 
-        msf_code = MobSF(settings.MOBSF_TOKEN, settings.MOBSF_SERVER).status()
-        if msf_code == 200:
-            msfstatus = True
-            message = "OK"
-        else:
+        try:
+            msf_code = MobSF(settings.MOBSF_TOKEN, settings.MOBSF_SERVER).status()
+            if msf_code <= 400:
+                msfstatus = True
+                message = "OK"
+            else:
+                msfstatus = False
+                message = http_responses[msf_code]
+        except requests.Timeout:
             msfstatus = False
-            message = http_responses[msf_code]
+            message = "Connection timed out"
         status["mobsf"] = {"status": msfstatus, "message": message}
 
         headers = {"Auth-Key": settings.MALWARE_BAZAAR_API_KEY}
