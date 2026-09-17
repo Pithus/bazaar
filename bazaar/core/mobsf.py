@@ -24,7 +24,8 @@ class MobSF:
         return self.__apikey
 
     def status(self):
-        return requests.post(f'{self.__server}/api/v1/tasks', timeout=10).status_code
+        headers = {'Authorization': settings.MOBSF_TOKEN}
+        return requests.post(f'{self.__server}/api/v1/tasks', timeout=10, headers=headers).status_code
 
     def upload(self, filename, file):
         """Upload an app."""
