@@ -445,6 +445,8 @@ def compute_genetic_analysis(results):
         except Exception:
             pass  # No genom found
 
+    if len(data) < 1:
+        return None
     distances = pdist(list(data.values()))  # compute distance over all dimensions
     normalized_dist = normalize(distances)
     z = linkage(normalized_dist)
