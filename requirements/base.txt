@@ -19,6 +19,7 @@ crispy-bootstrap4==2026.2
 django_compressor==4.6.0
 django-redis==6.0.0
 django-extensions==4.1
+django-storages[s3]
 
 # Django REST Framework
 djangorestframework==3.16.1

@@ -59,7 +59,7 @@ DJANGO_APPS = [
     "django.contrib.sites",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "django.contrib.humanize", # Handy template tags
+    "django.contrib.humanize",  # Handy template tags
     "django.contrib.admin",
     "django.forms",
 ]
@@ -70,6 +70,7 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.github",
+    "allauth.usersessions",
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
@@ -166,13 +167,22 @@ MEDIA_ROOT = str(APPS_DIR / "media")
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-url
 MEDIA_URL = "/media/"
 
-DEFAULT_FILE_STORAGE = "minio_storage.storage.MinioMediaStorage"
-MINIO_STORAGE_ENDPOINT = 'rustfs:9000'
-MINIO_STORAGE_ACCESS_KEY = env('RUSTFS_ACCESS_KEY')
-MINIO_STORAGE_SECRET_KEY = env('RUSTFS_SECRET_KEY')
-MINIO_STORAGE_USE_HTTPS = False
-MINIO_STORAGE_MEDIA_BUCKET_NAME = 'local-media'
-MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = True
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "endpoint_url": "http://rustfs:9000",
+            "access_key": env("RUSTFS_ACCESS_KEY"),
+            "secret_key": env("RUSTFS_SECRET_KEY"),
+            "bucket_name": "local-media",
+            "addressing_style": "path",
+            "default_acl": None,
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 # TEMPLATES
 # ------------------------------------------------------------------------------
@@ -285,17 +295,20 @@ ACCOUNT_ADAPTER = "allauth.account.adapter.DefaultAccountAdapter"
 SOCIALACCOUNT_ADAPTER = "allauth.socialaccount.adapter.DefaultSocialAccountAdapter"
 
 SOCIALACCOUNT_PROVIDERS = {
-    "github": {
-        # For each provider, you can choose whether or not the
-        # email address(es) retrieved from the provider are to be
-        # interpreted as verified.
-        "VERIFIED_EMAIL": True,
-        "APP": {
-            "client_id": "<client id>",
-            "secret": "<secret>",
-        }
-    },
+    # "github": {
+    #     For each provider, you can choose whether or not the
+    #     email address(es) retrieved from the provider are to be
+    #     interpreted as verified.
+    #     /!\ Don't add this if you are using dango admin to set those settings.
+    #     "VERIFIED_EMAIL": True,
+    #     "APP": {
+    #         "client_id": "<client-id>",
+    #         "secret": "<secret>",
+    #     }
+    # },
 }
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
 
 # django-compressor
 # ------------------------------------------------------------------------------
@@ -376,3 +389,5 @@ PROMETHEUS_EXPORT_MIGRATIONS = False
 MOBSF_SERVER = env("MOBSF_SERVER", default="http://mobsf:8000")
 # Default token for internal use only
 MOBSF_TOKEN = env("MOBSF_API_KEY", default='515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9')  # nosec
+
+DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=3)  # noqa F405
