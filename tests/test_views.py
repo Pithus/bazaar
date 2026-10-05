@@ -22,11 +22,11 @@ from bazaar.front.view import (
     download_sample_view,
     export_report_view,
     og_card_view,
-    my_rules_view,
     my_rule_create_view,
     my_rule_edit_view,
     my_rule_delete_view,
     my_retrohunt_view,
+    workspace_view,
 )
 
 
@@ -212,21 +212,21 @@ def test_og_card_view(mock_gen, report_data, rf: RequestFactory):
 
 
 # Test Rules
-def test_my_rules_view_unauth(rf: RequestFactory):
-    request = rf.get("/rules/")
+def test_workspaces(rf: RequestFactory):
+    request = rf.get("/workspace/")
     request.user = AnonymousUser()
 
-    response = my_rules_view(request)
+    response = workspace_view(request)
     assert response.status_code == 302
     assert response.url == "/"
 
 
 @pytest.mark.django_db
-def test_my_rules_view(user: User, rf: RequestFactory):
-    request = rf.get("/rules/")
+def test_workspaces(user: User, rf: RequestFactory):
+    request = rf.get("/workspace/")
     request.user = user
 
-    response = my_rules_view(request)
+    response = workspace_view(request)
     assert response.status_code == 200
 
 
@@ -250,7 +250,7 @@ def test_my_rule_create_view(yara_rule, user: User, rf: RequestFactory):
     response = my_rule_create_view(request)
 
     assert response.status_code == 302
-    assert response.url == "/rules/"
+    assert response.url == "/workspace/"
 
 
 def test_my_rule_edit_view_unauth(rf: RequestFactory):
@@ -304,7 +304,7 @@ def test_my_rule_edit_view_post(mock_es_delete, mock_yara_get, yara_rule, user: 
 
     response = my_rule_edit_view(request, uuid)
     assert response.status_code == 302
-    assert response.url == '/rules/'
+    assert response.url == '/workspace/'
 
 
 def test_my_rule_delete_view_unauth(rf: RequestFactory):
@@ -341,7 +341,7 @@ def test_my_rule_delete_view(mock_es_delete, mock_yara_delete, mock_yara_get, us
     response = my_rule_delete_view(request, uuid)
     assert mock_yara_delete.call_count == 1
     assert response.status_code == 302
-    assert response.url == '/rules/'
+    assert response.url == '/workspace/'
 
 
 def test_my_retrohunt_view_unauth(rf: RequestFactory):
@@ -369,4 +369,4 @@ def test_my_retrohunt_view(mock_async, mock_messages, user: User, rf: RequestFac
     response = my_retrohunt_view(request, uuid)
     assert mock_messages.call_count == 1
     assert response.status_code == 302
-    assert response.url == '/rules/'
+    assert response.url == '/workspace/'
