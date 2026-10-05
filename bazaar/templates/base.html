@@ -35,10 +35,14 @@
   {% endcompress %}
   {% endblock %}
 
+  {% block js_head %}
+  {% endblock js_head %}
+
 </head>
 
 {% url 'front:home' as home_url %}
 {% url 'about' as about_url %}
+{% url 'front:instance_status' as instance_status %}
 {% url 'front:my_rules' as my_rules_url %}
 {% url 'account_logout' as account_logout_url %}
 {% url 'account_login' as account_login_url %}
@@ -60,6 +64,9 @@
           </li>
           <li class="nav-item{% if request.path == about_url %} active {%endif%}">
             <a class="nav-link" href="{{ about_url }}"><i class="fas fa-question"></i> About</a>
+          </li>
+          <li class="nav-item {% if request.path == instance_status %} active {%endif%}">
+            <a class="nav-link" href="{{ instance_status }}"><i class="fas fa-server"></i> Status</a>
           </li>
           {% if request.user.is_authenticated %}
           </li>

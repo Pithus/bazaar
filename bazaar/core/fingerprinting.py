@@ -6,13 +6,16 @@ import zipfile
 from hashlib import sha256, sha1
 from io import BytesIO
 from tempfile import NamedTemporaryFile
+import urllib.request
+import urllib.parse
 
 from PIL import Image
-from androguard.core import androconf
-from androguard.core.bytecodes.apk import APK
+from androguard.util import set_log
+from androguard.core.apk import APK
+from androguard.core.axml import ResParserError
 
 MAX_IMAGE_SIZE = 96, 96
-androconf.show_logging(logging.ERROR)
+set_log("ERROR")
 
 
 class Certificate:
@@ -22,7 +25,7 @@ class Certificate:
 
     def __init__(self, cert):
         self.fingerprint = binascii.hexlify(cert.sha1).decode('ascii').lower()
-        md5_digest = hashlib.md5(cert.dump()).digest()
+        md5_digest = hashlib.md5(cert.dump(), usedforsecurity=False).digest()
         self.fingerprint_md5 = binascii.hexlify(md5_digest).decode('ascii').lower()
         self.fingerprint_sha1 = binascii.hexlify(cert.sha1).decode('ascii').lower()
         self.fingerprint_sha256 = binascii.hexlify(cert.sha256).decode('ascii').lower()
@@ -63,8 +66,8 @@ def get_check_sums_of_file(file_path):
     :return: list of tuple
     """
     BLOCKSIZE = 65536
-    md5 = hashlib.md5()
-    sha1 = hashlib.sha1()
+    md5 = hashlib.md5(usedforsecurity=False)
+    sha1 = hashlib.sha1(usedforsecurity=False)
     sha256 = hashlib.sha256()
     with open(file_path, 'rb') as apk:
         chunk = apk.read(BLOCKSIZE)
@@ -84,8 +87,8 @@ def get_check_sums_of_file_as_dict(file_path):
     :return: list of tuple
     """
     BLOCKSIZE = 65536
-    md5 = hashlib.md5()
-    sha1 = hashlib.sha1()
+    md5 = hashlib.md5(usedforsecurity=False)
+    sha1 = hashlib.sha1(usedforsecurity=False)
     sha256 = hashlib.sha256()
     with open(file_path, 'rb') as apk:
         chunk = apk.read(BLOCKSIZE)
@@ -102,7 +105,7 @@ def get_check_sums_of_file_as_dict(file_path):
 def get_certificates(apk):
     """
     Returns the signing certificates of the given apk
-    :param apk: apk `androguard.core.bytecodes.apk.APK` object
+    :param apk: apk `androguard.core.apk.APK` object
     :return: list of `scatter_scam_core.utils.Certificate`
     """
     certificates = []
@@ -115,13 +118,13 @@ def get_certificates(apk):
 def compute_uaid(apk):
     """
     Computes the Universal Application ID of the given apk
-    :param apk: apk `androguard.core.bytecodes.apk.APK` object
+    :param apk: apk `androguard.core.apk.APK` object
     :return: str
     """
     parts = [apk.get_package()]
     for c in get_certificates(apk):
         parts.append(c.fingerprint.upper())
-    return sha1(' '.join(parts).encode('utf-8')).hexdigest().lower()
+    return sha1(' '.join(parts).encode('utf-8'), usedforsecurity=False).hexdigest().lower()
 
 
 def icon_to_base64(apk_path, icon_path):
@@ -251,7 +254,10 @@ class ApplicationSignature(object):
         sign.md5 = hashes['md5']
         sign.sha1 = hashes['sha1']
         sign.sha256 = hashes['sha256']
-        sign.icon_base64 = icon_to_base64(apk_path, apk.get_app_icon())
+        try:
+            sign.icon_base64 = icon_to_base64(apk_path, apk.get_app_icon())
+        except ResParserError as e:
+            logging.warn(e)
         sign.icon_hash = compute_dhash_from_base64(sign.icon_base64)
         sign.certificates = get_certificates(apk)
         return sign
@@ -263,10 +269,14 @@ class ApplicationSignature(object):
         :param url: the location of the APK to be analyzed
         :return: the ApplicationSignature, None if the URL is invalid
         """
-        import urllib.request
+
         with NamedTemporaryFile() as apk:
             try:
-                urllib.request.urlretrieve(url, apk.name)
+                parsed = urllib.parse.urlparse(url)
+                if parsed.scheme not in ("http", "https"):
+                    raise ValueError(f"Unsupported URL scheme: {parsed.scheme}")
+                # We checked the url scheme right above, so skip Bandit's warning
+                urllib.request.urlretrieve(url, apk.name)  # nosec: B310
                 return ApplicationSignature.compute_from_apk(apk.name)
             except Exception:
                 return None

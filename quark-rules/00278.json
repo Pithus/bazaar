@@ -1,0 +1,25 @@
+{
+    "crime": "Configure video source and camcorder profile for video capture recording",
+    "permission": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+    ],
+    "api": [
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "setVideoSource",
+            "descriptor": "(I)V"
+        },
+        {
+            "class": "Landroid/media/MediaRecorder;",
+            "method": "setProfile",
+            "descriptor": "(Landroid/media/CamcorderProfile;)V"
+        }
+    ],
+    "score": -0.78,
+    "label": [
+        "camera",
+        "video",
+        "collection"
+    ]
+}

@@ -1,0 +1,22 @@
+{
+    "crime": "Configure custom timeout for IsoDep card communication (NFC reader-mode relay preparation)",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/nfc/tech/IsoDep;",
+            "method": "get",
+            "descriptor": "(Landroid/nfc/Tag;)Landroid/nfc/tech/IsoDep;"
+        },
+        {
+            "class": "Landroid/nfc/tech/IsoDep;",
+            "method": "setTimeout",
+            "descriptor": "(I)V"
+        }
+    ],
+    "score": 1.0,
+    "label": [
+        "nfc",
+        "relay",
+        "collection"
+    ]
+}

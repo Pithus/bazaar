@@ -1,10 +1,9 @@
-version: '3'
 
 volumes:
   local_postgres_data: {}
   local_postgres_data_backups: {}
   local_elasticsearch_data: {}
-  local_minio_data: {}
+  local_rustfs_data: {}
   local_prometheus_data: {}
   local_grafana_data: {}
 
@@ -15,31 +14,41 @@ services:
       dockerfile: ./compose/local/django/Dockerfile
     image: bazaar_local_django
     depends_on:
-      - postgres
-      - redis
-      - elasticsearch
-      - minio
-      - mobsf
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+      rustfs:
+        condition: service_started
+      mobsf:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
     volumes:
       - .:/app:z
     env_file:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
+      - ./.envs/.local/.elastic
     ports:
       - "8001:8000"
     command: /start
 
   redis:
-    image: redis:5.0
+    image: redis:8
 
   worker:
     <<: *django
     image: backend_local_worker
     depends_on:
-      - redis
-      - postgres
-      - elasticsearch
-      - minio
+      postgres:
+        condition: service_started
+      redis:
+        condition: service_started
+      rustfs:
+        condition: service_started
+      elasticsearch:
+        condition: service_healthy
     ports: []
     command: /start-worker
 
@@ -60,11 +69,14 @@ services:
 #      - "8025:8025"
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.19.10
     hostname: elasticsearch
     environment:
       - "discovery.type=single-node"
       - "ES_JAVA_OPTS=-Xms2000m -Xmx2000m"
+      - "xpack.security.enabled=false"
+    env_file:
+      - ./.envs/.local/.elastic
     ulimits:
       memlock:
         soft: -1
@@ -74,18 +86,30 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --user elastic:$$ELASTICSEARCH_PASSWORD -X GET http://localhost:9200/_cluster/health?pretty | grep status | grep -Eq '(green|yellow)'"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 50
+      start_period: 20s
 
   mobsf:
-    image: opensecurity/mobile-security-framework-mobsf:v3.4.6
+    image: opensecurity/mobile-security-framework-mobsf:v4.5.2
     hostname: mobsf
     ports:
       - 8181:8000
     environment:
       - "MOBSF_API_ONLY=0"
       - "MOBSF_API_KEY=515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9"
+      - "MOBSF_NIAP_ENABLED=1"
+      - "MOBSF_CVSS_SCORE_ENABLED=1"
 
   kibana:
-    image: kibana:7.7.0
+    image: kibana:8.19.10
     hostname: kibana
     ports:
       - 5601:5601
@@ -93,16 +117,17 @@ services:
       - elasticsearch:elasticsearch
     depends_on:
       - elasticsearch
+    env_file:
+      - ./.envs/.local/.elastic
 
-  minio:
-    image: minio/minio:RELEASE.2020-11-13T20-10-18Z
+  rustfs:
+    image: rustfs/rustfs:latest
     volumes:
-      - local_minio_data:/data
+      - local_rustfs_data:/data
     env_file:
       - ./.envs/.local/.django
-    command: server /data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health/ready"]
       interval: 30s
       timeout: 20s
       retries: 3

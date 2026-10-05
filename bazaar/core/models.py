@@ -41,7 +41,10 @@ class Yara(models.Model):
 
     @staticmethod
     def find_public_hunting_matches(sha256):
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+        es = Elasticsearch(
+            settings.ELASTICSEARCH_HOSTS,
+            basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+        )
         public_index, _ = Yara.get_es_index_names()
         q = {
             'query': {

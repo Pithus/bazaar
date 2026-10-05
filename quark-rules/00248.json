@@ -1,0 +1,20 @@
+{
+    "crime": "Establish a connection to an NFC card",
+    "permission": [],
+    "api": [
+        {
+            "descriptor": "(Landroid/nfc/Tag;)Landroid/nfc/tech/IsoDep;",
+            "class": "Landroid/nfc/tech/IsoDep;",
+            "method": "get"
+        },
+        {
+            "descriptor": "()V",
+            "class": "Landroid/nfc/tech/IsoDep;",
+            "method": "connect"
+        }
+    ],
+    "score": 0.34,
+    "label": [
+        "nfc"
+    ]
+}

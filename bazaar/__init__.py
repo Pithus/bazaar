@@ -10,4 +10,3 @@ from bazaar.core.init_es import init_es, init_fuzzy_match_es
 
 init_es()
 init_fuzzy_match_es()
-

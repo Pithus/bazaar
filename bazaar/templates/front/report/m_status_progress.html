@@ -1,20 +1,86 @@
 <div class="col">
+  <script>
+    let taskId = "{{ result.sha256 }}";
+
+    function beautifyStatus(JsonStatus, onlyFails=false) {
+      htmlDoc = '<br>';
+      for (var key in JsonStatus) {
+        if (key == 'analysis_date') {
+          continue;
+        }
+        if (onlyFails && JsonStatus[key] != -1) {
+          continue
+        }
+        line = `${key}: `
+        if (JsonStatus[key] == 2) {
+          line += 'done <span style="color: green">&#10003;</span>'
+        } else if (JsonStatus[key] == 1) {
+          line += 'running <div class="status-loader"></div>'
+        } else {
+          line += 'failed <span style="color: red">&#10007;</span>'
+        }
+        htmlDoc += `${line}<br>`
+      }
+      return htmlDoc
+    }
+
+    async function getStatus(sha256) {
+      let apiUrl = `/api/report/${sha256}/status`;
+
+      response = await fetch(apiUrl);
+      return response.json();
+    }
+  </script>
+
   {% if status.running %}
     <div class="alert alert-secondary" role="alert">
       <div class="spinner-border  spinner-border-sm text-primary mr-2" role="status">
         <span class="sr-only">Loading...</span>
       </div>
-    <span class="small">
-      the analysis is still running, refresh this page in few minutes by pressing <kbd>F5</kbd>.
+      <span class="small">
+        The analysis is still running…
+        <div id="report-status" class="small">
+        </div>
       </span>
-     <a href="https://github.com/Pithus/bazaar/discussions" class="small" target="_blank"> Something seems to be broken? Contact us!</a>
     </div>
+
+    <script>
+      async function refreshStatus() {
+        let statusDom = document.querySelector("#report-status")
+        let status = await getStatus(taskId);
+
+        if (status.report_status.running == false) {
+          clearInterval(interval);
+          location.reload();
+        }
+        else {
+          statusDom.innerHTML = beautifyStatus(status.detailed_status);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", async function(event) {
+        await refreshStatus();  
+        var interval = setInterval(async () => {
+            await refreshStatus();
+          }, 60000);
+      });
+    </script>
   {% elif status.in_error %}
-    <div class="alert alert-secondary" role="alert">
+    <div class="alert alert-secondary" data-toggle="collapse" data-target="#report-status" 
+          aria-expanded="false" aria-controls="status-loader" role="alert">
     <span class="small">
-      At least one step of the analysis has failed, we have been notified. Don't worry, the devil is in the details.
+      At least one step of the analysis has failed. (Click for details)
       </span>
-     <a href="https://github.com/Pithus/bazaar/discussions" class="small" target="_blank"> Something seems to be broken? Contact us!</a>
+      <div id="report-status" class="small collapse">
+      </div>
+      <script>
+        let statusDom = document.querySelector("#report-status")
+        document.addEventListener("DOMContentLoaded", function(event) {
+          getStatus(taskId).then((status) => {
+            statusDom.innerHTML = beautifyStatus(status.detailed_status, true);
+          });
+        });
+      </script>
     </div>
   {% endif %}
 </div>

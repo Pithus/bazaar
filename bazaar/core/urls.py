@@ -1,13 +1,21 @@
 from django.urls import path
 
-from bazaar.core.api_view import *
+from bazaar.core.api_view import (
+    ReportView,
+    ApkView,
+    SearchView,
+    StatusView
+)
 
 app_name = "core"
 urlpatterns = [
-    path("hello", hello_world, name="bazaar-api"),
-    path("upload", apk_upload, name="bazaar-api"),
-    path("report/<str:sha256>", apk_analysis_report, name="bazaar-api"),
-    path("status/<str:sha256>", analysis_tasks_status, name="bazaar-api"),
-    path("exists/<str:sha256>", sample_exists, name="bazaar-api"),
-    path("search/", search, name="bazaar-api"),
+    path("report/", view=ReportView.list_reports, name="api-list-reports"),
+    path("report/example", view=ReportView.get_example, name="api-report-example"),
+    path("report/<str:sha256>", view=ReportView.get_report, name="api-get-report"),
+    path("report/<str:sha256>/status", view=ReportView.get_report_status, name="api-report-status"),
+    path("report/<str:sha256>/exists", view=ReportView.get_report_exists, name="api-report-exists"),
+    path("apk/", view=ApkView.apk_handler, name="api-apk-handler"),
+    path("apk/<str:sha256>", view=ApkView.download_sample, name="api-apk-download"),
+    path("search/", view=SearchView.search, name="api-seach"),
+    path("status", view=StatusView.get, name="instance-view")
 ]

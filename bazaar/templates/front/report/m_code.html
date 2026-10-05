@@ -1,13 +1,14 @@
 {% load get %}
 
 <table class="table table-condensed table-responsive-md">
-  {% for p in d.code_analysis %}
+  {% for id, p in d.code_analysis.0.items %}
+  {% if id != "_name" %}
     <tr>
       <td class="">{% include "front/report/m_severity.html" with s=p.metadata.severity %}<br>CVSS:{{ p.metadata.cvss }}
         <br>
-        <a class="btn btn-sm btn-light btn-primary" data-toggle="collapse" href="#{{ p.metadata.id }}" role="button"
+        <a class="btn btn-sm btn-light btn-primary" data-toggle="collapse" href="#{{ id }}" role="button"
            aria-expanded="false"
-           aria-controls="{{ p.metadata.id }}">
+           aria-controls="{{ id }}">
           <i class="fa fa-eye"></i>
         </a>
       </td>
@@ -26,14 +27,15 @@
         {% if p.metadata|get:"owasp-mobile" %}
           <span class="small text-muted">{{ p.metadata|get:"owasp-mobile" }}</span><br>
         {% endif %}
-        <div class="collapse mt-2" id="{{ p.metadata.id }}">
+        <div class="collapse mt-2" id="{{ id }}">
           Files:
-          <div class="small">
+          <div class="small overflow-box">
             <pre><code>{% for f in p.files %} {{ f }}<br>{% endfor %}</code></pre>
           </div>
         </div>
 
       </td>
     </tr>
+    {% endif %}
   {% endfor %}
 </table>

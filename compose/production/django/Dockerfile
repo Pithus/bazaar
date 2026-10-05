@@ -1,5 +1,5 @@
 
-FROM python:3.8-slim-buster
+FROM python:3.13.10-trixie
 
 ENV PYTHONUNBUFFERED 1
 
@@ -16,12 +16,27 @@ RUN apt-get update \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
 
+RUN mkdir -p /home/django 
 RUN addgroup --system django \
-    && adduser --system --ingroup django django
+    && adduser --system --ingroup django django --home /home/django
+RUN chmod 775 /home/django && chown django:django /home/django
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
 RUN pip install --upgrade pip
+
+# Special SSDEEP edge case
+# AndroCFG requires ssdeep==3.4, but since setuptools dropped support of pkg_resources, install always fail
+# This is a temporary fix until:
+#   1) This PR gets merged https://github.com/DinoTools/python-ssdeep/pull/70
+#   2) AndroCFG bumps ssdeep requirements to version 3.4.2 specified in above patch
+RUN git clone https://github.com/DinoTools/python-ssdeep.git /python-ssdeep
+COPY ./requirements/ssdeep.patch /python-ssdeep/ssdeep.patch
+WORKDIR /python-ssdeep
+RUN git apply ssdeep.patch
+RUN python -m pip install /python-ssdeep
+WORKDIR /
+
 RUN pip install --no-cache-dir -r /requirements/production.txt \
     && rm -rf /requirements
 

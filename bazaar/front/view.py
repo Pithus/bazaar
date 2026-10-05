@@ -1,9 +1,6 @@
 import logging
 from tempfile import NamedTemporaryFile
-import requests
-import hashlib
 
-from androguard.core.androconf import is_android
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
@@ -17,8 +14,7 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from django_q.tasks import async_task
-from elasticsearch import Elasticsearch
-from elasticsearch.helpers.actions import scan
+
 from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse_lazy
 from pygments import highlight
@@ -26,14 +22,19 @@ from pygments.formatters import HtmlFormatter
 from pygments.lexers.jvm import JavaLexer
 from androcfg.code_style import U39bStyle
 
+from bazaar.core.services import ReportService
+from bazaar.core.services import ApkService
+from bazaar.core.services import SearchService
+from bazaar.core.services import RulesService
+from bazaar.core.services import GenomService
 
 from bazaar.core.models import Yara
-from bazaar.core.tasks import analyze, retrohunt
-from bazaar.core.utils import get_sha256_of_file, get_matching_items_by_dexofuzzy
+from bazaar.core.modules.pithus import retrohunt
+from bazaar.core.utils import get_matching_items_by_dexofuzzy
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm
 from bazaar.front.og import generate_og_card
-from bazaar.front.utils import transform_results, get_similarity_matrix, compute_status, generate_world_map, \
-    transform_hl_results, get_sample_timeline, get_andro_cfg_storage_path
+from bazaar.front.utils import get_similarity_matrix, generate_world_map, \
+    get_sample_timeline, get_andro_cfg_storage_path
 from .forms import YaraCreateForm
 
 
@@ -41,23 +42,8 @@ from .forms import YaraCreateForm
 class HomeView(View):
 
     def get(self, request, *args, **kwargs):
-        # Gets the latest complete report as an example
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
-        q = {
-            "size": 1,
-            "sort": {"analysis_date": "desc"},
-            "query": {
-                "match_all": {}
-            },
-            "_source": ["handle", "apk_hash", "quark"]
-        }
-        report_example = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=q)
-        tmp = transform_results(report_example)
-        if tmp:
-            report_example = tmp[0]
-        else:
-            report_example = tmp
 
+        report_example = ReportService.get_example()
         q = None
         matrix = None
         results = None
@@ -107,11 +93,9 @@ class ReportView(View):
             return cached_report
 
         # Not cached so, let's compute the report
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
         try:
-            result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha)['_source']
-            status = es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha)['_source']
-            status = compute_status(status)
+            result = ReportService.get_report(sha)
+            status = ReportService.get_status(sha)
 
             # Generate map
             map_svg = None
@@ -128,16 +112,16 @@ class ReportView(View):
                         dexofuzzy_hash,
                         25,
                         settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, sha)
-            except Exception:
-                pass
+            except Exception as e:
+                logging.error(e)
 
             if similar_samples:
                 res = []
                 for sha256, score in similar_samples:
-                    apk = get_sample_light(sha256)
+                    apk = SearchService.light_sample_search(sha256)
                     try:
                         vt = apk[0]['source']['vt']
-                    except:
+                    except Exception:
                         vt = None
                     res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
 
@@ -147,7 +131,7 @@ class ReportView(View):
             hunting_matches = Yara.find_public_hunting_matches(sha)
 
             # Adapt caching depending on the status of the analysis
-            cache_retention_time = 5
+            cache_retention_time = 2
             if not status['running']:
                 cache_retention_time = 600
 
@@ -168,35 +152,29 @@ class ReportView(View):
             return redirect(reverse_lazy('front:home'))
 
 
+def report_status_view(request, sha256):
+    try:
+        report_status = ReportService.get_status(sha256)
+    except Exception:
+        return redirect(reverse_lazy('front:home'))
+    return JsonResponse(report_status)
+
+
 def basic_url_download_view(request):
     if not request.user.is_authenticated:
         return redirect(reverse_lazy('front:home'))
+
     if request.method == 'POST':
         form = BasicUrlDownloadForm(request.POST)
         if form.is_valid():
             url = form.cleaned_data.get('url')
-            res = requests.get(url, stream=True)
-
-            if res.status_code not in [200, 301, 302]:
-                messages.warning(request, 'URL is not available.')
+            try:
+                sha256 = ApkService.upload_from_url(url)
+            except Exception as e:
+                messages.warning(request, e)
                 return redirect(reverse_lazy('front:home'))
 
-            sha256_hash = hashlib.sha256()
-            with NamedTemporaryFile() as tmp:
-                for chunk in res.iter_content(chunk_size=16 * 1024):
-                    tmp.write(chunk)
-                    sha256_hash.update(chunk)
-
-                sha256 = str(sha256_hash.hexdigest()).lower()
-                if is_android(tmp.name) != 'APK':
-                    messages.warning(request, 'Submitted file is not a valid APK.')
-
-                if default_storage.exists(sha256):
-                    return redirect(reverse_lazy('front:report', [sha256]))
-                else:
-                    default_storage.save(sha256, tmp)
-                    analyze(sha256)
-                    return redirect(reverse_lazy('front:report', [sha256]))
+            return redirect(reverse_lazy('front:report', [sha256]))
 
     return redirect(reverse_lazy('front:home'))
 
@@ -206,27 +184,13 @@ def basic_upload_view(request):
         form = BasicUploadForm(request.POST, request.FILES)
         if form.is_valid():
             apk = request.FILES['apk']
-            if apk.size > settings.MAX_APK_UPLOAD_SIZE:
-                messages.warning(request, 'Submitted file is too large.')
+            try:
+                sha256 = ApkService.upload_apk(apk)
+            except Exception as e:
+                messages.warning(request, e)
                 return redirect(reverse_lazy('front:home'))
 
-            with NamedTemporaryFile() as tmp:
-                for chunk in apk.chunks():
-                    tmp.write(chunk)
-                tmp.seek(0)
-
-                if is_android(tmp.name) != 'APK':
-                    messages.warning(request, 'Submitted file is not a valid APK.')
-                    return redirect(reverse_lazy('front:home'))
-
-                sha256 = get_sha256_of_file(tmp)
-                if default_storage.exists(sha256):
-                    # analyze(sha256, force=True)
-                    return redirect(reverse_lazy('front:report', [sha256]))
-                else:
-                    default_storage.save(sha256, tmp)
-                    analyze(sha256)
-                    return redirect(reverse_lazy('front:report', [sha256]))
+            return redirect(reverse_lazy('front:report', [sha256]))
 
     return redirect(reverse_lazy('front:home'))
 
@@ -239,10 +203,10 @@ def similarity_search_view(request, sha256=''):
         if form.is_valid():
             results = form.do_search(sha256)
             for sha256, score in results:
-                apk = get_sample_light(sha256)
+                apk = SearchService.light_sample_search(sha256)
                 try:
                     vt = apk[0]['source']['vt']
-                except:
+                except Exception:
                     vt = None
 
                 res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
@@ -257,10 +221,10 @@ def download_sample_view(request, sha256):
         return redirect(reverse_lazy('front:home'))
 
     if request.method == 'GET':
-        if not default_storage.exists(sha256):
+        if not ApkService.sample_exists(sha256):
             return redirect(reverse_lazy('front:home'))
 
-        response = HttpResponse(default_storage.open(sha256).read(),
+        response = HttpResponse(ApkService.download_sample(sha256),
                                 content_type="application/vnd.android.package-archive")
         response['Content-Disposition'] = f'inline; filename=pithus_sample_{sha256}.apk'
         return response
@@ -271,9 +235,8 @@ def export_report_view(request, sha256):
         return redirect(reverse_lazy('front:home'))
 
     if request.method == 'GET':
-        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
         try:
-            result = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
+            result = ReportService.get_report(sha256)
             response = JsonResponse(result)
             response['Content-Disposition'] = f'attachment; filename=pithus_report_{sha256}.json'
             return response
@@ -295,10 +258,10 @@ def my_rules_view(request):
         return redirect(reverse_lazy('front:home'))
 
     my_rules = None
-    if request.method == 'GET':
-        my_rules = get_rules(request)
-
     owner = request.user
+    if request.method == 'GET':
+        my_rules = RulesService.get_rules(owner)
+
     token, _ = Token.objects.get_or_create(user=owner)
 
     return render(request, 'front/yara_rules/my_rules.html', context={'my_rules': my_rules, 'my_token': token.key})
@@ -342,7 +305,7 @@ def my_rule_edit_view(request, uuid):
             new_rule.owner = request.user
             new_rule.last_update = timezone.now()
             new_rule.save()
-            delete_es_matches(request, rule)
+            RulesService.delete_es_matches(request.user, rule)
             messages.success(request, 'Your rule has been updated!')
         except Exception:
             return render(request, 'front/yara_rules/my_rule_edit.html', {'form': new_rule})
@@ -358,115 +321,24 @@ def my_rule_delete_view(request, uuid=None):
     if request.method == 'GET':
         rule = Yara.objects.get(id=uuid)
         try:
-            delete_es_matches(request, rule)
+            RulesService.delete_es_matches(request.user, rule)
             rule.delete()
             messages.success(request, 'Your rule has been deleted.')
             return redirect(reverse_lazy('front:my_rules'))
-        except Exception as e:
-            logging.exception(e)
+        except Exception:
+            messages.warning(request, 'An error occured while deleting your rule.')
             return redirect(reverse_lazy('front:my_rules'))
 
 
-def delete_es_matches(request, rule):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
-    public_es_index, private_es_index = Yara.get_es_index_names(request.user)
-    q = {'query': {
-        'match': {
-            'rule': rule.id,
-        }
-    }}
-    if rule.is_private:
-        try:
-            es.delete_by_query(index=private_es_index, body=q)
-        except Exception as e:
-            logging.exception(e)
-    elif not rule.is_private:
-        try:
-            es.delete_by_query(index=public_es_index, body=q)
-        except Exception as e:
-            logging.exception(e)
-    else:
-        pass
-
-    return
-
-
-def get_rules(request):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
-    yara_rules = Yara.objects.filter(owner=request.user)
-    public_es_index, private_es_index = Yara.get_es_index_names(request.user)
-    q = {
-        'query': {
-            'terms': {
-                'owner': [request.user.id]
-            }
-        },
-        'size': 5000,
-    }
-
-    public_matches, private_matches = None, None
-    try:
-        private_matches = es.search(index=private_es_index, body=q)['hits']['hits']
-    except:
-        pass
-
-    try:
-        public_matches = es.search(index=public_es_index, body=q)['hits']['hits']
-    except:
-        pass
-
-    my_rules = []
-    for rule in yara_rules:
-        my_rule = {
-            'rule': rule,
-            'matching_date': '',
-            'matches': [],
-        }
-        if rule.is_private and private_matches:
-            for match in private_matches:
-                if match['_source']['rule'] == str(rule.id):
-                    m = match['_source']
-                    m['sample'] = get_sample_light(match['_source']['matches']['apk_id'])
-                    my_rule['matches'].append(m)
-        elif not rule.is_private and public_matches:
-            for match in public_matches:
-                if match['_source']['rule'] == str(rule.id):
-                    m = match['_source']
-                    m['sample'] = get_sample_light(match['_source']['matches']['apk_id'])
-                    my_rule['matches'].append(m)
-        my_rules.append(my_rule)
-
-    return my_rules
-
-
-def get_sample_light(sha256):
-    query = {
-        "query": {
-            "match": {
-                "apk_hash": sha256
-            }
-        },
-        "_source": ["apk_hash", "sha256", "uploaded_at", "icon_base64", "handle", "app_name",
-                    "version_code", "size", "dexofuzzy.apk", "quark.threat_level", "vt", "malware_bazaar",
-                    "is_signed", "frosting_data.is_frosted", "features"],
-        "size": 1,
-    }
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
-    try:
-        results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
-        results = transform_hl_results(results)
-        return results
-    except Exception:
-        return []
-
-
 def my_retrohunt_view(request, uuid):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
     # TODO: add a cap on user use
     try:
-        async_task(retrohunt, uuid)
+        async_task(retrohunt, request)
         messages.success(request, 'The retrohunt has been launched.')
-    except Exception as e:
-        logging.exception(e)
+    except Exception:
+        messages.warning(request, 'An error occured launching retrohunt.')
 
     return redirect(reverse_lazy('front:my_rules'))
 
@@ -489,25 +361,11 @@ def get_andgrocfg_code(request, sha256, foo):
 
 
 def get_genom(request):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
-    entire_genom = []
-    for report in scan(
-        es,
-        query={"query": {"match_all": {}}},
-        index=settings.ELASTICSEARCH_APK_INDEX,
-    ):
-        sha256 = report.get('_source').get('sha256')
-        genom = None
-        threat = 'unknown'
-        try:
-            genom = report.get('_source').get('andro_cfg').get('genom')
-            threat = report.get('_source').get('vt_report').get('attributes').get(
-                'popular_threat_classification').get('suggested_threat_label')
-        except Exception:
-            pass
-        if genom:
-            entire_genom.append(f'{sha256}-{threat},{genom}')
-
-    response = HttpResponse('\n'.join(entire_genom), content_type='text/csv')
-    response['Content-Disposition'] = f'inline; filename=pithus_genom.csv'
+    genom = GenomService.get_genom()
+    response = HttpResponse('\n'.join(genom), content_type='text/csv')
+    response['Content-Disposition'] = 'inline; filename=pithus_genom.csv'
     return response
+
+
+def instance_status(request):
+    return render(request, 'front/instance_status.html')

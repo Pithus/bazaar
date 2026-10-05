@@ -16,7 +16,6 @@ $(function () {
     })
 })
 
-
 function hashfile(file_selector, upload_btn, report_btn) {
     return readbinaryfile(file_selector.files[0])
         .then(function (result) {
@@ -25,8 +24,8 @@ function hashfile(file_selector, upload_btn, report_btn) {
         }).then(function (result) {
             result = new Uint8Array(result);
             const hash = Uint8ArrayToHexString(result);
-            $.ajax(`/api/exists/${hash}`).done(function (data){
-                if(data.ret_code == 0){
+            $.ajax(`/report/${hash}/status`).done(function (data){
+                if(data.analysis_launched === true ||  data.running === true) {
                     report_btn.attr('href', data.report_url)
                     report_btn.show()
                 } else {

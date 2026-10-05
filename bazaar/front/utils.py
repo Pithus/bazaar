@@ -11,22 +11,6 @@ from django.conf import settings
 from elasticsearch import Elasticsearch
 
 
-def transform_results(results):
-    return [doc['_source'] for doc in results['hits']['hits']]
-
-
-def transform_hl_results(results):
-    ret = []
-    for doc in results['hits']['hits']:
-        d = {}
-        for k, v in doc.items():
-            if k.startswith('_'):
-                k = k[1:]
-            d[k] = v
-        ret.append(d)
-    return ret
-
-
 def append_dexofuzzy_similarity(results, key, top_n=5):
     """
     Add dexofuzzy similarity info into a transformed result dict
@@ -47,7 +31,7 @@ def append_dexofuzzy_similarity(results, key, top_n=5):
                     if sim > 0:
                         matches.append(
                             {'score': sim, 'sha256': sample['source']['sha256'], 'handle': sample['source']['handle']})
-            except Exception as e:
+            except Exception:
                 pass
 
         matches = sorted(matches, key=lambda ele: ele['score'], reverse=True)
@@ -92,23 +76,6 @@ def get_aggregations(results):
     return aggregations
 
 
-def compute_status(status):
-    success = True
-    error = False
-    running = len(status.keys()) != 8
-    for k, v in status.items():
-        if k != 'analysis_date':
-            success = success and v == 2
-            error = error or v == -1
-            running = running or v == 1 or v == 0
-
-    return {
-        'in_error': error,
-        'success': success,
-        'running': running
-    }
-
-
 def generate_world_map(domains, to_png=False, fp=None):
     import pygal
     import cairosvg
@@ -120,10 +87,10 @@ def generate_world_map(domains, to_png=False, fp=None):
             if d['geolocation']['country_short']:
                 c = d['geolocation']['country_short'].lower()
                 if c in countries:
-                    countries[c] +=1
+                    countries[c] += 1
                 else:
                     countries[c] = 1
-        except:
+        except Exception:
             pass
     custom_style = Style(
         foreground='#a991d4',
@@ -148,69 +115,86 @@ def generate_world_map(domains, to_png=False, fp=None):
 
 
 def get_sample_timeline(sha256):
-    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
+
+    sample = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
+    # parse_datetime(str(sample.get('uploaded_at'))).astimezone(pytz.UTC)
+    timeline = [
+        {
+            'id': 'pithus_upload',
+            'title': 'Upload on Pithus',
+            'date': parse_datetime(str(sample.get('uploaded_at'))).astimezone(pytz.UTC)
+        }]
     try:
-        sample = es.get(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256)['_source']
-        # parse_datetime(str(sample.get('uploaded_at'))).astimezone(pytz.UTC)
-        timeline = [
-            {
-                'id': 'pithus_upload',
-                'title': 'Upload on Pithus',
-                'date': parse_datetime(str(sample.get('uploaded_at'))).astimezone(pytz.UTC)
-            },
+        timeline.append(
             {
                 'id': 'cert_not_before',
                 'title': 'Certificate valid not before',
                 'date': parse_datetime(str(sample.get('certificates')[0].get('not_before'))).astimezone(pytz.UTC)
-            },
+            }
+        )
+        timeline.append(
             {
                 'id': 'cert_not_after',
                 'title': 'Certificate valid not after',
                 'date': parse_datetime(str(sample.get('certificates')[0].get('not_after'))).astimezone(pytz.UTC)
-            },
+            }
+        )
+    except Exception:
+        pass
+
+    try:
+        timeline.append(
             {
                 'id': 'vt_first_seen',
                 'title': 'First submission on VT',
-                'date': datetime.utcfromtimestamp(sample.get('vt_report').get('attributes').get('first_submission_date')).astimezone(
-                    pytz.UTC)
-            },
+                'date': datetime.utcfromtimestamp(
+                    sample.get('vt_report').get('attributes').get('first_submission_date')).astimezone(pytz.UTC)
+            }
+        )
+        timeline.append(
             {
                 'id': 'vt_last_seen',
                 'title': 'Last submission on VT',
-                'date': datetime.utcfromtimestamp(sample.get('vt_report').get('attributes').get('last_submission_date')).astimezone(pytz.UTC)
+                'date': datetime.utcfromtimestamp(
+                    sample.get('vt_report').get('attributes').get('last_submission_date')
+                ).astimezone(pytz.UTC)
             }
-        ]
-
-        try:
-            timeline.append(
-                {
-                    'id': 'bundle_lowest_date',
-                    'title': 'Oldest file found in APK',
-                    'date': parse_datetime(
-                        str(sample.get('vt_report').get('attributes').get('bundle_info').get('lowest_datetime'))).astimezone(pytz.UTC)
-                }
-            )
-        except Exception:
-            pass
-
-        try:
-            timeline.append(
-                {
-                    'id': 'bundle_highest_date',
-                    'title': 'Latest file found in APK',
-                    'date': parse_datetime(
-                        str(sample.get('vt_report').get('attributes').get('bundle_info').get('highest_datetime'))).astimezone(
-                        pytz.UTC)
-                }
-            )
-        except Exception:
-            pass
-
-        timeline.sort(key = lambda x:x['date'])
-        return timeline
-
+        )
     except Exception:
-        return None
+        pass
+
+    try:
+        timeline.append(
+            {
+                'id': 'bundle_lowest_date',
+                'title': 'Oldest file found in APK',
+                'date': parse_datetime(
+                    str(sample.get('vt_report').get('attributes').get('bundle_info').get('lowest_datetime'))
+                ).astimezone(pytz.UTC)
+            }
+        )
+    except Exception:
+        pass
+
+    try:
+        timeline.append(
+            {
+                'id': 'bundle_highest_date',
+                'title': 'Latest file found in APK',
+                'date': parse_datetime(
+                    str(sample.get('vt_report').get('attributes').get('bundle_info').get('highest_datetime'))
+                ).astimezone(pytz.UTC)
+            }
+        )
+    except Exception:
+        pass
+
+    timeline.sort(key=lambda x: x['date'])
+    return timeline
 
 
 def get_andro_cfg_storage_path(sha256):
