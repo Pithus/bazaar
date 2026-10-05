@@ -3,7 +3,8 @@ from django.views.generic.base import TemplateView
 
 from bazaar.front.view import HomeView, ReportView, basic_upload_view, similarity_search_view, export_report_view, \
     download_sample_view, my_rules_view, my_rule_edit_view, my_rule_create_view, my_rule_delete_view, og_card_view, \
-    my_retrohunt_view, get_andgrocfg_code, get_genom, basic_url_download_view, report_status_view, instance_status
+    my_retrohunt_view, get_andgrocfg_code, get_genom, basic_url_download_view, report_status_view, instance_status, \
+    remove_bookmark_sample_view, add_bookmark_sample_view, workspace_view
 
 app_name = "front"
 urlpatterns = [
@@ -15,16 +16,19 @@ urlpatterns = [
     path("report/<str:sha256>/card", view=og_card_view, name="og_card"),
     path("report/<str:sha256>/status", view=report_status_view, name="report_status"),
     path("apk/", view=basic_upload_view, name="basic_upload"),
-    path("url/", view=basic_url_download_view, name="basic_url_download"),
     path("apk/<str:sha256>", view=download_sample_view, name="download_sample"),
+    path("apk/<str:sha256>/bookmark/add", view=add_bookmark_sample_view, name="add_bookmark_sample"),
+    path("apk/<str:sha256>/bookmark/remove", view=remove_bookmark_sample_view,
+         name="remove_bookmark_sample"),
+    path("rules/<str:uuid>/delete", view=my_rule_delete_view, name="my_rule_delete"),
+    path("rules/<str:uuid>/edit", view=my_rule_edit_view, name="my_rule_edit"),
+    path("rules/<str:uuid>/retro", view=my_retrohunt_view, name="my_rule_retro"),
+    path("rules/new", view=my_rule_create_view, name="my_rule_create"),
     path("similar/", view=similarity_search_view, name="similarity_search"),
     path("similar/<str:sha256>", view=similarity_search_view, name="similarity_search"),
-    path("rules/", view=my_rules_view, name="my_rules"),
-    path("rules/new", view=my_rule_create_view, name="my_rule_create"),
-    path("rules/<str:uuid>/edit", view=my_rule_edit_view, name="my_rule_edit"),
-    path("rules/<str:uuid>/delete", view=my_rule_delete_view, name="my_rule_delete"),
-    path("rules/<str:uuid>/retro", view=my_retrohunt_view, name="my_rule_retro"),
     path("androcfg/<str:sha256>/<path:foo>", view=get_andgrocfg_code, name="get_andgrocfg_code"),
     path("androcfg/all", view=get_genom, name="get_genom"),
-    path("status", view=instance_status, name="instance_status")
+    path("status", view=instance_status, name="instance_status"),
+    path("url/", view=basic_url_download_view, name="basic_url_download"),
+    path("workspace/", view=workspace_view, name="workspace")
 ]

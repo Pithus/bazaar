@@ -1,10 +1,22 @@
+import uuid
+
 import yara
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-import uuid
-
+from django.db.models.expressions import F
 from elasticsearch import Elasticsearch
+
+
+class Bookmark(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    sample = models.CharField(max_length=256)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    @staticmethod
+    def get_es_index(user):
+        es_index = f'bookmark_user_{user.id}'
+        return es_index
 
 
 def check_yara_rule(rule):

@@ -1,26 +1,31 @@
+import hashlib
 import logging
+from collections import Counter
 from tempfile import NamedTemporaryFile
 
+import requests
+from androcfg.code_style import U39bStyle
+from androguard.core.androconf import is_android
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.core.files.storage import default_storage
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.http.response import HttpResponseBadRequest
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from django_q.tasks import async_task
-
-from rest_framework.authtoken.models import Token
-from rest_framework.reverse import reverse_lazy
+from elasticsearch import Elasticsearch
+from elasticsearch.helpers.actions import scan
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers.jvm import JavaLexer
-from androcfg.code_style import U39bStyle
+from rest_framework.authtoken.models import Token
+from rest_framework.reverse import reverse_lazy
 
 from bazaar.core.services import ReportService
 from bazaar.core.services import ApkService
@@ -34,7 +39,7 @@ from bazaar.core.utils import get_matching_items_by_dexofuzzy
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import get_similarity_matrix, generate_world_map, \
-    get_sample_timeline, get_andro_cfg_storage_path
+    get_sample_timeline, get_andro_cfg_storage_path, transform_hl_results, transform_results
 from .forms import YaraCreateForm
 
 
@@ -53,6 +58,7 @@ class HomeView(View):
 
         f = SearchForm(request.GET)
         form_to_show = f
+
         if not request.GET:
             form_to_show = SearchForm()
         if f.is_valid():
@@ -72,7 +78,7 @@ class HomeView(View):
                           'list_results': list_results,
                           'report_example': report_example,
                           'q': q, 'matrix': matrix,
-                          'max_size': settings.MAX_APK_UPLOAD_SIZE
+                          'max_size': settings.MAX_APK_UPLOAD_SIZE,
                       })
 
 
@@ -138,6 +144,12 @@ class ReportView(View):
             # Get timeline
             timeline = get_sample_timeline(sha)
 
+            # Check if the sample is already bookmarked
+            if request.user.is_authenticated:
+                is_bookmarked = get_user_bookmark_by_hash(request, sha)
+            else:
+                is_bookmarked = False
+
             return render(request, 'front/report.html', {
                 'result': result,
                 'status': status,
@@ -145,8 +157,9 @@ class ReportView(View):
                 'timeline': timeline,
                 'cache_key': f'{cache_key}_tpl',
                 'hunting_matches': hunting_matches,
-                'similar_samples': similar_samples_extended,
-                'cache_retention_time': cache_retention_time})
+                'similar_samples': similar_samples,
+                'cache_retention_time': cache_retention_time,
+                'is_bookmarked': is_bookmarked})
         except Exception as e:
             logging.exception(e)
             return redirect(reverse_lazy('front:home'))
@@ -253,18 +266,124 @@ def og_card_view(request, sha256):
             return HttpResponse(fp.read(), content_type="image/png")
 
 
-def my_rules_view(request):
+def get_user_bookmarks(request):
+    return Bookmark.objects.filter(owner=request.user)
+
+
+def enrich_bookmarks(bookmarks):
+    res = []
+    for sample in bookmarks:
+        apk = get_sample_light(sample.sample)
+        res.append(apk)
+    return res
+
+
+def get_user_bookmark_by_hash(request, sha):
+    bookmark = Bookmark.objects.filter(owner=request.user, sample=sha)
+    return bookmark
+
+
+def add_bookmark_sample_view(request, sha256):
     if not request.user.is_authenticated:
         return redirect(reverse_lazy('front:home'))
 
-    my_rules = None
+    if request.method == 'GET':
+        user_bookmarks = get_user_bookmarks(request)
+        if not user_bookmarks.filter(sample=sha256):
+            new_bookmark = Bookmark.objects.create(sample=sha256, owner=request.user)
+            try:
+                new_bookmark.save()
+                user_bookmarks = get_user_bookmarks(request)
+            except Exception as e:
+                logging.exception(e)
+
+    return redirect(reverse_lazy('front:report', [sha256]))
+
+
+def remove_bookmark_sample_view(request, sha256):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+
+    if request.method == 'GET':
+        bookmark = get_user_bookmark_by_hash(request, sha256)
+        try:
+            bookmark.delete()
+        except Exception as e:
+            logging.exception(e)
+
+    return redirect(reverse_lazy('front:report', [sha256]))
+
+
+def get_last_samples():
+    query = {
+        "query": {
+            "query_string": {
+                "default_field": "sha256",
+                "query": "*"
+            }
+        },
+        "highlight": {
+            "fields": {
+                "*": {"pre_tags": ["<mark>"], "post_tags": ["</mark>"]}
+            }
+        },
+        "aggs": {
+            "permissions": {
+                "terms": {"field": "permissions.keyword"}
+            },
+            "domains": {
+                "terms": {"field": "domains_analysis._name.keyword"}
+            },
+            "android_features": {
+                "terms": {"field": "features.keyword"}
+            }
+        },
+        "sort": {"analysis_date": "desc"},
+        "_source": ["apk_hash", "sha256", "uploaded_at", "icon_base64", "handle", "app_name",
+                    "version_code", "size", "dexofuzzy.apk", "quark.threat_level", "vt", "vt_report", "malware_bazaar",
+                    "is_signed", "frosting_data.is_frosted", "features", "andro_cfg.genom"],
+        "size": 5,
+    }
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    try:
+        raw_results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
+        results = transform_results(raw_results)
+        return results
+    except Exception as e:
+        return []
+
+
+def workspace_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+
+    my_bookmarks = None
+    if request.method == 'GET':
+        # TODO: refactor so there is only one call for all the rules, then filter by user and by score and output those in the tables
+        apk_count = get_count_apks()
+        malicious = get_malicious_samples_count()
+        count = {
+            "apks": apk_count,
+            "malicious": malicious
+        }
+        my_rules = get_rules(request)
+        my_bookmarks = enrich_bookmarks(get_user_bookmarks(request))
+        last_samples = get_last_samples()
+        highest_matching_rules = get_best_rules()
+        trending_malwares = get_trending_malware()
+        trends = {
+            'samples': last_samples, 'rules': highest_matching_rules, 'trending_malwares': trending_malwares
+        }
+
     owner = request.user
     if request.method == 'GET':
         my_rules = RulesService.get_rules(owner)
 
     token, _ = Token.objects.get_or_create(user=owner)
-
-    return render(request, 'front/yara_rules/my_rules.html', context={'my_rules': my_rules, 'my_token': token.key})
+    return render(request, 'front/workspace/workspace_base.html',
+                  context={'my_rules': my_rules, 'my_token': token,
+                           'bookmarked_samples': my_bookmarks, 'trends': trends,
+                           'count': count})
 
 
 def my_rule_create_view(request):
@@ -282,10 +401,10 @@ def my_rule_create_view(request):
             new_rule.save()
             messages.success(request, 'Your rule has been created!')
         except Exception:
-            return render(request, 'front/yara_rules/my_rule_edit.html', {'form': new_rule})
-        return redirect(reverse_lazy('front:my_rules'))
+            return render(request, 'front/workspace/my_rule_edit.html', {'form': new_rule})
+        return redirect(reverse_lazy('front:workspace'))
 
-    return render(request, 'front/yara_rules/my_rule_edit.html', {'form': new_rule})
+    return render(request, 'front/workspace/my_rule_edit.html', {'form': new_rule})
 
 
 def my_rule_edit_view(request, uuid):
@@ -295,7 +414,7 @@ def my_rule_edit_view(request, uuid):
     if request.method == 'GET':
         rule = Yara.objects.get(id=uuid)
         new_rule = YaraCreateForm(instance=rule)
-        return render(request, 'front/yara_rules/my_rule_edit.html', {'form': new_rule, 'edit': True})
+        return render(request, 'front/workspace/my_rule_edit.html', {'form': new_rule, 'edit': True})
 
     elif request.method == 'POST':
         rule = Yara.objects.get(id=uuid)
@@ -308,8 +427,8 @@ def my_rule_edit_view(request, uuid):
             RulesService.delete_es_matches(request.user, rule)
             messages.success(request, 'Your rule has been updated!')
         except Exception:
-            return render(request, 'front/yara_rules/my_rule_edit.html', {'form': new_rule})
-        return redirect(reverse_lazy('front:my_rules'))
+            return render(request, 'front/workspace/my_rule_edit.html', {'form': new_rule})
+        return redirect(reverse_lazy('front:workspace'))
     else:
         return HttpResponseBadRequest()
 
@@ -324,10 +443,267 @@ def my_rule_delete_view(request, uuid=None):
             RulesService.delete_es_matches(request.user, rule)
             rule.delete()
             messages.success(request, 'Your rule has been deleted.')
-            return redirect(reverse_lazy('front:my_rules'))
-        except Exception:
+            return redirect(reverse_lazy('front:workspace'))
+        except Exception as e:
             messages.warning(request, 'An error occured while deleting your rule.')
-            return redirect(reverse_lazy('front:my_rules'))
+            logging.exception(e)
+            return redirect(reverse_lazy('front:workspace'))
+
+
+def delete_es_matches(request, rule):
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    public_es_index, private_es_index = Yara.get_es_index_names(request.user)
+    q = {'query': {
+        'match': {
+            'rule': rule.id,
+        }
+    }}
+    if rule.is_private:
+        try:
+            es.delete_by_query(index=private_es_index, body=q)
+        except Exception as e:
+            logging.exception(e)
+    elif not rule.is_private:
+        try:
+            es.delete_by_query(index=public_es_index, body=q)
+        except Exception as e:
+            logging.exception(e)
+    else:
+        pass
+
+    return
+
+
+def get_count_apks():
+    query = {
+        "aggs": {
+            "type_value": {
+                "value_count": {
+                    "field": "apk_hash.keyword"
+                }
+            }
+        }
+    }
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+
+    try:
+        count = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)['aggregations']['type_value']['value']
+        return count
+    except:
+        return -1
+
+
+def get_trending_malware():
+    query = {
+        "query": {
+            "bool": {
+                "must": [],
+                "filter": [
+                    {
+                        "bool": {
+                            "should": [
+                                {
+                                    "range": {
+                                        "vt_report.attributes.popular_threat_classification.popular_threat_name.count": {
+                                            "gt": 1
+                                        }
+                                    }
+                                }
+                            ],
+                            "minimum_should_match": 1
+                        }
+                    }
+                ],
+                "should": [],
+                "must_not": []
+            }
+        },
+        "size": 5000,
+        "_source": "vt_report.attributes.popular_threat_classification.popular_threat_name.value",
+        "sort": [
+            {
+                "vt_report.attributes.popular_threat_classification.popular_threat_name.count": {
+                    "order": "desc"
+                }
+            }
+        ]
+    }
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    try:
+        results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)['hits']['hits']
+        return Counter(value['_source']['vt_report']['attributes']
+                       ['popular_threat_classification']['popular_threat_name'][0]['value'] for value in results).most_common(5)
+
+    except Exception:
+        return []
+
+
+def get_malicious_samples_count():
+    query = {
+        "query": {
+            "bool": {
+                "must": [],
+                "filter": [
+                    {
+                        "bool": {
+                            "should": [
+                                {
+                                    "range": {
+                                        "vt.malicious": {
+                                            "gt": 1
+                                        }
+                                    }
+                                }
+                            ],
+                            "minimum_should_match": 1
+                        }
+                    }
+                ],
+                "should": [],
+                "must_not": []
+            }
+        },
+        "size": 5000,
+        "_source": "vt",
+        "sort": [
+            {
+                "vt.malicious": {
+                    "order": "desc"
+                }
+            }
+        ]
+    }
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    try:
+        results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)['hits']['hits']
+        res = Counter(value['_source']['vt']['malicious'] for value in results)
+        # FIXME: total() doesn't seem to work, idk why
+        return sum(res.values())
+    except:
+        return -1
+
+
+def get_best_rules():
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    yara_rules = Yara.objects.all()
+    my_rules = []
+    public_es_index, _ = Yara.get_es_index_names()
+    # TODO: note fo later: in an ideal world, it would be nice to have the matches.matching_files be set on keyword=true for Elastic search so we can retreive the result sorted instead of sorting them on our own. See: https://stackoverflow.com/questions/63784500/text-fields-are-not-optimised-for-operations-that-require-per-document-elastic
+    q = {
+        "query": {
+            "bool": {
+                "must": [],
+                "filter": [
+                    {
+                        "bool": {
+                            "should": [
+                                {
+                                    "range": {
+                                        "matches.matching_files": {
+                                            "gt": 1
+                                        }
+                                    }
+                                }
+                            ],
+                            "minimum_should_match": 1
+                        }
+                    }
+                ],
+                "should": [],
+                "must_not": []
+            }
+        },
+        "size": 5000,
+    }
+    public_matches = None
+    try:
+        public_matches = es.search(index=public_es_index, body=q)['hits']['hits']
+        for rule in yara_rules:
+            my_rule = {
+                'rule': rule,
+                'matching_date': '',
+                'matches': [],
+            }
+            if public_matches:
+                for match in public_matches:
+                    if match['_source']['rule'] == str(rule.id):
+                        m = match['_source']
+                        m['sample'] = get_sample_light(match['_source']['matches']['apk_id'])
+                        my_rule['matches'].append(m)
+            if len(my_rule['matches']) > 1:
+                my_rules.append(my_rule)
+
+        return my_rules
+    except:
+        return []
+
+
+def get_rules(request):
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    yara_rules = Yara.objects.filter(owner=request.user)
+    public_es_index, private_es_index = Yara.get_es_index_names(request.user)
+    q = {
+        'query': {
+            'terms': {
+                'owner': [request.user.id]
+            }
+        },
+        'size': 5000,
+    }
+    public_matches, private_matches = None, None
+    try:
+        private_matches = es.search(index=private_es_index, body=q)['hits']['hits']
+    except:
+        pass
+
+    try:
+        public_matches = es.search(index=public_es_index, body=q)['hits']['hits']
+    except:
+        pass
+
+    my_rules = []
+    for rule in yara_rules:
+        my_rule = {
+            'rule': rule,
+            'matching_date': '',
+            'matches': [],
+        }
+        if rule.is_private and private_matches:
+            for match in private_matches:
+                if match['_source']['rule'] == str(rule.id):
+                    m = match['_source']
+                    m['sample'] = get_sample_light(match['_source']['matches']['apk_id'])
+                    my_rule['matches'].append(m)
+        elif not rule.is_private and public_matches:
+            for match in public_matches:
+                if match['_source']['rule'] == str(rule.id):
+                    m = match['_source']
+                    m['sample'] = get_sample_light(match['_source']['matches']['apk_id'])
+                    my_rule['matches'].append(m)
+        my_rules.append(my_rule)
+
+    return my_rules
+
+
+def get_sample_light(sha256):
+    query = {
+        "query": {
+            "match": {
+                "apk_hash": sha256
+            }
+        },
+        "_source": ["apk_hash", "sha256", "uploaded_at", "icon_base64", "handle", "app_name",
+                    "version_code", "size", "dexofuzzy.apk", "quark.threat_level", "vt", "malware_bazaar",
+                    "is_signed", "frosting_data.is_frosted", "features"],
+        "size": 1,
+    }
+    es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+    try:
+        results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
+        results = transform_hl_results(results)
+        return results
+    except Exception:
+        return []
 
 
 def my_retrohunt_view(request, uuid):
@@ -340,7 +716,7 @@ def my_retrohunt_view(request, uuid):
     except Exception:
         messages.warning(request, 'An error occured launching retrohunt.')
 
-    return redirect(reverse_lazy('front:my_rules'))
+    return redirect(reverse_lazy('front:workspace'))
 
 
 def get_andgrocfg_code(request, sha256, foo):
