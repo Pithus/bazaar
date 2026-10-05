@@ -41,7 +41,7 @@ services:
       postgres:
         condition: service_started
       rustfs:
-        condition: service_started
+        condition: service_healthy
       elasticsearch:
         condition: service_healthy
     ports: []
@@ -122,6 +122,23 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+
+  rustfs-init:
+    image: rustfs/rc:latest
+    depends_on:
+      rustfs:
+        condition: service_healthy
+    env_file:
+      - ./.envs/.local/.django
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        until /usr/bin/rc alias set rustfs http://rustfs:9000 "$${RUSTFS_ACCESS_KEY}" "$${RUSTFS_SECRET_KEY}"; do
+          sleep 2
+        done
+        /usr/bin/rc ls rustfs/local-media >/dev/null 2>&1 || \
+        /usr/bin/rc mb rustfs/local-media
 
   prometheus:
     image: prom/prometheus
