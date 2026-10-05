@@ -1,7 +1,7 @@
 setuptools==82.0.0
 pytz==2025.2
 python-slugify==8.0.4
-pillow==12.2.0
+pillow==12.3.0
 rcssmin==1.2.2
 argon2-cffi==25.1.0
 whitenoise==6.11.0
