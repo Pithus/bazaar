@@ -9,7 +9,7 @@ watchgod==0.8.2
 # Testing
 mypy==1.19.1
 django-stubs==5.2.8
-pytest==9.0.2
+pytest==9.0.3
 pytest-sugar==1.1.1
 
 
