@@ -33,7 +33,7 @@ from bazaar.core.services import SearchService
 from bazaar.core.services import RulesService
 from bazaar.core.services import GenomService
 
-from bazaar.core.models import Yara
+from bazaar.core.models import Yara, Bookmark
 from bazaar.core.modules.pithus import retrohunt
 from bazaar.core.utils import get_matching_items_by_dexofuzzy
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm
