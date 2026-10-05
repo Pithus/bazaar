@@ -1,4 +1,4 @@
-setuptools==82.0.0
+setuptools==83.0.0
 pytz==2025.2
 python-slugify==8.0.4
 pillow==12.2.0
