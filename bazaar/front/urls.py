@@ -2,7 +2,7 @@ from django.urls import path
 from django.views.generic.base import TemplateView
 
 from bazaar.front.view import HomeView, ReportView, basic_upload_view, similarity_search_view, export_report_view, \
-    download_sample_view, my_rules_view, my_rule_edit_view, my_rule_create_view, my_rule_delete_view, og_card_view, \
+    download_sample_view, my_rule_edit_view, my_rule_create_view, my_rule_delete_view, og_card_view, \
     my_retrohunt_view, get_andgrocfg_code, get_genom, basic_url_download_view, report_status_view, instance_status, \
     remove_bookmark_sample_view, add_bookmark_sample_view, workspace_view
 

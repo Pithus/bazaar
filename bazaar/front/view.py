@@ -39,7 +39,8 @@ from bazaar.core.utils import get_matching_items_by_dexofuzzy
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import get_similarity_matrix, generate_world_map, \
-    get_sample_timeline, get_andro_cfg_storage_path, transform_hl_results, transform_results
+    get_sample_timeline, get_andro_cfg_storage_path
+from bazaar.core.utils import transform_hl_results, transform_results
 from .forms import YaraCreateForm
 
 
