@@ -1,7 +1,7 @@
 FROM python:3.13.10-trixie
 
-ENV PYTHONUNBUFFERED 1
-ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
 RUN apt update \
   # dependencies for building Python packages
