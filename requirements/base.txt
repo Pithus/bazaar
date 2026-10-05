@@ -48,7 +48,7 @@ matplotlib
 
 # Map
 pygal_maps_world==1.0.2
-CairoSVG==2.8.2
+CairoSVG==2.9.0
 
 # Monitoring
 django-prometheus==2.4.0
