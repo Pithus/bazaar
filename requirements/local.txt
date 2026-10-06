@@ -1,7 +1,7 @@
 -r base.txt
 
 networkx==3.6.1
-Werkzeug==3.1.6
+Werkzeug==3.1.9
 ipdb==0.13.13
 psycopg2==2.9.11
 watchgod==0.8.2
