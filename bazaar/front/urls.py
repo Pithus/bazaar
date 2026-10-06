@@ -4,7 +4,7 @@ from django.views.generic.base import TemplateView
 from bazaar.front.view import HomeView, ReportView, basic_upload_view, similarity_search_view, export_report_view, \
     download_sample_view, my_rule_edit_view, my_rule_create_view, my_rule_delete_view, og_card_view, \
     my_retrohunt_view, get_andgrocfg_code, get_genom, basic_url_download_view, report_status_view, instance_status, \
-    remove_bookmark_sample_view, add_bookmark_sample_view, workspace_view, add_comment_view, delete_comment_view
+    remove_bookmark_sample_view, add_bookmark_sample_view, workspace_view
 
 app_name = "front"
 urlpatterns = [
@@ -30,7 +30,5 @@ urlpatterns = [
     path("androcfg/all", view=get_genom, name="get_genom"),
     path("status", view=instance_status, name="instance_status"),
     path("url/", view=basic_url_download_view, name="basic_url_download"),
-    path("workspace/", view=workspace_view, name="workspace"),
-    path("comment/<str:sha256>/add", view=add_comment_view, name="add_comment"),
-    path("comment/<uuid:comment_id>/delete", view=delete_comment_view, name="delete_comment")
+    path("workspace/", view=workspace_view, name="workspace")
 ]

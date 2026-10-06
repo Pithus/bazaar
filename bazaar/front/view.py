@@ -19,7 +19,6 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from django_q.tasks import async_task
-from django.shortcuts import get_object_or_404
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers.actions import scan
 from pygments import highlight
@@ -34,10 +33,10 @@ from bazaar.core.services import SearchService
 from bazaar.core.services import RulesService
 from bazaar.core.services import GenomService
 
-from bazaar.core.models import Yara, Bookmark, Comment
+from bazaar.core.models import Yara, Bookmark
 from bazaar.core.modules.pithus import retrohunt
 from bazaar.core.utils import get_matching_items_by_dexofuzzy
-from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm, CommentForm
+from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import get_similarity_matrix, generate_world_map, \
     get_sample_timeline, get_andro_cfg_storage_path
@@ -277,16 +276,10 @@ def get_user_bookmarks(request):
     return Bookmark.objects.filter(owner=request.user)
 
 
-def enrich_bookmarks(request, bookmarks):
+def enrich_bookmarks(bookmarks):
     res = []
     for sample in bookmarks:
         apk = get_sample_light(sample.sample)
-        apk[0]["comment"] = Comment.objects.filter(owner=request.user, sample=sample.sample).first()
-        print(
-            "SAMPLE:", sample.sample,
-            "COMMENT:", apk[0]["comment"],
-            "COMMENT ID:", apk[0]["comment"].id if apk[0]["comment"] else None,
-        )
         res.append(apk)
     return res
 
@@ -380,7 +373,7 @@ def workspace_view(request):
             "malicious": malicious
         }
         my_rules = get_rules(request)
-        my_bookmarks = enrich_bookmarks(request, get_user_bookmarks(request))
+        my_bookmarks = enrich_bookmarks(get_user_bookmarks(request))
         last_samples = get_last_samples()
         highest_matching_rules = get_best_rules()
         trending_malwares = get_trending_malware()
@@ -397,44 +390,6 @@ def workspace_view(request):
                   context={'my_rules': my_rules, 'my_token': token,
                            'bookmarked_samples': my_bookmarks, 'trends': trends,
                            'count': count})
-
-
-def add_comment_view(request, sha256):
-    if not request.user.is_authenticated:
-        return redirect(reverse_lazy('front:home'))
-    
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
-    form = CommentForm(request.POST)
-
-    if form.is_valid():
-        comment = form.save(commit=False)
-        comment.sample = sha256
-        comment.owner = request.user
-        comment.save()
-
-    return HttpResponse(status=200)
-
-
-def delete_comment_view(request, comment_id):
-    if not request.user.is_authenticated:
-        return redirect(reverse_lazy('front:home'))
-
-    if request.method != "POST":
-        return HttpResponseNotAllowed(["POST"])
-
-    comments = Comment.objects.filter(
-        id=comment_id,
-        owner=request.user,
-    )
-    if comments is not None:
-        for comment in comments:
-            comment.delete()
-
-    return JsonResponse({
-        "success": True,
-        "message": "Comment deleted.",
-    })
 
 
 def my_rule_create_view(request):

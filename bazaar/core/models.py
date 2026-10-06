@@ -8,22 +8,6 @@ from django.db.models.expressions import F
 from elasticsearch import Elasticsearch
 
 
-class Comment(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    sample = models.CharField(max_length=256)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    content = models.CharField(max_length=4096)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["sample", "owner"],
-                name="unique_comment_per_sample_per_owner",
-            ),
-        ]
-
-
-
 class Bookmark(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     sample = models.CharField(max_length=256)

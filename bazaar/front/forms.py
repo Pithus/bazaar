@@ -7,7 +7,6 @@ from bazaar.front.utils import append_dexofuzzy_similarity, get_aggregations
 
 from django.forms import ModelForm
 from bazaar.core.models import Yara
-from bazaar.core.models import Comment
 
 
 class SimilaritySearchForm(forms.Form):
@@ -52,14 +51,3 @@ class YaraCreateForm(ModelForm):
     class Meta:
         model = Yara
         fields = ['title', 'content', 'is_private']
-
-
-class CommentForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ["content"]
-        widgets = {
-            "content": forms.Textarea(attrs={
-                "rows": 5,
-            }),
-        }
