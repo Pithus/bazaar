@@ -200,6 +200,11 @@ def basic_upload_view(request):
             apk = request.FILES['apk']
             try:
                 sha256 = ApkService.upload_apk(apk)
+                if request.user.is_authenticated:
+                    # Todo: make bookmarking a user setting
+                    Bookmark.objects.create(sample=sha256, owner=request.user).save()
+            except Exception as e:
+                logging.exception(e)
             except Exception as e:
                 messages.warning(request, e)
                 return redirect(reverse_lazy('front:home'))
