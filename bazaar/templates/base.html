@@ -91,7 +91,7 @@
 
   </div>
 
-  <div class="container-fluid">
+  <div id="message-container" class="container-fluid">
     {% if messages %}
     {% for message in messages %}
     <div class="alert mt-2 {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}
