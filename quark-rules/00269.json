@@ -13,7 +13,7 @@
             "descriptor": "(Landroid/graphics/Bitmap$CompressFormat; I Ljava/io/OutputStream;)Z"
         }
     ],
-    "score": -0.68,
+    "score": -1.17,
     "label": [
         "screen"
     ]

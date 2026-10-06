@@ -13,7 +13,7 @@
             "method": "compareToIgnoreCase"
         }
     ],
-    "score": 0.27,
+    "score": 0.14,
     "label": [
         "command"
     ]

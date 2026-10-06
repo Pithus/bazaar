@@ -74,18 +74,53 @@
         {% for results in bookmarked_samples %}
         {% for result in results %}
         <tr>
-          {% include "front/m_result_flat.html" with result=result %}
+          <td> {% include "front/m_result_flat.html" with result=result %} </td>
+          <td class="align-middle">
+            <a class="btn btn-primary open-content-modal" data-toggle="modal" data-target="#commentModal-{{ result.id }}" target="_blank"
+                href="#">
+            <span class="big"><i class="fas fa-comment"></i></span><br>
+          </a>
+        </td>
         </tr>
+        <!-- Modal -->
+        <div class="modal fade" id="commentModal-{{ result.id }}" tabindex="-1" role="dialog"
+                aria-labelledby="commentModalLabel">
+          <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <div class="modal-title" id="title">
+                  Comment for {{ result.id }}
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+              </div>
+              <div class="modal-body">
+                <form class="comment-form" method="post" action="{% url 'front:add_comment' sha256=result.id %}">
+                  {% csrf_token %}
+                  <textarea name="content" rows="4" class="textarea form-control" id="comment-{{ result.id }}-content">{{ result.comment.content|default:"" }}</textarea>
+                  <div class="modal-footer">
+                  <button type="submit" class="btn btn-primary">Save</button>
+                  {% if result.comment %}
+                    <button type="button" class="btn btn-danger" data-delete-url="{% url 'front:delete_comment' comment_id=result.comment.id %}"
+                      onclick="deleteComment(this, '{{ result.id }}')">Delete</button>
+                  {% endif %}
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
         {% endfor %}
         {% endfor %}
       </table>
+
     </div>
 
     <div class="tab-pane fade" role="tabpanel" aria-labelledby="hunting_tab" id="hunting">
       <div class="col-md-12">
         <h2>Yara hunting
           <a href="{% url 'front:my_rule_create' %}" class="btn btn-primary">
-            <span class="huge"><i class="fas fa-plus"></i></span>
+            <span class="big"><i class="fas fa-plus"></i></span>
             <br>
             New rule
           </a>
@@ -262,5 +297,47 @@
 </div>
 <!-- row -->
 </div>
+
+<script>
+document.querySelectorAll(".comment-form").forEach(function (form) {
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+
+        const response = await fetch(form.action, {
+            method: "POST",
+            body: formData,
+        });
+        if (!response.ok) {
+            throw new Error("Failed to save comment");
+        }
+    });
+});
+
+async function deleteComment(button, sampleId) {
+    const textarea = document.getElementById(
+        `comment-${sampleId}-content`
+    );
+
+    textarea.value = "";
+
+    try {
+        const response = await fetch(button.dataset.deleteUrl, {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to delete comment");
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+</script>
 
 {% endblock %}
