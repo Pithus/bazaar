@@ -19,13 +19,15 @@ from google_play_scraper import app
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.utils import timezone
+from django.contrib.auth import get_user_model
+
 
 from elasticsearch import Elasticsearch
 from elasticsearch.helpers.actions import scan
 
 from bazaar.core.fingerprinting import ApplicationSignature
 from bazaar.core.utils import strings_from_apk
-from bazaar.core.models import Yara
+from bazaar.core.models import Yara, Notification
 
 
 es = Elasticsearch(
@@ -355,7 +357,12 @@ def yara_analysis(sha256, rule_id=-1):
     return {'status': 'success', 'info': ''}
 
 
-def retrohunt(rule_id):
+def retrohunt(rule_id, user_id):
+    
+    user_model = get_user_model()
+    if user_id is not None:
+        user = user_model.objects.get(pk=user_id)
+
     rule = None
     try:
         rule = Yara.objects.get(id=rule_id)
@@ -367,7 +374,14 @@ def retrohunt(rule_id):
                        index=settings.ELASTICSEARCH_APK_INDEX,
                        ):
         _id = report.get('_source').get('sha256')
-        execute_single_yara_rule(rule.id, _id)
+        res = execute_single_yara_rule(rule.id, _id)
+        if user_id is not None and user is not None and user.is_authenticated and True:
+        #if res['status'] == 'success':
+            Notification.objects.create(
+                user=user, 
+                text_content=f"Retrohunt found sample matching [{rule.title}]", 
+                redirect_link="/workspace"
+            )
 
     del rule
     gc.collect()

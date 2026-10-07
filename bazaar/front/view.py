@@ -33,8 +33,9 @@ from bazaar.core.services import ApkService
 from bazaar.core.services import SearchService
 from bazaar.core.services import RulesService
 from bazaar.core.services import GenomService
+from bazaar.core.services import NotificationsService
 
-from bazaar.core.models import Yara, Bookmark, Comment
+from bazaar.core.models import Yara, Bookmark, Comment, Notification
 from bazaar.core.modules.pithus import retrohunt
 from bazaar.core.utils import get_matching_items_by_dexofuzzy
 from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm, CommentForm
@@ -273,6 +274,37 @@ def og_card_view(request, sha256):
             return HttpResponse(fp.read(), content_type="image/png")
 
 
+def notifications_view(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+
+    notifications = NotificationsService.get_user_notifications(request)
+    return render(request, 'front/workspace/notifications.html',
+                  context={'notifications': notifications})
+
+
+def notification_delete_view(request, notif_id):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+
+    if request.method != "POST":
+        return HttpResponseNotAllowed(["POST"])
+
+    notifs = Notification.objects.filter(
+        id=notif_id,
+        user=request.user,
+    )
+    if notifs is not None:
+        for notif in notifs:
+            notif.delete()
+
+    return JsonResponse({
+        "success": True,
+        "message": "Comment deleted.",
+    })
+
+
+
 def get_user_bookmarks(request):
     return Bookmark.objects.filter(owner=request.user)
 
@@ -282,11 +314,6 @@ def enrich_bookmarks(request, bookmarks):
     for sample in bookmarks:
         apk = get_sample_light(sample.sample)
         apk[0]["comment"] = Comment.objects.filter(owner=request.user, sample=sample.sample).first()
-        print(
-            "SAMPLE:", sample.sample,
-            "COMMENT:", apk[0]["comment"],
-            "COMMENT ID:", apk[0]["comment"].id if apk[0]["comment"] else None,
-        )
         res.append(apk)
     return res
 
@@ -770,10 +797,11 @@ def my_retrohunt_view(request, uuid):
     if not request.user.is_authenticated:
         return redirect(reverse_lazy('front:home'))
     # TODO: add a cap on user use
-    try:
-        async_task(retrohunt, request)
+    try:    
+        async_task(retrohunt, uuid, request.user.pk)
         messages.success(request, 'The retrohunt has been launched.')
-    except Exception:
+    except Exception as e:
+        logging.exception(e)
         messages.warning(request, 'An error occured launching retrohunt.')
 
     return redirect(reverse_lazy('front:workspace'))

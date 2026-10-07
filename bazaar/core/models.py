@@ -8,6 +8,13 @@ from django.db.models.expressions import F
 from elasticsearch import Elasticsearch
 
 
+class Notification(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    text_content = models.CharField(max_length=128)
+    redirect_link = models.CharField(max_length=128)
+
+
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     sample = models.CharField(max_length=256)
@@ -21,7 +28,6 @@ class Comment(models.Model):
                 name="unique_comment_per_sample_per_owner",
             ),
         ]
-
 
 
 class Bookmark(models.Model):
