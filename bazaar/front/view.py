@@ -407,6 +407,15 @@ def add_comment_view(request, sha256):
         return HttpResponseNotAllowed(["POST"])
     form = CommentForm(request.POST)
 
+    comments = Comment.objects.filter(
+        sample=sha256,
+        owner=request.user,
+    )
+    if comments is not None:
+        for comment in comments:
+            comment.delete()
+
+
     if form.is_valid():
         comment = form.save(commit=False)
         comment.sample = sha256
