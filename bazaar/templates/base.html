@@ -81,7 +81,12 @@
           <ul class="navbar-nav ml-auto">
             {% if request.user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" id="notifications" href="{{ notifications_url }}"><i class="fas fa-bell"></i></a>
+              <a class="nav-link notification-bell" id="notifications" href="{{ notifications_url }}">
+                <i class="fas fa-bell"></i>
+                  {% if has_notifications %}
+                    <span class="notification-dot"></span>
+                  {% endif %}
+              </a>
             </li>
             <li class="nav-item {% if request.path == account_logout_url %}active{% endif %}">
               <a class="nav-link" href="{{ account_logout_url }}">

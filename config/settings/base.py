@@ -211,6 +211,7 @@ TEMPLATES = [
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
                 "bazaar.utils.context_processors.settings_context",
+                "bazaar.utils.context_processors.notifications",
             ],
         },
     }

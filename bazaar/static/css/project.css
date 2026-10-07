@@ -7316,3 +7316,17 @@ samp {
 
 .inline-doc {
   color: #868e96; }
+
+.notification-bell {
+  position: relative;
+  display: inline-block; }
+
+.notification-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  background-color: #dc3545;
+  border-radius: 50%;
+  border: 2px solid #fff; }
