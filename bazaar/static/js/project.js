@@ -26,7 +26,7 @@ function hashfile(file_selector, upload_btn, report_btn) {
             const hash = Uint8ArrayToHexString(result);
             $.ajax(`/report/${hash}/status`).done(function (data){
                 if(data.analysis_launched === true ||  data.running === true) {
-                    report_btn.attr('href', data.report_url)
+                    report_btn.attr('href', `/report/${hash}`)
                     report_btn.show()
                 } else {
                     upload_btn.show()
