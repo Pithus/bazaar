@@ -299,10 +299,29 @@
 </div>
 
 <script>
+
+function showMessage(message, type = "success") {
+    const container = document.getElementById("message-container");
+
+    const alert = document.createElement("div");
+    alert.className = `alert alert-${type} alert-dismissible fade show mt-2`;
+    alert.setAttribute("role", "alert");
+
+    alert.innerHTML = `${message}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+          aria-hidden="true">&times;</span></button>`;
+    container.appendChild(alert);
+
+    setTimeout(() => {
+        alert.remove();
+    }, 5000);
+}
+
 document.querySelectorAll(".comment-form").forEach(function (form) {
     form.addEventListener("submit", async function (event) {
         event.preventDefault();
 
+        const modalElement = form.closest(".modal");
         const formData = new FormData(form);
 
         const response = await fetch(form.action, {
@@ -312,6 +331,8 @@ document.querySelectorAll(".comment-form").forEach(function (form) {
         if (!response.ok) {
             throw new Error("Failed to save comment");
         }
+        $(modalElement).modal("hide");
+        showMessage("Comment successfully saved.", "success");
     });
 });
 
@@ -319,6 +340,7 @@ async function deleteComment(button, sampleId) {
     const textarea = document.getElementById(
         `comment-${sampleId}-content`
     );
+    const modalElement = document.getElementById(`commentModal-${sampleId}`);
 
     textarea.value = "";
 
@@ -336,6 +358,8 @@ async function deleteComment(button, sampleId) {
     } catch (error) {
         console.error(error);
     }
+    $(modalElement).modal("hide");
+    showMessage("Comment successfully deleted.", "success");
 }
 
 </script>
