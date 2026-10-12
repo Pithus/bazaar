@@ -73,8 +73,8 @@ class MobSF:
         headers = {'Authorization': self.__apikey}
         data = {'hash': data['hash']}
         r = requests.post(f'{self.__server}/api/v1/report_json', data=data, headers=headers, timeout=10)
-        while r.status_code != 200:
-            time.sleep(3)
+        while r.status_code == 404:
+            time.sleep(10)
             r = requests.post(f'{self.__server}/api/v1/report_json', data=data, headers=headers, timeout=10)
         return r.json()
 
