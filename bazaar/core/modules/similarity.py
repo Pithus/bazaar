@@ -95,11 +95,10 @@ def analysis(sha256):
                     logging.error('Got an error %s', e)
 
         es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': doc}, retry_on_conflict=5)
+        es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'ssdeep_analysis': 2}},
+                  retry_on_conflict=5)
 
     del apk, f, doc
     gc.collect()
-
-    es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'ssdeep_analysis': 2}},
-              retry_on_conflict=5)
 
     return {'status': 'success', 'info': ''}

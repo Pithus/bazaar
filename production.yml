@@ -103,7 +103,7 @@ services:
 
 
   mobsf:
-    image: opensecurity/mobile-security-framework-mobsf:v4.5.2
+    image: opensecurity/mobile-security-framework-mobsf:v4.5.3
     hostname: mobsf
     environment:
       - "MOBSF_API_ONLY=1"
