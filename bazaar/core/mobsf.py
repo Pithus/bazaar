@@ -54,7 +54,7 @@ class MobSF:
             try:
                 r = requests.post(f'{self.__server}/api/v1/scan', data=data, headers=headers, timeout=10)
                 break
-            except (requests.ConnectionError, requests.Timeout, requests.ReadTimeout) as e:
+            except (requests.ConnectionError, requests.Timeout, requests.ReadTimeout):
                 if attempt == max_attempts - 1:
                     raise
                 time.sleep(5)

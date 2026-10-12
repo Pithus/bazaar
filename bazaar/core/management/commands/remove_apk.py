@@ -1,13 +1,9 @@
-from time import sleep
-import logging
 from elasticsearch import Elasticsearch
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django_q.tasks import async_task
 from django.core.files.storage import default_storage
 
-from elasticsearch.helpers.actions import scan
 
 indexes = [
     'apk_analysis',
@@ -44,5 +40,5 @@ class Command(BaseCommand):
         for i in indexes:
             try:
                 es.delete(index=i, id=sha256)
-            except:
+            except Exception:
                 pass
