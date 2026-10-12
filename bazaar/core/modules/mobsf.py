@@ -112,7 +112,7 @@ def analysis(sha256):
                   retry_on_conflict=5)
 
     except Exception as e:
-        logging.warning(e)
+        logging.exception(e)
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'mobsf_analysis': -1}},
                   retry_on_conflict=5)
 

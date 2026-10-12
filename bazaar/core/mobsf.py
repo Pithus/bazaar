@@ -1,5 +1,6 @@
 import logging
 import requests
+import time
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
@@ -48,7 +49,15 @@ class MobSF:
         """
         logger.debug(f"Requesting {self.__server} to scan {data['hash']}")
         headers = {'Authorization': self.__apikey}
-        r = requests.post(f'{self.__server}/api/v1/scan', data=data, headers=headers, timeout=10)
+        max_attempts = 100
+        for attempt in range(max_attempts):
+            try:
+                r = requests.post(f'{self.__server}/api/v1/scan', data=data, headers=headers, timeout=10)
+                break
+            except (requests.ConnectionError, requests.Timeout, requests.ReadTimeout) as e:
+                if attempt == max_attempts - 1:
+                    raise
+                time.sleep(5)
         return r.json()
 
     def scans(self, page=1, page_size=100):
@@ -69,7 +78,9 @@ class MobSF:
         headers = {'Authorization': self.__apikey}
         data = {'hash': data['hash']}
         r = requests.post(f'{self.__server}/api/v1/report_json', data=data, headers=headers, timeout=10)
-
+        while r.status_code != 200:
+            time.sleep(3)
+            r = requests.post(f'{self.__server}/api/v1/report_json', data=data, headers=headers, timeout=10)
         return r.json()
 
     def delete_scan(self, data):

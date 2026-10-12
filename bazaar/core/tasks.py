@@ -29,10 +29,10 @@ es = Elasticsearch(
 
 def _prepare(sha256):
     tasks = {
-        'apkid_analysis': 0,
-        'ssdeep_analysis': 0,
-        'extract_classes': 0,
-        'quark_analysis': 0,
+        'apkid_analysis': 1,
+        'ssdeep_analysis': 1,
+        'extract_classes': 1,
+        'quark_analysis': 1,
         'analysis_date': timezone.now()
     }
 
