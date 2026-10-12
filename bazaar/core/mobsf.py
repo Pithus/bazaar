@@ -49,15 +49,10 @@ class MobSF:
         """
         logger.debug(f"Requesting {self.__server} to scan {data['hash']}")
         headers = {'Authorization': self.__apikey}
-        max_attempts = 100
-        for attempt in range(max_attempts):
-            try:
-                r = requests.post(f'{self.__server}/api/v1/scan', data=data, headers=headers, timeout=10)
-                break
-            except (requests.ConnectionError, requests.Timeout, requests.ReadTimeout):
-                if attempt == max_attempts - 1:
-                    raise
-                time.sleep(5)
+        try:
+            r = requests.post(f'{self.__server}/api/v1/scan', data=data, headers=headers, timeout=10)
+        except Exception:
+            return None
         return r.json()
 
     def scans(self, page=1, page_size=100):
