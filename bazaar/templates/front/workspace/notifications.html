@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+{% load cache %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6 offset-md-3">
+        <h2>Notifications:</h2>
+        <table class="table table-condensed table-sm">
+            {% for notif in notifications %}
+            <tr>
+                <td id="notif-{{ notif.id }}">
+                    <a class="notif-{{ notif.id }}" href="{{ notif.redirect_link }}">{{ notif.text_content }}</a>
+                    <button type="button" class="close remove-notif"
+                        data-notif-id="{{ notif.id }}" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </td>
+                {% empty %}
+                    <td>Nothing to display</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<script>
+async function remove_notif(notif_id) {
+    document.getElementById(`notif-${notif_id}`).remove();
+
+    await fetch(`/notifications/${notif_id}/delete`, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".remove-notif").forEach(function (button) {
+        button.addEventListener("click", function () {
+            remove_notif(this.dataset.notifId);
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -62,8 +62,8 @@ def test_similarity_search_sha256():
 
 
 def test_my_rules():
-    assert reverse("front:my_rules") == "/rules/"
-    assert resolve("/rules/").view_name == "front:my_rules"
+    assert reverse("front:workspace") == "/workspace/"
+    assert resolve("/workspace/").view_name == "front:workspace"
 
 
 def test_my_rule_create():

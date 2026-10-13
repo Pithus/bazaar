@@ -19,7 +19,7 @@ from bazaar.front.view import (
     download_sample_view,
     export_report_view,
     og_card_view,
-    my_rules_view,
+    workspace_view,
     my_rule_create_view,
     my_rule_edit_view,
     my_rule_delete_view,
@@ -64,7 +64,7 @@ from bazaar.front.view import (
         similarity_search_view, f"/similar/{sha256}", [], {"sha256": sha256},
         marks=pytest.mark.skip(reason="No auth required")
     ),
-    (my_rules_view, "/rules/", [], {}),
+    (workspace_view, "/workspace/", [], {}),
     (my_rule_create_view, "/rules/new", [], {}),
     (my_rule_edit_view, f"/rules/{uuid}/edit", [uuid], {}),
     (my_rule_delete_view, f"/rules/{uuid}/delete", [], {"uuid": uuid}),

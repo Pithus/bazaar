@@ -43,9 +43,11 @@
 {% url 'front:home' as home_url %}
 {% url 'about' as about_url %}
 {% url 'front:instance_status' as instance_status %}
-{% url 'front:my_rules' as my_rules_url %}
+{% url 'front:workspace' as workspace_url %}
 {% url 'account_logout' as account_logout_url %}
 {% url 'account_login' as account_login_url %}
+{% url 'front:notifications_url' as notifications_url %}
+
 
 <body>
   <div class="mb-0">
@@ -69,29 +71,44 @@
             <a class="nav-link" href="{{ instance_status }}"><i class="fas fa-server"></i> Status</a>
           </li>
           {% if request.user.is_authenticated %}
-          </li>
-          <li class="nav-item {% if request.path == my_rules_url %} active {%endif%}">
-            <a class="nav-link" href="{{ my_rules_url }}"><i class="fas fa-binoculars"></i>
-              {% trans "My hunting" %}
+          <li class="nav-item {% if request.path == workspace_url %} active {%endif%}">
+            <a class="nav-link" href="{{ workspace_url }}"><i class="fas fa-binoculars"></i>
+              {% trans "Workspace" %}
             </a>
           </li>
-          <li class="nav-item {% if request.path == account_logout_url %} active {%endif%}">
-            <a class="nav-link" href="{{ account_logout_url }}"><i class="fas fa-sign-out-alt"></i>
-              {% trans "Logout" %}</a>
-            {% else %}
-          <li
-            class="nav-item border rounded border-secondary {% if request.path == account_login_url %} active {%endif%}">
-            <a id="log-in-link" class="nav-link" href="{{ account_login_url }}"><i class="fas fa-sign-in-alt"></i>
-              {% trans "Sign In" %}</a>
-          </li>
           {% endif %}
-        </ul>
+          </ul>
+          <ul class="navbar-nav ml-auto">
+            {% if request.user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link notification-bell" id="notifications" href="{{ notifications_url }}">
+                <i class="fas fa-bell"></i>
+                  {% if has_notifications %}
+                    <span class="notification-dot"></span>
+                  {% endif %}
+              </a>
+            </li>
+            <li class="nav-item {% if request.path == account_logout_url %}active{% endif %}">
+              <a class="nav-link" href="{{ account_logout_url }}">
+                <i class="fas fa-sign-out-alt"></i>
+                {% trans "Logout" %}
+              </a>
+            </li>
+            {% else %}
+            <li class="nav-item border rounded border-secondary {% if request.path == account_login_url %}active{% endif %}">
+              <a id="log-in-link" class="nav-link" href="{{ account_login_url }}">
+                <i class="fas fa-sign-in-alt"></i>
+                {% trans "Sign In" %}
+              </a>
+            </li>
+            {% endif %}
+          </ul>
       </div>
     </nav>
 
   </div>
 
-  <div class="container-fluid">
+  <div id="message-container" class="container-fluid">
     {% if messages %}
     {% for message in messages %}
     <div class="alert mt-2 {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}
