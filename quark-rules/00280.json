@@ -1,0 +1,21 @@
+{
+    "crime": "Execute shell command and capture error output",
+    "permission": [],
+    "api": [
+        {
+            "class": "Ljava/lang/Runtime;",
+            "method": "exec",
+            "descriptor": "(Ljava/lang/String;)Ljava/lang/Process;"
+        },
+        {
+            "class": "Ljava/lang/Process;",
+            "method": "getErrorStream",
+            "descriptor": "()Ljava/io/InputStream;"
+        }
+    ],
+    "score": 0.62,
+    "label": [
+        "exec",
+        "command"
+    ]
+}

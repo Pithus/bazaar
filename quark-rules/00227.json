@@ -13,7 +13,7 @@
             "descriptor": "(Landroid/content/Intent;)Landroid/content/ComponentName;"
         }
     ],
-    "score": 0.95,
+    "score": 0.69,
     "label": [
         "control"
     ]

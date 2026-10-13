@@ -13,7 +13,7 @@
             "descriptor": "(I)Ljava/lang/Integer;"
         }
     ],
-    "score": -0.52,
+    "score": -0.4,
     "label": [
         "network",
         "collection"

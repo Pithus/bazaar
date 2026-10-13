@@ -1,0 +1,21 @@
+{
+    "crime": "Collect device IMEI and subscriber IMSI identifiers",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/telephony/TelephonyManager;",
+            "method": "getDeviceId",
+            "descriptor": "()Ljava/lang/String;"
+        },
+        {
+            "class": "Landroid/telephony/TelephonyManager;",
+            "method": "getSubscriberId",
+            "descriptor": "()Ljava/lang/String;"
+        }
+    ],
+    "score": 0.8,
+    "label": [
+        "collection",
+        "telephony"
+    ]
+}
