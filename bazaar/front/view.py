@@ -1,16 +1,13 @@
-import hashlib
 import logging
 from collections import Counter
 from tempfile import NamedTemporaryFile
 
-import requests
 from androcfg.code_style import U39bStyle
-from androguard.core.androconf import is_android
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.core.files.storage import default_storage
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed
 from django.http.response import HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -19,9 +16,7 @@ from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from django_q.tasks import async_task
-from django.shortcuts import get_object_or_404
 from elasticsearch import Elasticsearch
-from elasticsearch.helpers.actions import scan
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
 from pygments.lexers.jvm import JavaLexer
@@ -113,7 +108,6 @@ class ReportView(View):
 
             # Find similar sample based on dexofuzzy
             similar_samples = None
-            similar_samples_extended = None
             try:
                 dexofuzzy_hash = result['dexofuzzy']['apk']
                 if dexofuzzy_hash:
@@ -133,8 +127,6 @@ class ReportView(View):
                     except Exception:
                         vt = None
                     res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
-
-                    similar_samples_extended = res
 
             # Find public hunting results
             hunting_matches = Yara.find_public_hunting_matches(sha)
@@ -304,7 +296,6 @@ def notification_delete_view(request, notif_id):
     })
 
 
-
 def get_user_bookmarks(request):
     return Bookmark.objects.filter(owner=request.user)
 
@@ -389,7 +380,7 @@ def get_last_samples():
         raw_results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
         results = transform_results(raw_results)
         return results
-    except Exception as e:
+    except Exception:
         return []
 
 
@@ -399,7 +390,8 @@ def workspace_view(request):
 
     my_bookmarks = None
     if request.method == 'GET':
-        # TODO: refactor so there is only one call for all the rules, then filter by user and by score and output those in the tables
+        # TODO: refactor so there is only one call for all the rules,
+        # then filter by user and by score and output those in the tables
         apk_count = get_count_apks()
         malicious = get_malicious_samples_count()
         count = {
@@ -429,7 +421,7 @@ def workspace_view(request):
 def add_comment_view(request, sha256):
     if not request.user.is_authenticated:
         return redirect(reverse_lazy('front:home'))
-    
+
     if request.method != "POST":
         return HttpResponseNotAllowed(["POST"])
     form = CommentForm(request.POST)
@@ -441,7 +433,6 @@ def add_comment_view(request, sha256):
     if comments is not None:
         for comment in comments:
             comment.delete()
-
 
     if form.is_valid():
         comment = form.save(commit=False)
@@ -576,7 +567,7 @@ def get_count_apks():
     try:
         count = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)['aggregations']['type_value']['value']
         return count
-    except:
+    except Exception:
         return -1
 
 
@@ -591,7 +582,7 @@ def get_trending_malware():
                             "should": [
                                 {
                                     "range": {
-                                        "vt_report.attributes.popular_threat_classification.popular_threat_name.count": {
+                                        "vt_report.attributes.popular_threat_classification.popular_threat_name.count": {  # noqa
                                             "gt": 1
                                         }
                                     }
@@ -618,8 +609,10 @@ def get_trending_malware():
     es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
     try:
         results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)['hits']['hits']
-        return Counter(value['_source']['vt_report']['attributes']
-                       ['popular_threat_classification']['popular_threat_name'][0]['value'] for value in results).most_common(5)
+        return Counter(
+            value['_source']['vt_report']['attributes']
+            ['popular_threat_classification']['popular_threat_name'][0]['value'] for value in results
+        ).most_common(5)
 
     except Exception:
         return []
@@ -666,7 +659,7 @@ def get_malicious_samples_count():
         res = Counter(value['_source']['vt']['malicious'] for value in results)
         # FIXME: total() doesn't seem to work, idk why
         return sum(res.values())
-    except:
+    except Exception:
         return -1
 
 
@@ -675,7 +668,10 @@ def get_best_rules():
     yara_rules = Yara.objects.all()
     my_rules = []
     public_es_index, _ = Yara.get_es_index_names()
-    # TODO: note fo later: in an ideal world, it would be nice to have the matches.matching_files be set on keyword=true for Elastic search so we can retreive the result sorted instead of sorting them on our own. See: https://stackoverflow.com/questions/63784500/text-fields-are-not-optimised-for-operations-that-require-per-document-elastic
+    # TODO: note fo later: in an ideal world, it would be nice to have the matches.matching_files
+    # be set on keyword=true for Elastic search so we can retreive the result sorted
+    # instead of sorting them on our own.
+    # See: https://stackoverflow.com/questions/63784500/text-fields-are-not-optimised-for-operations-that-require-per-document-elastic  # noqa
     q = {
         "query": {
             "bool": {
@@ -721,7 +717,7 @@ def get_best_rules():
                 my_rules.append(my_rule)
 
         return my_rules
-    except:
+    except Exception:
         return []
 
 
@@ -740,12 +736,12 @@ def get_rules(request):
     public_matches, private_matches = None, None
     try:
         private_matches = es.search(index=private_es_index, body=q)['hits']['hits']
-    except:
+    except Exception:
         pass
 
     try:
         public_matches = es.search(index=public_es_index, body=q)['hits']['hits']
-    except:
+    except Exception:
         pass
 
     my_rules = []
@@ -797,7 +793,7 @@ def my_retrohunt_view(request, uuid):
     if not request.user.is_authenticated:
         return redirect(reverse_lazy('front:home'))
     # TODO: add a cap on user use
-    try:    
+    try:
         async_task(retrohunt, uuid, request.user.pk)
         messages.success(request, 'The retrohunt has been launched.')
     except Exception as e:

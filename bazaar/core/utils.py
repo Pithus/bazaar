@@ -459,6 +459,7 @@ def compute_genetic_analysis(results):
 
     return x
 
+
 def transform_results(results):
     return [doc['_source'] for doc in results['hits']['hits']]
 

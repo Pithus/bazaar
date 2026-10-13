@@ -1,6 +1,7 @@
 
 from bazaar.core.models import Notification
 
+
 def get_user_notifications(request):
     if not request.user.is_authenticated:
         return []
@@ -11,7 +12,7 @@ def get_user_notifications(request):
 def add_user_notification(user, text_content, redirect_link=None):
     if not user.is_authenticated:
         return False
-    
+
     Notification.objects.create(user=user, text_content=text_content, redirect_link=redirect_link)
     return True
 

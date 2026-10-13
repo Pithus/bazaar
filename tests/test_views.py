@@ -212,7 +212,7 @@ def test_og_card_view(mock_gen, report_data, rf: RequestFactory):
 
 
 # Test Rules
-def test_workspaces(rf: RequestFactory):
+def test_workspaces_anon(rf: RequestFactory):
     request = rf.get("/workspace/")
     request.user = AnonymousUser()
 

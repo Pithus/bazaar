@@ -358,7 +358,7 @@ def yara_analysis(sha256, rule_id=-1):
 
 
 def retrohunt(rule_id, user_id):
-    
+
     user_model = get_user_model()
     if user_id is not None:
         user = user_model.objects.get(pk=user_id)
@@ -375,11 +375,10 @@ def retrohunt(rule_id, user_id):
                        ):
         _id = report.get('_source').get('sha256')
         res = execute_single_yara_rule(rule.id, _id)
-        if user_id is not None and user is not None and user.is_authenticated and True:
-        #if res['status'] == 'success':
+        if user_id is not None and user is not None and user.is_authenticated and res['status'] == 'success':
             Notification.objects.create(
-                user=user, 
-                text_content=f"Retrohunt found sample matching [{rule.title}]", 
+                user=user,
+                text_content=f"Retrohunt found sample matching [{rule.title}]",
                 redirect_link="/workspace"
             )
 
