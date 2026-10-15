@@ -127,7 +127,7 @@ class ReportView(View):
                     except Exception:
                         vt = None
                     res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
-                similar_samples_extended = res
+                similar_samples = res
 
             # Find public hunting results
             hunting_matches = Yara.find_public_hunting_matches(sha)
@@ -153,7 +153,7 @@ class ReportView(View):
                 'timeline': timeline,
                 'cache_key': f'{cache_key}_tpl',
                 'hunting_matches': hunting_matches,
-                'similar_samples': similar_samples_extended,
+                'similar_samples': similar_samples,
                 'cache_retention_time': cache_retention_time,
                 'is_bookmarked': is_bookmarked})
         except Exception as e:
