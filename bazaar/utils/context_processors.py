@@ -10,7 +10,10 @@ def settings_context(_request):
 
 
 def notifications(request):
-    if not request.user.is_authenticated:
+    try:
+        if not request.user.is_authenticated:
+            return {"has_notifications": False}
+    except AttributeError:
         return {"has_notifications": False}
 
     return {

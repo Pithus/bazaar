@@ -13,6 +13,7 @@ es = Elasticsearch(
     basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
 )
 
+
 def analysis(sha256):
 
     if settings.MISP_URL is None or settings.MISP_KEY is None:
@@ -21,7 +22,7 @@ def analysis(sha256):
         return {'status': 'success', 'info': 'MISP not setup'}
 
     # wait for mobsf to finish its analysis
-    while check_mobsf := es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256)['_source']['mobsf_analysis'] == 1:
+    while es.get(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256)['_source']['mobsf_analysis'] == 1:
         time.sleep(10)
 
     try:
@@ -50,7 +51,7 @@ def analysis(sha256):
             )
 
             attributes = results.get('Attribute', [])
-            
+
             for attribute in attributes:
                 event_id = attribute.get("event_id")
                 if not event_id:
@@ -62,7 +63,7 @@ def analysis(sha256):
                     "ioc": ioc,
                     "event_id": str(event_id),
                     "event_info": event.get("info"),
-                    "event_url": f"{settings.MISP_URL.rstrip('/')}/events/view/{str(event_id)}" 
+                    "event_url": f"{settings.MISP_URL.rstrip('/')}/events/view/{str(event_id)}"
                 }
 
         es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': {'misp_matches': matches}},
