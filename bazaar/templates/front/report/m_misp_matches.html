@@ -1,0 +1,21 @@
+<table class="table table-condensed">
+  <thead>
+    <tr>
+      <th>IOC</th>
+      <th>Event Info</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for k, m in matches.items %}
+    <tr>
+      <td>
+        <a href="{{ m.event_url }}">
+            <code>{{ m.ioc }}</code>
+        </a>
+      </td>
+      <td>
+        <p>{{ m.event_info }}</p>
+      </td>
+    {% endfor %}
+  </tbody>
+</table>

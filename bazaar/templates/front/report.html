@@ -306,7 +306,16 @@
           {% include "front/report/m_malware_bazaar.html" with d=result %}
         </div>
         {% endif %}
-        {% if not result.malware_bazaar and not result.vt and not similar_samples and not timeline and not hunting_matches %}
+        {% if result.misp_matches %}
+        <h3>MISP matches</h3>
+        <p class="text-muted small">Information computed by <a class="small" target="_blank"
+              href="https://github.com/MISP/MISP">MISP</a>.
+        </p>
+        <div class="overflow-box">
+          {% include "front/report/m_misp_matches.html" with matches=result.misp_matches %}
+        </div>
+        {% endif %}
+        {% if not result.malware_bazaar and not result.vt and not similar_samples and not timeline and not hunting_matches and not result.misp_matches %}
           There is no data to display.
         {% endif %}
       </div>

@@ -16,6 +16,7 @@ from bazaar.core.modules import (
     quarkengine,
     similarity,
     virus_total,
+    misp,
 )
 
 
@@ -33,6 +34,8 @@ def _prepare(sha256):
         'ssdeep_analysis': 1,
         'extract_classes': 1,
         'quark_analysis': 1,
+        'misp_analysis': 1,
+        'mobsf_analysis': 1,
         'analysis_date': timezone.now()
     }
 
@@ -66,6 +69,7 @@ def analyze(sha256, force=False):
         async_task(pithus.get_google_play_info, package)
         async_task(pithus.frosting_analysis, sha256)
         async_task(pithus.extract_classes, sha256)
+        async_task(misp.analysis, sha256)
 
     gc.collect()
 
