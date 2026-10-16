@@ -62,7 +62,7 @@
         await refreshStatus();  
         var interval = setInterval(async () => {
             await refreshStatus();
-          }, 60000);
+          }, 10000);
       });
     </script>
   {% elif status.in_error %}

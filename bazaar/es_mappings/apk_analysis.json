@@ -1018,6 +1018,30 @@
       "cert_issuer": {
         "type": "alias",
         "path": "certificates.issuer"
+      },
+      "misp_matches": {
+        "type": "nested",
+        "properties": {
+          "ioc": {
+            "type": "keyword"
+          },
+          "event_id": {
+            "type": "keyword"
+          },
+          "event_info": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 512
+              }
+            }
+          },
+          "event_url": {
+            "type": "keyword",
+            "index": false
+          }
+        }
       }
     }
   }

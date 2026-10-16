@@ -13,3 +13,8 @@ RUSTFS_SECRET_KEY=DRjFXylyfMqn2zilAr33xORhaYz5r9e8r37XPz3A
 
 DJANGO_SUPERUSER_EMAIL = pithus@pithus.org
 DJANGO_SUPERUSER_USERNAME = pithus
+
+
+# Connetion to a MISP instance
+MISP_KEY=
+MISP_URL=

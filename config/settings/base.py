@@ -392,3 +392,7 @@ MOBSF_SERVER = env("MOBSF_SERVER", default="http://mobsf:8000")
 MOBSF_TOKEN = env("MOBSF_API_KEY", default='515d3578262a2539cd13b5b9946fe17e350c321b91faeb1ee56095430242a4a9')  # nosec
 
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=3)  # noqa F405
+
+# MISP
+MISP_URL = env("MISP_URL", default=None)
+MISP_KEY = env("MISP_KEY", default=None)
