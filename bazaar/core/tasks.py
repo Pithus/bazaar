@@ -17,6 +17,7 @@ from bazaar.core.modules import (
     similarity,
     virus_total,
     misp,
+    extract_files,
 )
 
 
@@ -36,6 +37,7 @@ def _prepare(sha256):
         'quark_analysis': 1,
         'misp_analysis': 1,
         'mobsf_analysis': 1,
+        'extract_files': 1,
         'analysis_date': timezone.now()
     }
 
@@ -61,6 +63,7 @@ def analyze(sha256, force=False):
         async_task(mobsf.analysis, sha256)
         async_task(malware_bazaar.analysis, sha256)
         async_task(virus_total.analysis, sha256)
+        async_task(extract_files.analysis, sha256)
         async_task(apkid.analysis, sha256)
         async_task(similarity.analysis, sha256)
         async_task(androcfg.analysis, sha256)

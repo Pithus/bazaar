@@ -1,3 +1,4 @@
+import os
 import logging
 from collections import Counter
 from tempfile import NamedTemporaryFile
@@ -7,7 +8,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.core.files.storage import default_storage
-from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed
+from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed, Http404, FileResponse
 from django.http.response import HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -146,6 +147,12 @@ class ReportView(View):
             else:
                 is_bookmarked = False
 
+            # Check if binwalk found data to extract
+            _, extracted_files = default_storage.listdir(os.path.join(sha, "extracted"))
+            hidden_files = {}
+            for fname in extracted_files:
+                hidden_files[fname] = os.path.join(sha, "extracted", fname)
+
             return render(request, 'front/report.html', {
                 'result': result,
                 'status': status,
@@ -155,10 +162,25 @@ class ReportView(View):
                 'hunting_matches': hunting_matches,
                 'similar_samples': similar_samples,
                 'cache_retention_time': cache_retention_time,
-                'is_bookmarked': is_bookmarked})
+                'is_bookmarked': is_bookmarked,
+                'hidden_files': hidden_files,
+            })
         except Exception as e:
             logging.exception(e)
             return redirect(reverse_lazy('front:home'))
+
+def dl_hidden(request, sha256, filename):
+    fpath = os.path.join(sha256, "extracted", filename)
+    if not default_storage.exists(fpath):
+        raise Http404("File not found")
+
+    file = default_storage.open(fpath, "rb")
+
+    return FileResponse(
+        file,
+        as_attachment=True,
+        filename=filename.split("/")[-1],
+    )
 
 
 def report_status_view(request, sha256):
