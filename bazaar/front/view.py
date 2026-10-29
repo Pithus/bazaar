@@ -169,6 +169,7 @@ class ReportView(View):
             logging.exception(e)
             return redirect(reverse_lazy('front:home'))
 
+
 def dl_hidden(request, sha256, filename):
     fpath = os.path.join(sha256, "extracted", filename)
     if not default_storage.exists(fpath):

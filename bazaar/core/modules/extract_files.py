@@ -51,7 +51,11 @@ def analysis(sha256):
                                 print(f"\n\n\n\n\n\n\n{PurePosixPath(e["output_directory"]).name}\n\n\n\n\n\n\n")
                                 with open(fpath, "rb") as f:
                                     default_storage.save(
-                                        os.path.join(sha256, "extracted", f"{PurePosixPath(e["output_directory"]).name}_{fname}"),
+                                        os.path.join(
+                                            sha256,
+                                            "extracted",
+                                            f"{PurePosixPath(e["output_directory"]).name}_{fname}"
+                                        ),
                                         f
                                     )
                 es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_files': 2}},
@@ -60,7 +64,7 @@ def analysis(sha256):
     except Exception as e:
         logging.exception(e)
         es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_files': -1}},
-                    retry_on_conflict=1)
+                  retry_on_conflict=1)
 
     del apk, f
     gc.collect()
