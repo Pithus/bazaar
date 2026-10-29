@@ -1,0 +1,17 @@
+<table class="table table-condensed">
+  <thead>
+    <tr>
+      <th>File</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for fname, path in d.items %}
+    <tr>
+      <td>
+        <a href="{% url 'front:dl_hidden' sha256=r.sha256 filename=fname %}">
+            <code>{{ fname }}</code>
+        </a>
+      </td>
+    {% endfor %}
+  </tbody>
+</table>

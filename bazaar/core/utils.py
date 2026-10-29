@@ -24,12 +24,12 @@ def compute_status(status):
     success = True
     analysis_launched = False
     error = False
-    running = len(status.keys()) != 8
+    running = 0
     for k, v in status.items():
         if k != 'analysis_date':
             success = success and v == 2
             error = error or v == -1
-            running = running or v == 1 or v == 0
+            running = running or v == 1
             if v == 2:
                 analysis_launched = True  # if at least one step succeeded, the analysis was launched
     return {
