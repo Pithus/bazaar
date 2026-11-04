@@ -45,6 +45,7 @@ numpy==2.4.1
 pandas==2.3.3
 tld==0.13.1
 matplotlib
+binwalkpy @ git+https://github.com/Pithus/binwalkpy.git
 
 # Map
 pygal_maps_world==1.0.2

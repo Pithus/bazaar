@@ -264,6 +264,18 @@
         {% endif %}
 
         {% include "front/report/m_services_et_al.html" with d=result %}
+    
+        {% if hidden_files %}
+        <div>
+          <h3>Hidden Files</h3>
+          <p class="text-muted small">Information computed with 
+            <a class="small" target="_blank" href="https://github.com/pithus/bazaar">Pithus</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_hidden_files.html" with d=hidden_files r=result %}
+          </div>
+        </div>
+        {% endif %}
       </div>
 
       <div class="tab-pane" role="tabpanel" aria-labelledby="threat_intel-tab" id="threat_intel">
