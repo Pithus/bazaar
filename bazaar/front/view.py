@@ -857,13 +857,27 @@ def instance_status(request):
 
 
 def compare_analysis_view(request, *args, **kwargs):
+
     if request.method == 'GET':
-        f = CompareSearchForm(request.GET)
+        left_sha = kwargs.get('left_sha') or request.GET.get('left_sha', '')
+        right_sha = kwargs.get('right_sha') or request.GET.get('right_sha', '')
+
+        f = CompareSearchForm(initial={
+            'left_sha': left_sha,
+            'right_sha': right_sha,
+        })
 
         res = []
         left_res = None
         right_res = None
-        if f.is_valid:
+
+        if left_sha and right_sha:
+            f = CompareSearchForm({
+                'left_sha': left_sha,
+                'right_sha': right_sha,
+            })
+
+        if f.is_valid():
             res = f.do_search()
             if res:
                 left_res = res[0][0]['source']
@@ -875,5 +889,9 @@ def compare_analysis_view(request, *args, **kwargs):
         return render(
             request,
             'front/compare_analysis.html',
-            context={'left_analysis': left_res, 'right_analysis': right_res}
+            context={
+                'form': f,
+                'left_analysis': left_res,
+                'right_analysis': right_res
+            }
         )

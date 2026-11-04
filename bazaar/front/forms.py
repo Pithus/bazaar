@@ -66,11 +66,11 @@ class CommentForm(forms.ModelForm):
 
 
 class CompareSearchForm(forms.Form):
-    left_sha = forms.CharField()
-    right_sha = forms.CharField()
+    left_sha = forms.CharField(required=False)
+    right_sha = forms.CharField(required=False)
 
     def do_search(self):
         return SearchService.compare_search(
-            self['left_sha'].value(),
-            self['right_sha'].value()
+            self.cleaned_data['left_sha'],
+            self.cleaned_data['right_sha']
         )

@@ -18,13 +18,13 @@
             <div class="col-md-5">
               <div class="input-group">
                 <input type="text" class="form-control" name="left_sha" required placeholder="Left Hash"
-                  value="{{form.data.hash}}">
+                  value="{{ form.left_sha.value|default:'' }}">
               </div>
             </div>
             <div class="col-md-5">
               <div class="input-group">
                 <input type="text" class="form-control" name="right_sha" required placeholder="Right Hash"
-                  value="{{form.data.hash}}">
+                  value="{{ form.right_sha.value|default:'' }}">
               </div>
             </div>
             <div class="col-md-2">
