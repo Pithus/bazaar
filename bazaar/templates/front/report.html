@@ -340,6 +340,10 @@
           {% include "front/report/m_code.html" with d=result %}
         </div>
         {% endif %}
+
+        {% if not result.niap_analysis and not result.code_analysis %}
+          <p class="text-muted">There is no data to display.</p>
+        {% endif %}
       </div>
 
       <div class="tab-pane" role="tabpanel" aria-labelledby="network_analysis-tab" id="network_analysis">
@@ -370,6 +374,11 @@
             {% include "front/report/m_domains.html" with d=result %}
           </div>
         </div>
+        {% else %}
+        <div>
+          <h3>Domains analysis</h3>
+          <p class="text-muted">No domains found.</p>
+        </div>
         {% endif %}
 
         {% if result.url_analysis %}
@@ -381,6 +390,11 @@
           <div class="overflow-box">
             {% include "front/report/m_url.html" with d=result %}
           </div>
+        </div>
+        {% else %}
+        <div>
+          <h3>URL analysis</h3>
+          <p class="text-muted">No URLs found.</p>
         </div>
         {% endif %}
       </div>
@@ -433,6 +447,16 @@
             {% include "front/report/m_api.html" with d=result %}
           </div>
         </div>
+        {% endif %}
+
+        {% if not result.detailed_permissions and not result.trackers and not result.android_api_analysis %}
+          {% if result.quark %}
+            {% if not result.quark.crimes %}
+              <p class="text-muted">There is no data to display.</p>
+            {% endif %}
+          {% else %}
+            <p class="text-muted">There is no data to display.</p>
+          {% endif %}
         {% endif %}
       </div>
 
