@@ -87,9 +87,87 @@ def similarity_search(search_hash, algorithm, ignore_sha=''):
                 )
             case 'func_hash':
                 results = get_matching_items_by_ssdeep_func(
-                    search_hash, 25, settings.ELASTICSEARCH_APK_INDEX, ignore_sha
+                    search_hash, 25, settings.ELASTICSEARCH_APK_INDEX
                 )
     except Exception as e:
         logging.error(e)
+
+    return results
+
+
+def compare_search(left_sha, right_sha):
+    shas = []
+    shas.append(left_sha)
+    shas.append(right_sha)
+
+    results = []
+    for sha in shas:
+        query = {
+            "query": {
+                "query_string": {
+                    "default_field": "sha256",
+                    "query": sha,
+                }
+            },
+            "highlight": {
+                "fields": {
+                    "*": {"pre_tags": ["<mark>"], "post_tags": ["</mark>"]}
+                }
+            },
+            "aggs": {
+                "permissions": {
+                    "terms": {"field": "permissions.keyword"}
+                },
+                "domains": {
+                    "terms": {"field": "domains_analysis._name.keyword"}
+                },
+                "android_features": {
+                    "terms": {"field": "features.keyword"}
+                }
+            },
+            "sort": {"analysis_date": "desc"},
+            "_source": [
+                "uaid",
+                "signatures",
+                "is_signed",
+                "is_signed_v1",
+                "is_signed_v2",
+                "is_signed_v3",
+                "certificates",
+                "dexofuzzy",
+                "apkid",
+                "manifest_analysis",
+                "browsable_activities",
+                "niap_analysis",
+                "code_analysis",
+                "detailed_permissions",
+                "trackers",
+                "quark.crimes",
+                "android_api_analysis",
+                "ssdeep",
+                "version_name",
+                "apk_hash",
+                "app_name",
+                "dexofuzzy.apk",
+                "features"
+                "frosting_data.is_frosted",
+                "handle",
+                "is_signed",
+                "md5",
+                "quark.threat_level",
+                "sha1",
+                "sha256",
+                "size",
+                "uploaded_at",
+                "version_code",
+            ],
+            "size": 1,
+        }
+        es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
+        try:
+            raw_results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
+            results.append(transform_hl_results(raw_results))
+        except Exception:
+            return []
 
     return results

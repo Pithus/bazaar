@@ -34,7 +34,8 @@ from bazaar.core.services import NotificationsService
 from bazaar.core.models import Yara, Bookmark, Comment, Notification
 from bazaar.core.modules.pithus import retrohunt
 from bazaar.core.utils import get_matching_items_by_dexofuzzy
-from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, BasicUrlDownloadForm, CommentForm
+from bazaar.front.forms import SearchForm, BasicUploadForm, SimilaritySearchForm, \
+    BasicUrlDownloadForm, CommentForm, CompareSearchForm
 from bazaar.front.og import generate_og_card
 from bazaar.front.utils import get_similarity_matrix, generate_world_map, \
     get_sample_timeline, get_andro_cfg_storage_path
@@ -856,3 +857,44 @@ def get_genom(request):
 
 def instance_status(request):
     return render(request, 'front/instance_status.html')
+
+
+def compare_analysis_view(request, *args, **kwargs):
+
+    if request.method == 'GET':
+        left_sha = kwargs.get('left_sha') or request.GET.get('left_sha', '')
+        right_sha = kwargs.get('right_sha') or request.GET.get('right_sha', '')
+
+        f = CompareSearchForm(initial={
+            'left_sha': left_sha,
+            'right_sha': right_sha,
+        })
+
+        res = []
+        left_res = None
+        right_res = None
+
+        if left_sha and right_sha:
+            f = CompareSearchForm({
+                'left_sha': left_sha,
+                'right_sha': right_sha,
+            })
+
+        if f.is_valid():
+            res = f.do_search()
+            if res:
+                left_res = res[0][0]['source']
+                right_res = res[1][0]['source']
+            else:
+                return render(request, 'front/compare_analysis.html')
+
+        print(res)
+        return render(
+            request,
+            'front/compare_analysis.html',
+            context={
+                'form': f,
+                'left_analysis': left_res,
+                'right_analysis': right_res
+            }
+        )
