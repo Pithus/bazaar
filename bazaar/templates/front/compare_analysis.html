@@ -37,11 +37,11 @@
   </div>
 
   {% if left_analysis and right_analysis %}
-  <div class="table-responsive">
-    <table class="table table-responsive">
+  <div class="comparison-table">
+    <table class="table comparison-table-inner">
       <thead>
         <tr>
-          <th> </th>
+          <th class="label-column"></th>
           <th><strong><a href="{% url 'front:report' left_analysis.sha256 %}">{{left_analysis.sha256}}</a></strong></th>
           <th><strong><a href="{% url 'front:report' right_analysis.sha256 %}">{{right_analysis.sha256}}</a></strong>
           </th>
@@ -53,10 +53,14 @@
             <p>File sums</p>
           </td>
           <td>
-            {% include "front/report/m_file.html" with d=left_analysis %}
+             <div class="comparison-cell">
+                {% include "front/report/m_file.html" with d=left_analysis %}
+             </div>
           </td>
           <td>
-            {% include "front/report/m_file.html" with d=right_analysis %}
+             <div class="comparison-cell">
+                {% include "front/report/m_file.html" with d=rigt_analysis %}
+             </div>
           </td>
         </tr>
         <tr>
@@ -67,10 +71,14 @@
             </p>
           </td>
           <td>
-            {% include "front/report/m_apkid.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_apkid.html" with d=left_analysis %}
+            </div>
           </td>
           <td>
-            {% include "front/report/m_apkid.html" with d=right_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_apkid.html" with d=right_analysis %}
+            </div>
           </td>
         </tr>
         <tr>
@@ -81,10 +89,14 @@
             </p>
           </td>
           <td>
-            {% include "front/report/m_ssdeep.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_ssdeep.html" with d=left_analysis %}
+            </div>
           </td>
           <td>
-            {% include "front/report/m_ssdeep.html" with d=right_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_ssdeep.html" with d=right_analysis %}
+            </div>
           </td>
         </tr>
         <tr>
@@ -92,10 +104,14 @@
             <p>Dexofuzzy</p>
           </td>
           <td>
-            {% include "front/report/m_dexofuzzy.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_dexofuzzy.html" with d=left_analysis %}
+            </div>
           </td>
           <td>
-            {% include "front/report/m_dexofuzzy.html" with d=right_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_dexofuzzy.html" with d=right_analysis %}
+            </div>
           </td>
         </tr>
         <tr>
@@ -107,9 +123,13 @@
             </p>
           </td>
           <td>
-            {% include "front/report/m_apk.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_apk.html" with d=left_analysis %}
+            </div>
           <td>
-            {% include "front/report/m_apk.html" with d=right_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_apk.html" with d=right_analysis %}
+            </div>
           </td>
           </td>
         </tr>
@@ -121,10 +141,14 @@
             </p>
           </td>
           <td>
-            {% include "front/report/m_certificate.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_certificate.html" with d=left_analysis %}
+            </div>
           </td>
           <td>
-            {% include "front/report/m_certificate.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_certificate.html" with d=right_analysis %}
+            </div>
           </td>
         </tr>
 
@@ -137,10 +161,14 @@
             </p>
           </td>
           <td>
-            {% include "front/report/m_manifest.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_manifest.html" with d=left_analysis %}
+            </div>
           </td>
           <td>
-            {% include "front/report/m_manifest.html" with d=right_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_manifest.html" with d=right_analysis %}
+            </div>
           </td>
         </tr>
         {% endif %}
@@ -154,14 +182,17 @@
             </p>
           </td>
           <td>
-            {% include "front/report/m_browsable_activities.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_browsable_activities.html" with d=left_analysis %}
+            </div>
           </td>
           <td>
-            {% include "front/report/m_browsable_activities.html" with d=right_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_browsable_activities.html" with d=right_analysis %}
+            </div>
           </td>
         </tr>
         {% endif %}
-
 
         {% if left_analysis.niap_analysis and right_analysis.niap_analysis %}
         <tr>
@@ -172,10 +203,14 @@
             </p>
           </td>
           <td>
-            {% include "front/report/m_niap.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_niap.html" with d=left_analysis %}
+            </div>
           </td>
           <td>
-            {% include "front/report/m_niap.html" with d=right_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_niap.html" with d=right_analysis %}
+            </div>
           </td>
         </tr>
         {% endif %}
@@ -189,10 +224,14 @@
             </p>
           </td>
           <td>
-            {% include "front/report/m_code.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_code.html" with d=left_analysis %}
+            </div>
           </td>
           <td>
-            {% include "front/report/m_code.html" with d=right_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_code.html" with d=right_analysis %}
+            </div>
           </td>
         </tr>
         {% endif %}
@@ -206,10 +245,14 @@
             </p>
           </td>
           <td>
-            {% include "front/report/m_permissions.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_permissions.html" with d=left_analysis %}
+            </div>
           </td>
           <td>
-            {% include "front/report/m_permissions.html" with d=right_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_permissions.html" with d=right_analysis %}
+            </div>
           </td>
         </tr>
         {% endif %}
@@ -223,10 +266,14 @@
             </p>
           </td>
           <td>
-            {% include "front/report/m_trackers.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_trackers.html" with d=left_analysis %}
+            </div>
           </td>
           <td>
-            {% include "front/report/m_trackers.html" with d=right_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_trackers.html" with d=right_analysis %}
+            </div>
           </td>
         </tr>
         {% endif %}
@@ -240,10 +287,14 @@
             </p>
           </td>
           <td>
-            {% include "front/report/m_quark.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_quark.html" with d=left_analysis %}
+            </div>
           </td>
           <td>
-            {% include "front/report/m_quark.html" with d=right_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_quark.html" with d=right_analysis %}
+            </div>
           </td>
         </tr>
         {% endif %}
@@ -257,10 +308,14 @@
             </p>
           </td>
           <td>
-            {% include "front/report/m_api.html" with d=left_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_api.html" with d=left_analysis %}
+            </div>
           </td>
           <td>
-            {% include "front/report/m_api.html" with d=right_analysis %}
+            <div class="comparison-cell">
+              {% include "front/report/m_api.html" with d=right_analysis %}
+            </div>
           </td>
         </tr>
         {% endif %}

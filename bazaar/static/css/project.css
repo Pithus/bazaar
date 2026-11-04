@@ -7330,3 +7330,27 @@ samp {
   background-color: #dc3545;
   border-radius: 50%;
   border: 2px solid #fff; }
+
+.comparison-table {
+  width: 100%;
+  overflow: hidden; }
+
+.comparison-table-inner {
+  width: 100%;
+  table-layout: fixed; }
+
+.comparison-table-inner th:first-child,
+.comparison-table-inner td:first-child {
+  width: 120px; }
+
+.comparison-table-inner th:nth-child(2),
+.comparison-table-inner th:nth-child(3),
+.comparison-table-inner td:nth-child(2),
+.comparison-table-inner td:nth-child(3) {
+  width: auto;
+  overflow-wrap: break-word; }
+
+.comparison-cell {
+  width: 100%;
+  overflow-x: auto;
+  white-space: nowrap; }
