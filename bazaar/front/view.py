@@ -327,9 +327,12 @@ def get_user_bookmarks(request):
 def enrich_bookmarks(request, bookmarks):
     res = []
     for sample in bookmarks:
-        apk = get_sample_light(sample.sample)
-        apk[0]["comment"] = Comment.objects.filter(owner=request.user, sample=sample.sample).first()
-        res.append(apk)
+        try:
+            apk = get_sample_light(sample.sample)
+            apk[0]["comment"] = Comment.objects.filter(owner=request.user, sample=sample.sample).first()
+            res.append(apk)
+        except Exception as e:
+            logging.exception(e)
     return res
 
 
