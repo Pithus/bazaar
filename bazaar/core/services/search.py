@@ -160,14 +160,14 @@ def compare_search(left_sha, right_sha):
                 "size",
                 "uploaded_at",
                 "version_code",
-                ],
+            ],
             "size": 1,
         }
         es = Elasticsearch(settings.ELASTICSEARCH_HOSTS)
         try:
             raw_results = es.search(index=settings.ELASTICSEARCH_APK_INDEX, body=query)
             results.append(transform_hl_results(raw_results))
-        except Exception as e:
+        except Exception:
             return []
 
     return results

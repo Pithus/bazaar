@@ -39,6 +39,7 @@ def compute_status(status):
         'running': running
     }
 
+
 def get_sha256_of_file_path(file_path):
     sha256_hash = hashlib.sha256()
     with open(file_path, "rb") as f:
