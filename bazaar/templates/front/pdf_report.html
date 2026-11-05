@@ -1,0 +1,395 @@
+{% load static %}
+{% load cache %}
+{% load crispy_forms_tags %}
+
+<link href="{% static 'css/project.css' %}" rel="stylesheet">
+<link href="{% static 'fonts/font-awesome/css/all.css' %}" rel="stylesheet">
+<link href="{% static 'css/nerd-fonts.min.css' %}" rel="stylesheet">
+<link href="{% static 'reports/css/pdf.css' %}" rel="stylesheet" media="print">
+
+{% block content %}
+<div class="container">
+  <h1 class="h1">Pithus report</h1>
+  <div class="row justify-content-center">
+    <div class="col">
+      <h1 class="text-primary">
+        {% if result.icon_base64 %}
+        <img class="" src="data:image/png;base64,{{ result.icon_base64 }}" width="48px">
+        {% endif %}
+        {{ result.handle }}
+      </h1>
+      {% if result.app_name %}
+        <h3 class="text-secondary">{{ result.app_name }}</h3>
+      {% endif %}
+      {% if result.malware_bazaar.vendor_intel.Triage.tags %}
+      <p>
+        {% for t in result.malware_bazaar.vendor_intel.Triage.tags %}
+        <span class="badge badge-secondary text-white">{{ t }}</span>
+        {% endfor %}
+      </p>
+      {% endif %}
+      <p class="text-muted">Analyzed on {{ result.uploaded_at }}</p>
+    </div>
+  </div>
+
+  <div class="card border-0">
+    <div class="card-body text-center">
+      <div>
+        {% include "front/report/m_threat_level.html" %}
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col mb-4">
+      <div class="card text-white bg-secondary">
+        <div class="card-body text-center">
+          <h3 class="text-white">{{ result.permissions|length }}</h3>
+          <h6>permissions</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card text-white bg-secondary">
+        <div class="card-body text-center">
+          <h3 class="text-white">{{ result.activities|length }}</h3>
+          <h6>activities</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card text-white bg-secondary">
+        <div class="card-body text-center">
+          <h3 class="text-white">{{ result.services|length }}</h3>
+          <h6>services</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card text-white bg-secondary">
+        <div class="card-body text-center">
+          <h3 class="text-white">{{ result.receivers|length }}</h3>
+          <h6>receivers</h6>
+        </div>
+      </div>
+    </div>
+    <div class="col mb-4">
+      <div class="card text-white bg-secondary">
+        <div class="card-body text-center">
+          <h3 class="text-white">{{ result.domains_analysis|length }}</h3>
+          <h6>domains</h6>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-md-12 mt-5 tab-content">
+      <div class="tab-pane" role="tabpanel" aria-labelledby="fingerprints-tab" id="fingerprints">
+        <div class="col-md-12">
+          <h3>File sums</h3>
+          <div class="overflow-box">
+            {% include "front/report/m_file.html" with d=result %}
+          </div>
+        </div>
+        <div class="col-md-12">
+          <h3>APKiD</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/rednaga/APKiD">APKiD</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_apkid.html" with d=result %}
+          </div>
+        </div>
+        <div class="col-md-12">
+          <h3>SSdeep</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/DinoTools/python-ssdeep">ssdeep</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_ssdeep.html" with d=result %}
+          </div>
+        </div>
+        <div class="col-md-12">
+          <h3>Dexofuzzy</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/ESTsecurity/Dexofuzzy">Dexofuzzy</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_dexofuzzy.html" with d=result %}
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-pane" role="tabpanel" aria-labelledby="apk_analysis-tab" id="apk_analysis">
+        <div>
+          <h3>APK details</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/androguard/androguard">AndroGuard</a>
+            and <a class="small" target="_blank" href="https://github.com/pithus/bazaar">Pithus</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_apk.html" with d=result %}
+          </div>
+        </div>
+
+        <div>
+          <h3>Certificate details</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/androguard/androguard">AndroGuard</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_certificate.html" with d=result %}
+          </div>
+        </div>
+
+        {% include "front/report/m_file_analysis.html" with d=result %}
+
+        {% if result.manifest_analysis %}
+        <div>
+          <h3>Manifest analysis</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_manifest.html" with d=result %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if result.browsable_activities %}
+        <h3>Browsable activities</h3>
+        <p class="text-muted small">Information computed with <a class="small" target="_blank"
+            href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+        </p>
+        <div class="overflow-box">
+          {% include "front/report/m_browsable_activities.html" with d=result %}
+        </div>
+        {% endif %}
+
+        {% include "front/report/m_services_et_al.html" with d=result %}
+    
+        {% if hidden_files %}
+        <div>
+          <h3>Hidden Files</h3>
+          <p class="text-muted small">Information computed with 
+            <a class="small" target="_blank" href="https://github.com/pithus/bazaar">Pithus</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_hidden_files.html" with d=hidden_files r=result %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="tab-pane" role="tabpanel" aria-labelledby="threat_intel-tab" id="threat_intel">
+        {% if hunting_matches %}
+        <div class="mb-4">
+          <h3>Hunting matches</h3>
+          <p class="text-muted small">Information computed by <a class="small" target="_blank"
+              href="https://github.com/pithus/bazaar">Pithus</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_hunting.html" %}
+          </div>
+        </div>
+        {% endif %}
+        {% if timeline %}
+        {% include "front/report/m_timeline.html" %}
+        {% endif %}
+
+        {% if similar_samples %}
+        {% if similar_samples|length > 0 %}
+        <div>
+          <h3>Similar samples</h3>
+          <p class="text-muted small">Information computed by <a class="small" target="_blank"
+              href="https://github.com/pithus/bazaar">Pithus</a>.
+          </p>
+          <div class="alert alert-info">
+            <p>The following samples have traits that are similar to the one displayed. This
+              might indicate a proximity in use or, if those samples are different in appearance, it might indicate a
+              possible malicious application.</p>
+            <p>High similarity and different apparent names indicate that those applications are suspicious.</p>
+          </div>
+          <div class="overflow-box">
+            {% include "front/report/m_similar_samples.html" %}
+          </div>
+        </div>
+        {% endif %}
+        {% endif %}
+        {% if result.malware_bazaar or result.vt %}
+        <div>
+          {% include "front/report/m_malware_bazaar.html" with d=result %}
+        </div>
+        {% endif %}
+        {% if result.misp_matches %}
+        <h3>MISP matches</h3>
+        <p class="text-muted small">Information computed by <a class="small" target="_blank"
+              href="https://github.com/MISP/MISP">MISP</a>.
+        </p>
+        <div class="overflow-box">
+          {% include "front/report/m_misp_matches.html" with matches=result.misp_matches %}
+        </div>
+        {% endif %}
+        {% if not result.malware_bazaar and not result.vt and not similar_samples and not timeline and not hunting_matches and not result.misp_matches %}
+          There is no data to display.
+        {% endif %}
+      </div>
+
+      <div class="tab-pane" role="tabpanel" aria-labelledby="code_analysis-tab" id="code_analysis">
+        {% if result.niap_analysis %}
+        <div>
+          <h3>NIAP analysis</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_niap.html" with d=result %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if result.code_analysis %}
+        <div>
+          <h3>Code analysis</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          {% include "front/report/m_code.html" with d=result %}
+        </div>
+        {% endif %}
+
+        {% if not result.niap_analysis and not result.code_analysis %}
+          <p class="text-muted">There is no data to display.</p>
+        {% endif %}
+      </div>
+
+      <div class="tab-pane" role="tabpanel" aria-labelledby="network_analysis-tab" id="network_analysis">
+
+        {% if result.domains_analysis %}
+        <div class="overflow-box">
+          {% include "front/report/m_map.html" %}
+        </div>
+        {% endif %}
+
+        {% if result.network_security %}
+        <div>
+          <h3>Network analysis</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          <div class="overflow-box">
+           {% include "front/report/m_network.html" with d=result %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if result.domains_analysis %}
+        <div>
+          <h3>Domains analysis</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_domains.html" with d=result %}
+          </div>
+        </div>
+        {% else %}
+        <div>
+          <h3>Domains analysis</h3>
+          <p class="text-muted">No domains found.</p>
+        </div>
+        {% endif %}
+
+        {% if result.url_analysis %}
+        <div>
+          <h3>URL analysis</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_url.html" with d=result %}
+          </div>
+        </div>
+        {% else %}
+        <div>
+          <h3>URL analysis</h3>
+          <p class="text-muted">No URLs found.</p>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="tab-pane" role="tabpanel" aria-labelledby="behavior_analysis-tab" id="behavior_analysis">
+        {% if result.detailed_permissions %}
+        <div>
+          <h3>Permissions analysis</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_permissions.html" with d=result %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if result.trackers %}
+        <div>
+          <h3>Tracking analysis</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/Exodus-Privacy/exodus-core">Exodus-core</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_trackers.html" with d=result %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if result.quark.crimes %}
+        <div>
+          <h3>Threat analysis</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/quark-engine/quark-engine">Quark-Engine</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_quark.html" with d=result %}
+          </div>
+        </div>
+        {% endif %}
+
+
+        {% if result.android_api_analysis %}
+        <div>
+          <h3>Behavior analysis</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_api.html" with d=result %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if not result.detailed_permissions and not result.trackers and not result.android_api_analysis %}
+          {% if result.quark %}
+            {% if not result.quark.crimes %}
+              <p class="text-muted">There is no data to display.</p>
+            {% endif %}
+          {% else %}
+            <p class="text-muted">There is no data to display.</p>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      {% if request.user.is_authenticated %}
+        {% if result.andro_cfg %}
+        <div class="tab-pane" role="tabpanel" aria-labelledby="cfg_analysis-tab" id="cfg_analysis">
+          <div>
+            {% include "front/report/m_androcfg.html" with andro_cfg=result.andro_cfg sha256=result.sha256 %}
+          </div>
+        </div>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock content %}

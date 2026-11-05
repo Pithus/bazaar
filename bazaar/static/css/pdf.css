@@ -1,0 +1,78 @@
+@page {
+    size: A4;
+    margin: 12mm;
+}
+
+html, body {
+    height: auto !important;
+    overflow: visible !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+.container {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+section {
+    break-inside: auto;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: #333;
+}
+
+h1, h2, h3 {
+    page-break-after: avoid;
+}
+
+.no-print {
+    display: none !important;
+}
+
+.page-break {
+    break-before: page;
+}
+
+.tab-content > .tab-pane {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    height: auto !important;
+}
+
+.tab-pane {
+    display: block !important;
+    position: static !important;
+}
+
+.tab-pane {
+    margin-bottom: 30px;
+}
+
+.pdf-page-break {
+    break-before: page;
+}
+
+table {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-collapse: collapse !important;
+    box-sizing: border-box !important;
+}
+
+table td,
+table th {
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+}
+
+tr {
+    page-break-inside: avoid;
+}

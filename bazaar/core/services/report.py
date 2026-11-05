@@ -4,6 +4,31 @@ from elasticsearch import Elasticsearch
 
 from bazaar.core.utils import compute_status
 
+class ReportData:
+
+    def __init__(
+        self,
+        result = None,
+        status = None,
+        map_svg = None,
+        timeline = None,
+        hunting_matches = None,
+        similar_samples = None,
+        cache_retention_time = None,
+        is_bookmarked = None,
+        hidden_files = None
+    ):
+        self.result = result
+        self.status = status
+        self.map_svg = map_svg
+        self.timeline = timeline
+        self.hunting_matches = hunting_matches
+        self.similar_samples = similar_samples
+        self.cache_retention_time = cache_retention_time
+        self.is_bookmarked = is_bookmarked
+        self.hidden_files = hidden_files
+
+
 
 def list_reports() -> []:
     try:
