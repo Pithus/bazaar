@@ -128,3 +128,43 @@ samp {
     overflow-x: auto;
     white-space: nowrap;
 }
+
+.autocomplete {
+  position: relative;
+  display: inline-block;
+  flex: 1 1 auto;
+  width: 1%;
+}
+
+.autocomplete .form-control {
+  width: 100%;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.autocomplete-items {
+  text-align: left; 
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-top: none;
+  z-index: 99;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-items div:hover {
+  background-color: #e9e9e9;
+}
+
+.autocomplete-active {
+  background-color: #d1c0ee !important;
+  color: #ffffff;
+}
