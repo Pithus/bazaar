@@ -42,7 +42,6 @@ from bazaar.front.utils import get_similarity_matrix, generate_world_map, \
     get_sample_timeline, get_andro_cfg_storage_path
 from bazaar.core.utils import transform_hl_results, transform_results
 from .forms import YaraCreateForm
-from bazaar.users.models import Settings
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -462,7 +461,7 @@ def user_settings(request):
     if request.method == "POST":
         data = json.loads(request.body)
         mode = data.get("usagemode")
-    
+
         valid_usage_modes = [
             "journalism",
             "reverse",
@@ -481,6 +480,7 @@ def user_settings(request):
         user_settings.save()
         return HttpResponse(status=200)
     return HttpResponseBadRequest()
+
 
 def add_comment_view(request, sha256):
     if not request.user.is_authenticated:
