@@ -13,7 +13,7 @@
             "descriptor": "()Ljava/lang/String;"
         }
     ],
-    "score": -0.34,
+    "score": -0.02,
     "label": [
         "network",
         "collection"
