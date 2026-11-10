@@ -46,6 +46,7 @@ pandas==2.3.3
 tld==0.13.1
 matplotlib
 binwalkpy @ git+https://github.com/Pithus/binwalkpy.git
+weasyprint==70.0
 
 # Map
 pygal_maps_world==1.0.2

@@ -5,7 +5,7 @@ from bazaar.front.view import HomeView, ReportView, basic_upload_view, similarit
     download_sample_view, my_rule_edit_view, my_rule_create_view, my_rule_delete_view, og_card_view, \
     my_retrohunt_view, get_andgrocfg_code, get_genom, basic_url_download_view, report_status_view, instance_status, \
     remove_bookmark_sample_view, add_bookmark_sample_view, workspace_view, add_comment_view, delete_comment_view, \
-    notifications_view, notification_delete_view, dl_hidden, compare_analysis_view
+    notifications_view, notification_delete_view, dl_hidden, compare_analysis_view, export_pdf_view
 
 app_name = "front"
 urlpatterns = [
@@ -14,6 +14,7 @@ urlpatterns = [
     path("report/", view=HomeView.as_view(), name="report"),
     path("report/<str:sha256>", view=ReportView.as_view(), name="report"),
     path("report/<str:sha256>/json", view=export_report_view, name="export_report"),
+    path("report/<str:sha256>/pdf", view=export_pdf_view, name="export_pdf"),
     path("report/<str:sha256>/card", view=og_card_view, name="og_card"),
     path("report/<str:sha256>/status", view=report_status_view, name="report_status"),
     path("report/<str:sha256>/extracted/<str:filename>", view=dl_hidden, name="dl_hidden"),
@@ -38,5 +39,5 @@ urlpatterns = [
     path("notifications", view=notifications_view, name="notifications_url"),
     path("notifications/<uuid:notif_id>/delete", view=notification_delete_view, name="notifications_url"),
     path("compare/", view=compare_analysis_view, name="compare_analysis"),
-    path("compare/<str:left_sha>/to/<str:right_sha>", view=compare_analysis_view, name="compare_analysis")
+    path("compare/<str:left_sha>/to/<str:right_sha>", view=compare_analysis_view, name="compare_analysis"),
 ]

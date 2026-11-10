@@ -39,6 +39,10 @@
             <a href="{% url 'front:export_report' result.apk_hash %}" class="h5 text-decoration-none"
               data-toggle="tooltip" data-placement="top" title="Export the report in JSON">
               <i class="nf nf-mdi-export"></i></a>
+            <a href="{% url 'front:export_pdf' result.apk_hash %}" 
+              class="h5 text-decoration-none" data-toggle="tooltip" data-placement="top" title="Download report as PDF">
+              <i class="fas fa-file-pdf"></i></a>
+            </a>
             {% if is_bookmarked %}
               <a href="{% url 'front:remove_bookmark_sample' result.apk_hash %}" class="h5 text-decoration-none"
                   data-toggle="tooltip" data-placement="top" title="Remove bookmark">

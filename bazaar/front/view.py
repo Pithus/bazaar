@@ -23,6 +23,10 @@ from pygments.formatters import HtmlFormatter
 from pygments.lexers.jvm import JavaLexer
 from rest_framework.authtoken.models import Token
 from rest_framework.reverse import reverse_lazy
+from weasyprint import HTML, CSS
+from django.template.loader import render_to_string
+from django.contrib.staticfiles import finders
+
 
 from bazaar.core.services import ReportService
 from bazaar.core.services import ApkService
@@ -82,9 +86,81 @@ class HomeView(View):
                       })
 
 
+def get_report_data(request, sha):
+
+    try:
+        result = ReportService.get_report(sha)
+        status = ReportService.get_status(sha)
+
+        # Generate map
+        map_svg = None
+        if 'domains_analysis' in result:
+            map_svg = generate_world_map(result['domains_analysis'])
+
+        # Find similar sample based on dexofuzzy
+        similar_samples = None
+        try:
+            dexofuzzy_hash = result['dexofuzzy']['apk']
+            if dexofuzzy_hash:
+                similar_samples = get_matching_items_by_dexofuzzy(
+                    dexofuzzy_hash,
+                    25,
+                    settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, sha)
+        except Exception as e:
+            logging.error(e)
+
+        if similar_samples:
+            res = []
+            for sha256, score in similar_samples:
+                apk = SearchService.light_sample_search(sha256)
+                try:
+                    vt = apk[0]['source']['vt']
+                except Exception:
+                    vt = None
+                res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
+            similar_samples = res
+
+        # Find public hunting results
+        hunting_matches = Yara.find_public_hunting_matches(sha)
+
+        # Adapt caching depending on the status of the analysis
+        cache_retention_time = 2
+        if not status['running']:
+            cache_retention_time = 600
+
+        # Get timeline
+        timeline = get_sample_timeline(sha)
+
+        # Check if the sample is already bookmarked
+        if request.user.is_authenticated:
+            is_bookmarked = get_user_bookmark_by_hash(request, sha)
+        else:
+            is_bookmarked = False
+
+        # Check if binwalk found data to extract
+        _, extracted_files = default_storage.listdir(os.path.join(sha, "extracted"))
+        hidden_files = {}
+        for fname in extracted_files:
+            hidden_files[fname] = os.path.join(sha, "extracted", fname)
+    except Exception:
+        raise
+
+    return ReportService.ReportData(
+        result = result,
+        status = status,
+        map_svg = map_svg,
+        timeline = timeline,
+        hunting_matches = hunting_matches,
+        similar_samples = similar_samples,
+        cache_retention_time = cache_retention_time,
+        is_bookmarked = is_bookmarked,
+        hidden_files = hidden_files
+    )
+
 class ReportView(View):
 
     def get(self, request, *args, **kwargs):
+
         if 'sha256' not in kwargs:
             return redirect(reverse_lazy('front:home'))
 
@@ -98,73 +174,20 @@ class ReportView(View):
         if cached_report:
             return cached_report
 
-        # Not cached so, let's compute the report
         try:
-            result = ReportService.get_report(sha)
-            status = ReportService.get_status(sha)
-
-            # Generate map
-            map_svg = None
-            if 'domains_analysis' in result:
-                map_svg = generate_world_map(result['domains_analysis'])
-
-            # Find similar sample based on dexofuzzy
-            similar_samples = None
-            try:
-                dexofuzzy_hash = result['dexofuzzy']['apk']
-                if dexofuzzy_hash:
-                    similar_samples = get_matching_items_by_dexofuzzy(
-                        dexofuzzy_hash,
-                        25,
-                        settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX, sha)
-            except Exception as e:
-                logging.error(e)
-
-            if similar_samples:
-                res = []
-                for sha256, score in similar_samples:
-                    apk = SearchService.light_sample_search(sha256)
-                    try:
-                        vt = apk[0]['source']['vt']
-                    except Exception:
-                        vt = None
-                    res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
-                similar_samples = res
-
-            # Find public hunting results
-            hunting_matches = Yara.find_public_hunting_matches(sha)
-
-            # Adapt caching depending on the status of the analysis
-            cache_retention_time = 2
-            if not status['running']:
-                cache_retention_time = 600
-
-            # Get timeline
-            timeline = get_sample_timeline(sha)
-
-            # Check if the sample is already bookmarked
-            if request.user.is_authenticated:
-                is_bookmarked = get_user_bookmark_by_hash(request, sha)
-            else:
-                is_bookmarked = False
-
-            # Check if binwalk found data to extract
-            _, extracted_files = default_storage.listdir(os.path.join(sha, "extracted"))
-            hidden_files = {}
-            for fname in extracted_files:
-                hidden_files[fname] = os.path.join(sha, "extracted", fname)
+            data = get_report_data(request, sha)
 
             return render(request, 'front/report.html', {
-                'result': result,
-                'status': status,
-                'map': map_svg,
-                'timeline': timeline,
+                'result': data.result,
+                'status': data.status,
+                'map': data.map_svg,
+                'timeline': data.timeline,
                 'cache_key': f'{cache_key}_tpl',
-                'hunting_matches': hunting_matches,
-                'similar_samples': similar_samples,
-                'cache_retention_time': cache_retention_time,
-                'is_bookmarked': is_bookmarked,
-                'hidden_files': hidden_files,
+                'hunting_matches': data.hunting_matches,
+                'similar_samples': data.similar_samples,
+                'cache_retention_time': data.cache_retention_time,
+                'is_bookmarked': data.is_bookmarked,
+                'hidden_files': data.hidden_files,
             })
         except Exception as e:
             logging.exception(e)
@@ -898,3 +921,44 @@ def compare_analysis_view(request, *args, **kwargs):
                 'right_analysis': right_res
             }
         )
+
+
+def export_pdf_view(request, sha256):
+
+    cache_key = f'html_report_{sha256}'
+    if request.user.is_authenticated:
+        cache_key = f'html_report_{sha256}_authenticated'
+
+    project_css_path = finders.find('css/project.css')
+    pdf_css_path = finders.find('css/pdf.css')
+    data = get_report_data(request, sha256)
+
+    html_data = render_to_string('front/pdf_report.html', {
+        'result': data.result,
+        'status': data.status,
+        'map': data.map_svg,
+        'timeline': data.timeline,
+        'cache_key': f'{cache_key}_tpl',
+        'hunting_matches': data.hunting_matches,
+        'similar_samples': data.similar_samples,
+        'cache_retention_time': data.cache_retention_time,
+        'is_bookmarked': data.is_bookmarked,
+        'hidden_files': data.hidden_files,
+    }, request=request)
+
+    pdf_file = HTML(
+        string=html_data,
+        base_url=request.build_absolute_uri('/')
+    ).write_pdf(
+        stylesheets=[
+           CSS(filename=project_css_path),
+           CSS(filename=pdf_css_path),
+        ]
+    )
+
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = (
+        f'attachment; filename="report_{sha256}.pdf"'
+    )
+
+    return response
