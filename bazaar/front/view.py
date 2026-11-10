@@ -2,6 +2,7 @@ import os
 import logging
 from collections import Counter
 from tempfile import NamedTemporaryFile
+import json
 
 from androcfg.code_style import U39bStyle
 from django.conf import settings
@@ -41,6 +42,7 @@ from bazaar.front.utils import get_similarity_matrix, generate_world_map, \
     get_sample_timeline, get_andro_cfg_storage_path
 from bazaar.core.utils import transform_hl_results, transform_results
 from .forms import YaraCreateForm
+from bazaar.users.models import Settings
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -145,8 +147,10 @@ class ReportView(View):
             # Check if the sample is already bookmarked
             if request.user.is_authenticated:
                 is_bookmarked = get_user_bookmark_by_hash(request, sha)
+                usagemode = request.user.user_settings.usagemode
             else:
                 is_bookmarked = False
+                usagemode = "default"
 
             # Check if binwalk found data to extract
             _, extracted_files = default_storage.listdir(os.path.join(sha, "extracted"))
@@ -165,6 +169,7 @@ class ReportView(View):
                 'cache_retention_time': cache_retention_time,
                 'is_bookmarked': is_bookmarked,
                 'hidden_files': hidden_files,
+                'usagemode': usagemode,
             })
         except Exception as e:
             logging.exception(e)
@@ -443,8 +448,39 @@ def workspace_view(request):
     return render(request, 'front/workspace/workspace_base.html',
                   context={'my_rules': my_rules, 'my_token': token,
                            'bookmarked_samples': my_bookmarks, 'trends': trends,
-                           'count': count})
+                           'count': count,
+                           'usagemode': request.user.user_settings.usagemode})
 
+
+def user_settings(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse_lazy('front:home'))
+
+    ok = True
+    user_settings = request.user.user_settings
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        mode = data.get("usagemode")
+    
+        valid_usage_modes = [
+            "journalism",
+            "reverse",
+            "threathunting",
+            "default"
+        ]
+
+        if mode in valid_usage_modes:
+            user_settings.usagemode = mode
+        else:
+            ok = False
+    else:
+        return HttpResponseNotAllowed()
+
+    if ok:
+        user_settings.save()
+        return HttpResponse(status=200)
+    return HttpResponseBadRequest()
 
 def add_comment_view(request, sha256):
     if not request.user.is_authenticated:
