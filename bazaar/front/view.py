@@ -240,18 +240,20 @@ def similarity_search_view(request, sha256=''):
         res = []
         if form.is_valid():
             results = form.do_search(sha256)
-            for sha256, score in results:
-                apk = SearchService.light_sample_search(sha256)
+            for match_sha, score in results:
+                apk = SearchService.light_sample_search(match_sha)
                 try:
                     vt = apk[0]['source']['vt']
                 except Exception:
                     vt = None
 
-                res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], sha256, vt, score))
+                res.append((apk[0]['source']['app_name'], apk[0]['source']['handle'], match_sha, vt, score))
 
             results = res
 
-        return render(request, 'front/similarity_search.html', {'form': form, 'results': results})
+        return render(
+            request, 'front/similarity_search.html',
+            {'form': form, 'results': results, 'sha256': sha256})
 
 
 def download_sample_view(request, sha256):

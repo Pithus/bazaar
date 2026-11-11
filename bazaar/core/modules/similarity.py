@@ -5,7 +5,6 @@ from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 import dexofuzzy
 import ssdeep
-import tlsh
 
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -32,7 +31,7 @@ def analysis(sha256):
         tlsh_apk = ''
         try:
             tlsh_apk = tlsh_hash_from_file(f.name)
-            insert_fuzzy_hash(tlsh_apk, sha256, settings.ELASTICSEARCH_TLSH_APK_INDEX)
+            insert_tlsh_hash(tlsh_apk, sha256, settings.ELASTICSEARCH_TLSH_APK_INDEX)
         except Exception as e:
             logging.exception(f'tlsh analysis: {e}')
 

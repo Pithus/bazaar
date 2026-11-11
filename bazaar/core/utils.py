@@ -479,14 +479,13 @@ def get_matching_items_by_tlsh(tlsh, threshold_grade, index, sha256):
             "sha256": hit["_source"]["sha256"]
         })
 
-
     sha256_list_to_return = []
 
     for entry in hashes:
         if entry["_source"]["sha256"] != sha256:
             tlsh_grade = tlsh.diff(tlsh, entry["tlsh"])
             if tlsh_grade <= threshold_grade:
-                sha256_list_to_return.append((record['_source']['sha256'], tlsh_grade))
+                sha256_list_to_return.append((entry['_source']['sha256'], tlsh_grade))
 
     return sha256_list_to_return
 
