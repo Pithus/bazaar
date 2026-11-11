@@ -14,6 +14,7 @@ indexes = [
     'dexofuzzy_apk',
     'ssdeep_apk',
     'ssdeep_manifest',
+    'tlsh_apk',
 ]
 es = Elasticsearch(
     settings.ELASTICSEARCH_HOSTS,

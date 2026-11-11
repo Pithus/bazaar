@@ -1,0 +1,30 @@
+{% load get %}
+
+<table class="table table-condensed table-sm">
+  {% if d.tlsh.apk %}
+  <tr>
+    <td class=""><span class="">APK file</span></td>
+    <td class="">
+      <samp>{{ d.tlsh.apk|truncatechars:70}}</samp>
+    </td>
+    <td>
+      {% include "front/report/m_copy_to_clipboard.html" with data=d.tlsh.apk %}
+      <a class="btn btn-sm btn-link p-0 text-decoration-none" href="{% url 'front:similarity_search' %}{{ d.sha256 }}?hash={{ d.tlsh.apk }}&algorithm=tlsh"
+        data-toggle="tooltip" data-placement="top" title="Find similar samples">
+        <i class="nf nf-oct-search"></i>
+      </a>
+    </td>
+  </tr>
+  {% endif %}
+  {% for p in d.tlsh.dex|dictsort:"file" %}
+  <tr>
+    <td class=""><span class=""><samp>{{ p.file }}</samp></span></td>
+    <td class="">
+      <samp>{{ p.hash|truncatechars:70 }}</samp>
+    </td>
+    <td>
+      {% include "front/report/m_copy_to_clipboard.html" with data=p.hash %}
+    </td>
+  </tr>
+  {% endfor %}
+</table>

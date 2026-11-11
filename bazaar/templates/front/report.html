@@ -219,6 +219,15 @@
             {% include "front/report/m_dexofuzzy.html" with d=result %}
           </div>
         </div>
+        <div class="col-md-12">
+          <h3>TLSH</h3>
+          <p class="text-muted small">Information computed with <a class="small" target="_blank"
+              href="https://tlsh.org">TLSH</a>.
+          </p>
+          <div class="overflow-box">
+            {% include "front/report/m_tlsh.html" with d=result %}
+          </div>
+        </div>
       </div>
 
       <div class="tab-pane" role="tabpanel" aria-labelledby="apk_analysis-tab" id="apk_analysis">

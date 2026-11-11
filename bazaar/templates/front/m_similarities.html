@@ -10,7 +10,7 @@
   </thead>
   <tbody>
     {% for app_name, package_name, hash, vt_score, score in results %}
-    {% if hash != result.sha256 %}
+    {% if hash != sha256 %}
     <tr>
       <td>
         <p>{{ app_name }}</p>
@@ -41,7 +41,7 @@
       </td>
       <td>
         <div class="">
-          <a href="/compare/?left_sha={{result.sha256}}&right_sha={{hash}}">Compare</a>
+          <a href="/compare/?left_sha={{sha256}}&right_sha={{hash}}">Compare</a>
         </div>
       </td>
     </tr>

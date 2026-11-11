@@ -13,7 +13,13 @@ from bazaar.core.models import Comment
 class SimilaritySearchForm(forms.Form):
     hash = forms.CharField(max_length=128)
     algorithm = forms.ChoiceField(
-        choices=[('ssdeep', 'ssdeep'), ('dexofuzzy', 'dexofuzzy'), ('func_hash', 'func_hash')])
+        choices=[
+            ('ssdeep', 'ssdeep'),
+            ('dexofuzzy', 'dexofuzzy'),
+            ('func_hash', 'func_hash'),
+            ('tlsh', 'tlsh')
+        ]
+    )
 
     def do_search(self, sha=''):
         algorithm = self.cleaned_data['algorithm']

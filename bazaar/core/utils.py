@@ -6,6 +6,7 @@ import logging
 import dexofuzzy
 from tempfile import NamedTemporaryFile
 import ssdeep
+import tlsh
 import requests
 from androguard.core import apk
 from django.conf import settings
@@ -13,6 +14,8 @@ from django.core.files.storage import default_storage
 from django.urls import reverse
 from django.utils.html import escape
 from elasticsearch import Elasticsearch
+from elasticsearch.helpers.actions import scan
+
 import numpy
 from scipy.cluster.hierarchy import dendrogram, linkage
 from scipy.spatial.distance import pdist
@@ -244,6 +247,31 @@ def insert_fuzzy_hash(hash_value, sha256, index):
     es.indices.refresh(index=index)
 
 
+def insert_tlsh_hash(hash_value, sha256, index):
+
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
+
+    document = {'hash_value': hash_value, 'sha256': sha256}
+
+    es.index(index=index, id=sha256, body=document)
+    es.indices.refresh(index=index)
+
+
+def tlsh_hash_from_file(filename):
+
+    tlshfct = tlsh.Tlsh()
+
+    with open(filename, 'rb') as f:
+        for buf in iter(lambda: f.read(512), b''):
+            tlshfct.update(buf)
+        tlshfct.final()
+
+    return tlshfct.hexdigest()
+
+
 def get_matching_items_by_ssdeep(ssdeep_value, threshold_grade, index, sha256):
     chunksize, chunk, double_chunk = ssdeep_value.split(':')
     chunksize = int(chunksize)
@@ -423,6 +451,41 @@ def get_matching_items_by_dexofuzzy(dexofuzzy_value, threshold_grade, index, sha
             if dexofuzzy_grade >= threshold_grade:
                 sha256_list_to_return.append(
                     (record['_source']['sha256'], dexofuzzy_grade))
+
+    return sha256_list_to_return
+
+
+def get_matching_items_by_tlsh(tlsh, threshold_grade, index, sha256):
+
+    es = Elasticsearch(
+        settings.ELASTICSEARCH_HOSTS,
+        basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
+    )
+
+    hashes = []
+
+    for hit in scan(
+        es,
+        index=index,
+        query={
+            "_source": ["tlsh", "sha256"],
+            "query": {
+                "match_all": {}
+            }
+        }
+    ):
+        hashes.append({
+            "tlsh": hit["_source"]["tlsh"],
+            "sha256": hit["_source"]["sha256"]
+        })
+
+    sha256_list_to_return = []
+
+    for entry in hashes:
+        if entry["_source"]["sha256"] != sha256:
+            tlsh_grade = tlsh.diff(tlsh, entry["tlsh"])
+            if tlsh_grade <= threshold_grade:
+                sha256_list_to_return.append((entry['_source']['sha256'], tlsh_grade))
 
     return sha256_list_to_return
 

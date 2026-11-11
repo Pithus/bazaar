@@ -38,6 +38,7 @@ google-play-scraper==1.2.7
 gpapi==0.4.4
 requests==2.33.0
 dexofuzzy==2.0.0
+python-tlsh
 AndroCFG @ git+https://github.com/Pithus/AndroCFG.git
 vt-py==0.22.0
 scipy==1.17.0
