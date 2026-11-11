@@ -146,16 +146,17 @@ def get_report_data(request, sha):
         raise
 
     return ReportService.ReportData(
-        result = result,
-        status = status,
-        map_svg = map_svg,
-        timeline = timeline,
-        hunting_matches = hunting_matches,
-        similar_samples = similar_samples,
-        cache_retention_time = cache_retention_time,
-        is_bookmarked = is_bookmarked,
-        hidden_files = hidden_files
+        result=result,
+        status=status,
+        map_svg=map_svg,
+        timeline=timeline,
+        hunting_matches=hunting_matches,
+        similar_samples=similar_samples,
+        cache_retention_time=cache_retention_time,
+        is_bookmarked=is_bookmarked,
+        hidden_files=hidden_files
     )
+
 
 class ReportView(View):
 
@@ -951,8 +952,8 @@ def export_pdf_view(request, sha256):
         base_url=request.build_absolute_uri('/')
     ).write_pdf(
         stylesheets=[
-           CSS(filename=project_css_path),
-           CSS(filename=pdf_css_path),
+            CSS(filename=project_css_path),
+            CSS(filename=pdf_css_path),
         ]
     )
 
