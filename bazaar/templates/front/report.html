@@ -192,31 +192,45 @@
             {% include "front/report/m_file.html" with d=result %}
           </div>
         </div>
-        <div class="col-md-12">
-          <h3>APKiD</h3>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/rednaga/APKiD">APKiD</a>.
-          </p>
-          <div class="overflow-box">
-            {% include "front/report/m_apkid.html" with d=result %}
+        {% if usagemode != "default" and usagemode != "reverse" %}
+        <div class="mt-2 mb-1">
+          <a data-toggle="collapse" href="#report-apkid">> Toggle APKiD<br></a>
+        </div>
+        {% endif %}
+        <div class="collapse {% if usagemode == "default" or usagemode == "reverse" %}show{% endif %}" id="report-apkid">
+          <div class="col-md-12">
+            <h3>APKiD</h3>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/rednaga/APKiD">APKiD</a>.
+            </p>
+            <div class="overflow-box">
+              {% include "front/report/m_apkid.html" with d=result %}
+            </div>
           </div>
         </div>
-        <div class="col-md-12">
-          <h3>SSdeep</h3>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/DinoTools/python-ssdeep">ssdeep</a>.
-          </p>
-          <div class="overflow-box">
-            {% include "front/report/m_ssdeep.html" with d=result %}
-          </div>
+        {% if usagemode != "default" and usagemode != "threathunting" %}
+        <div class="mt-2 mb-1">
+          <a data-toggle="collapse" href="#fuzzyAnalysis">> Toggle fuzzy search<br></a>
         </div>
-        <div class="col-md-12">
-          <h3>Dexofuzzy</h3>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/ESTsecurity/Dexofuzzy">Dexofuzzy</a>.
-          </p>
-          <div class="overflow-box">
-            {% include "front/report/m_dexofuzzy.html" with d=result %}
+        {% endif %}
+        <div class="collapse {% if usagemode == "default" or usagemode == "threathunting" %}show{% endif %}" id="fuzzyAnalysis">
+          <div class="col-md-12">
+            <h3>SSdeep</h3>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/DinoTools/python-ssdeep">ssdeep</a>.
+            </p>
+            <div class="overflow-box">
+              {% include "front/report/m_ssdeep.html" with d=result %}
+            </div>
+          </div>
+          <div class="col-md-12">
+            <h3>Dexofuzzy</h3>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/ESTsecurity/Dexofuzzy">Dexofuzzy</a>.
+            </p>
+            <div class="overflow-box">
+              {% include "front/report/m_dexofuzzy.html" with d=result %}
+            </div>
           </div>
         </div>
         <div class="col-md-12">
@@ -252,123 +266,163 @@
           </div>
         </div>
 
-        {% include "front/report/m_file_analysis.html" with d=result %}
 
-        {% if result.manifest_analysis %}
-        <div>
-          <h3>Manifest analysis</h3>
+        {% if usagemode == "journalism" %}
+        <div class="mt-2 mb-1">
+          <a data-toggle="collapse" href="#report-apk">> Toggle detailed APK analysis<br></a>
+        </div>
+        {% endif %}
+        <div class="collapse {% if usagemode != "journalism" %}show{% endif %}" id="report-apk">
+          {% include "front/report/m_file_analysis.html" with d=result %}
+
+          {% if result.manifest_analysis %}
+          <div>
+            <h3>Manifest analysis</h3>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+            </p>
+            <div class="overflow-box">
+              {% include "front/report/m_manifest.html" with d=result %}
+            </div>
+          </div>
+          {% endif %}
+
+          {% if result.browsable_activities %}
+          <h3>Browsable activities</h3>
           <p class="text-muted small">Information computed with <a class="small" target="_blank"
               href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
           </p>
           <div class="overflow-box">
-            {% include "front/report/m_manifest.html" with d=result %}
+            {% include "front/report/m_browsable_activities.html" with d=result %}
           </div>
-        </div>
-        {% endif %}
+          {% endif %}
 
-        {% if result.browsable_activities %}
-        <h3>Browsable activities</h3>
-        <p class="text-muted small">Information computed with <a class="small" target="_blank"
-            href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-        </p>
-        <div class="overflow-box">
-          {% include "front/report/m_browsable_activities.html" with d=result %}
-        </div>
-        {% endif %}
-
-        {% include "front/report/m_services_et_al.html" with d=result %}
-    
-        {% if hidden_files %}
-        <div>
-          <h3>Hidden Files</h3>
-          <p class="text-muted small">Information computed with 
-            <a class="small" target="_blank" href="https://github.com/pithus/bazaar">Pithus</a>.
-          </p>
-          <div class="overflow-box">
-            {% include "front/report/m_hidden_files.html" with d=hidden_files r=result %}
+          {% include "front/report/m_services_et_al.html" with d=result %}
+      
+          {% if hidden_files %}
+          <div>
+            <h3>Hidden Files</h3>
+            <p class="text-muted small">Information computed with 
+              <a class="small" target="_blank" href="https://github.com/pithus/bazaar">Pithus</a>.
+            </p>
+            <div class="overflow-box">
+              {% include "front/report/m_hidden_files.html" with d=hidden_files r=result %}
+            </div>
           </div>
+          {% endif %}
         </div>
-        {% endif %}
       </div>
 
       <div class="tab-pane" role="tabpanel" aria-labelledby="threat_intel-tab" id="threat_intel">
-        {% if hunting_matches %}
-        <div class="mb-4">
-          <h3>Hunting matches</h3>
-          <p class="text-muted small">Information computed by <a class="small" target="_blank"
-              href="https://github.com/pithus/bazaar">Pithus</a>.
-          </p>
-          <div class="overflow-box">
-            {% include "front/report/m_hunting.html" %}
-          </div>
+        {% if usagemode != "default" and usagemode != "threathunting" %}
+        <div class="mt-2 mb-1">
+          <a data-toggle="collapse" href="#report-hunting">> Toggle Pithus huntings<br></a>
         </div>
         {% endif %}
+        <div class="collapse {% if usagemode == "default" or usagemode == "threathunting" %}show{% endif %}" id="report-hunting">
+          {% if hunting_matches %}
+          <div class="mb-4">
+            <h3>Hunting matches</h3>
+            <p class="text-muted small">Information computed by <a class="small" target="_blank"
+                href="https://github.com/pithus/bazaar">Pithus</a>.
+            </p>
+            <div class="overflow-box">
+              {% include "front/report/m_hunting.html" %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
         {% if timeline %}
         {% include "front/report/m_timeline.html" %}
         {% endif %}
 
-        {% if similar_samples %}
-        {% if similar_samples|length > 0 %}
-        <div>
-          <h3>Similar samples</h3>
+        {% if usagemode != "default" and usagemode != "threathunting" %}
+        <div class="mt-2 mb-1">
+          <a data-toggle="collapse" href="#report-similar">> Toggle similar sample<br></a>
+        </div>
+        {% endif %}
+        <div class="collapse {% if usagemode == "default" or usagemode == "threathunting" %}show{% endif %}" id="report-similar">
+ 
+          {% if similar_samples %}
+          {% if similar_samples|length > 0 %}
+          <div>
+            <h3>Similar samples</h3>
+            <p class="text-muted small">Information computed by <a class="small" target="_blank"
+                href="https://github.com/pithus/bazaar">Pithus</a>.
+            </p>
+            <div class="alert alert-info">
+              <p>The following samples have traits that are similar to the one displayed. This
+                might indicate a proximity in use or, if those samples are different in appearance, it might indicate a
+                possible malicious application.</p>
+              <p>High similarity and different apparent names indicate that those applications are suspicious.</p>
+            </div>
+            <div class="overflow-box">
+              {% include "front/report/m_similar_samples.html" %}
+            </div>
+          </div>
+          {% endif %}
+          {% endif %}
+        </div>
+
+        {% if usagemode != "default" and usagemode != "threathunting" %}
+        <div class="mt-2 mb-1">
+          <a data-toggle="collapse" href="#report-vtmb">> Toggle Virustotal & Malware Bazaar analysis<br></a>
+        </div>
+        {% endif %}
+        <div class="collapse {% if usagemode == "default" or usagemode == "threathunting" %}show{% endif %}" id="report-vtmb">
+ 
+          {% if result.malware_bazaar or result.vt %}
+          <div>
+            {% include "front/report/m_malware_bazaar.html" with d=result %}
+          </div>
+          {% endif %}
+          {% if result.misp_matches %}
+          <h3>MISP matches</h3>
           <p class="text-muted small">Information computed by <a class="small" target="_blank"
-              href="https://github.com/pithus/bazaar">Pithus</a>.
+                href="https://github.com/MISP/MISP">MISP</a>.
           </p>
-          <div class="alert alert-info">
-            <p>The following samples have traits that are similar to the one displayed. This
-              might indicate a proximity in use or, if those samples are different in appearance, it might indicate a
-              possible malicious application.</p>
-            <p>High similarity and different apparent names indicate that those applications are suspicious.</p>
-          </div>
           <div class="overflow-box">
-            {% include "front/report/m_similar_samples.html" %}
+            {% include "front/report/m_misp_matches.html" with matches=result.misp_matches %}
           </div>
+          {% endif %}
+          {% if not result.malware_bazaar and not result.vt and not similar_samples and not timeline and not hunting_matches and not result.misp_matches %}
+            There is no data to display.
+          {% endif %}
         </div>
-        {% endif %}
-        {% endif %}
-        {% if result.malware_bazaar or result.vt %}
-        <div>
-          {% include "front/report/m_malware_bazaar.html" with d=result %}
-        </div>
-        {% endif %}
-        {% if result.misp_matches %}
-        <h3>MISP matches</h3>
-        <p class="text-muted small">Information computed by <a class="small" target="_blank"
-              href="https://github.com/MISP/MISP">MISP</a>.
-        </p>
-        <div class="overflow-box">
-          {% include "front/report/m_misp_matches.html" with matches=result.misp_matches %}
-        </div>
-        {% endif %}
-        {% if not result.malware_bazaar and not result.vt and not similar_samples and not timeline and not hunting_matches and not result.misp_matches %}
-          There is no data to display.
-        {% endif %}
       </div>
 
       <div class="tab-pane" role="tabpanel" aria-labelledby="code_analysis-tab" id="code_analysis">
-        {% if result.niap_analysis %}
-        <div>
-          <h3>NIAP analysis</h3>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-          </p>
-            {% include "front/report/m_niap.html" with d=result %}
+        {% if usagemode != "default" and usagemode != "reverse" %}
+        <div class="mt-2 mb-1">
+          <a data-toggle="collapse" href="#report-code">> Toggle code analysis<br></a>
         </div>
         {% endif %}
+        <div class="collapse {% if usagemode == "default" or usagemode == "reverse" %}show{% endif %}" id="report-code">
+ 
+          {% if result.niap_analysis %}
+          <div>
+            <h3>NIAP analysis</h3>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+            </p>
+              {% include "front/report/m_niap.html" with d=result %}
+          </div>
+          {% endif %}
 
-        {% if result.code_analysis %}
-        <div>
-          <h3>Code analysis</h3>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-          </p>
-          {% include "front/report/m_code.html" with d=result %}
+          {% if result.code_analysis %}
+          <div>
+            <h3>Code analysis</h3>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+            </p>
+            {% include "front/report/m_code.html" with d=result %}
+          </div>
+          {% endif %}
+
+          {% if not result.niap_analysis and not result.code_analysis %}
+            <p class="text-muted">There is no data to display.</p>
+          {% endif %}
         </div>
-        {% endif %}
-
-        {% if not result.niap_analysis and not result.code_analysis %}
-          <p class="text-muted">There is no data to display.</p>
-        {% endif %}
       </div>
 
       <div class="tab-pane" role="tabpanel" aria-labelledby="network_analysis-tab" id="network_analysis">
@@ -406,22 +460,29 @@
         </div>
         {% endif %}
 
-        {% if result.url_analysis %}
-        <div>
-          <h3>URL analysis</h3>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-          </p>
-          <div class="overflow-box">
-            {% include "front/report/m_url.html" with d=result %}
-          </div>
-        </div>
-        {% else %}
-        <div>
-          <h3>URL analysis</h3>
-          <p class="text-muted">No URLs found.</p>
+        {% if usagemode == "journalism" %}
+        <div class="mt-2 mb-1">
+          <a data-toggle="collapse" href="#report-urls">> Toggle URLs analysis<br></a>
         </div>
         {% endif %}
+        <div class="collapse {% if usagemode != "journalism" %}show{% endif %}" id="report-urls">
+          {% if result.url_analysis %}
+          <div>
+            <h3>URL analysis</h3>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+            </p>
+            <div class="overflow-box">
+              {% include "front/report/m_url.html" with d=result %}
+            </div>
+          </div>
+          {% else %}
+          <div>
+            <h3>URL analysis</h3>
+            <p class="text-muted">No URLs found.</p>
+          </div>
+          {% endif %}
+        </div>
       </div>
 
       <div class="tab-pane" role="tabpanel" aria-labelledby="behavior_analysis-tab" id="behavior_analysis">
@@ -449,30 +510,44 @@
         </div>
         {% endif %}
 
-        {% if result.quark.crimes %}
-        <div>
-          <h3>Threat analysis</h3>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/quark-engine/quark-engine">Quark-Engine</a>.
-          </p>
-          <div class="overflow-box">
-            {% include "front/report/m_quark.html" with d=result %}
-          </div>
+        {% if usagemode != "default" and usagemode != "reverse" %}
+        <div class="mt-2 mb-1">
+          <a data-toggle="collapse" href="#report-quark">> Toggle quark analysis<br></a>
         </div>
         {% endif %}
-
-
-        {% if result.android_api_analysis %}
-        <div>
-          <h3>Behavior analysis</h3>
-          <p class="text-muted small">Information computed with <a class="small" target="_blank"
-              href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
-          </p>
-          <div class="overflow-box">
-            {% include "front/report/m_api.html" with d=result %}
+        <div class="collapse {% if usagemode == "default" or usagemode == "reverse" %}show{% endif %}" id="report-quark">
+ 
+          {% if result.quark.crimes %}
+          <div>
+            <h3>Threat analysis</h3>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/quark-engine/quark-engine">Quark-Engine</a>.
+            </p>
+            <div class="overflow-box">
+              {% include "front/report/m_quark.html" with d=result %}
+            </div>
           </div>
+          {% endif %}
+        </div>
+
+        {% if usagemode != "default" and usagemode != "reverse" %}
+        <div class="mt-2 mb-1">
+          <a data-toggle="collapse" href="#report-behavior">> Toggle behavior analysis<br></a>
         </div>
         {% endif %}
+        <div class="collapse {% if usagemode == "default" or usagemode == "reverse" %}show{% endif %}" id="report-behavior">
+          {% if result.android_api_analysis %}
+          <div>
+            <h3>Behavior analysis</h3>
+            <p class="text-muted small">Information computed with <a class="small" target="_blank"
+                href="https://github.com/MobSF/Mobile-Security-Framework-MobSF">MobSF</a>.
+            </p>
+            <div class="overflow-box">
+              {% include "front/report/m_api.html" with d=result %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
 
         {% if not result.detailed_permissions and not result.trackers and not result.android_api_analysis %}
           {% if result.quark %}
@@ -489,7 +564,14 @@
         {% if result.andro_cfg %}
         <div class="tab-pane" role="tabpanel" aria-labelledby="cfg_analysis-tab" id="cfg_analysis">
           <div>
-            {% include "front/report/m_androcfg.html" with andro_cfg=result.andro_cfg sha256=result.sha256 %}
+            {% if usagemode != "default" and usagemode != "reverse" %}
+            <div class="mt-2 mb-1">
+              <a data-toggle="collapse" href="#report-androcfg">> Toggle AndroCFG analysis<br></a>
+            </div>
+            {% endif %}
+            <div class="collapse {% if usagemode == "default" or usagemode == "reverse" %}show{% endif %}" id="report-androcfg">
+              {% include "front/report/m_androcfg.html" with andro_cfg=result.andro_cfg sha256=result.sha256 %}
+            </div>
           </div>
         </div>
         {% endif %}

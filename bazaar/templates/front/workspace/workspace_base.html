@@ -46,11 +46,18 @@
           </li>
 
           <li class="nav-item">
-            <a href="#api" class="nav-link mb-1 mr-1" data-toggle="pill" role="tab" id="api_tab" aria-controls="api_tab"
-              aria-selected="false">
-
+            <a href="#api" class="nav-link mb-1 mr-1" data-toggle="pill" role="tab" id="api_tab"
+            aria-controls="api_tab" aria-selected="false">
               <i class="nf nf-fa-key"></i>
               API key
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="#settings" class="nav-link mb-1 mr-1" data-toggle="pill" role="tab" id="settings_tab"
+            aria-controls="settings_tab" aria-selected="false">
+              <i class="nf nf-mdi-settings"></i>
+              User settings
             </a>
           </li>
         </ul>
@@ -289,6 +296,60 @@
         </div>
       </div>
     </div>
+
+    <div class="tab-pane fade" role="tabpanel" aria-labelledby="settings_tab" id="settings">
+      <div class="mt-1">
+        <h3>User Mode</h3>
+        <p>This setting allows you to change the display mode for all reports, focusing in your area of work specifically by declutering the reports.
+          You can always display the other information when viewing a report, but it won't display by default.</p>
+        <form id="usagemode-form">
+          {% csrf_token %}
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="usagemode" id="usagemode1" value="journalism"
+            {% if usagemode == 'journalism' %}checked{% endif %}>
+            <label class="form-check-label" for="usagemode1">
+              Journalism
+              <small class="d-block text-muted">
+                Essential informations about the application, nothing more.
+              </small>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="usagemode" id="usagemode2" value="reverse"
+            {% if usagemode == 'reverse' %}checked{% endif %}>
+            <label class="form-check-label" for="usagemode2">
+              Reverse Engineering
+              <small class="d-block text-muted">
+                Code & behavior analysis, control flow, network.
+              </small>
+            </label>
+          </div>
+            <div class="form-check">
+            <input class="form-check-input" type="radio" name="usagemode" id="usagemode3" value="threathunting"
+            {% if usagemode == 'threathunting' %}checked{% endif %}>
+            <label class="form-check-label" for="usagemode3">
+              Threat Hunting & Analysis
+              <small class="d-block text-muted">
+                All pivoting features, similarity samples…
+              </small>
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="usagemode" id="usagemode4" value="default"
+            {% if usagemode == 'default' %}checked{% endif %}>
+            <label class="form-check-label" for="usagemode4">
+              Default
+              <small class="d-block text-muted">
+                Display everything.
+              </small>
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary mt-3">
+            Save
+          </button>
+        </form>
+      </div>
+    </div>
   </div>
   <!-- tab content -->
 </div>
@@ -300,45 +361,45 @@
 
 <script>
 
-function showMessage(message, type = "success") {
-    const container = document.getElementById("message-container");
+function showMessage(message, type="success") {
+  const container = document.getElementById("message-container");
 
-    const alert = document.createElement("div");
-    alert.className = `alert alert-${type} alert-dismissible fade show mt-2`;
-    alert.setAttribute("role", "alert");
+  const alert = document.createElement("div");
+  alert.className = `alert alert-${type} alert-dismissible fade show mt-2`;
+  alert.setAttribute("role", "alert");
 
-    alert.innerHTML = `${message}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-          aria-hidden="true">&times;</span></button>`;
-    container.appendChild(alert);
+  alert.innerHTML = `${message}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+      aria-hidden="true">&times;</span></button>`;
+  container.appendChild(alert);
 
-    setTimeout(() => {
-        alert.remove();
-    }, 5000);
+  setTimeout(() => {
+    alert.remove();
+  }, 5000);
 }
 
 document.querySelectorAll(".comment-form").forEach(function (form) {
     form.addEventListener("submit", async function (event) {
-        event.preventDefault();
+      event.preventDefault();
 
-        const modalElement = form.closest(".modal");
-        const formData = new FormData(form);
+      const modalElement = form.closest(".modal");
+      const formData = new FormData(form);
 
-        const response = await fetch(form.action, {
-            method: "POST",
-            body: formData,
-        });
-        if (!response.ok) {
-            throw new Error("Failed to save comment");
-        }
-        $(modalElement).modal("hide");
-        showMessage("Comment successfully saved.", "success");
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error("Failed to save comment");
+      }
+      $(modalElement).modal("hide");
+      showMessage("Comment successfully saved.", "success");
     });
 });
 
 async function deleteComment(button, sampleId) {
     const textarea = document.getElementById(
-        `comment-${sampleId}-content`
+      `comment-${sampleId}-content`
     );
     const modalElement = document.getElementById(`commentModal-${sampleId}`);
 
@@ -346,21 +407,55 @@ async function deleteComment(button, sampleId) {
 
     try {
         const response = await fetch(button.dataset.deleteUrl, {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": "{{ csrf_token }}",
-            },
+          method: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+          },
         });
 
         if (!response.ok) {
-            throw new Error("Failed to delete comment");
+          throw new Error("Failed to delete comment");
         }
+        showMessage("Comment successfully deleted.", "success");
     } catch (error) {
-        console.error(error);
+        showMessage(error, "danger");
     }
     $(modalElement).modal("hide");
-    showMessage("Comment successfully deleted.", "success");
 }
+
+async function saveSettings() {
+    const selected = document.querySelector(
+        'input[name="usagemode"]:checked'
+    ).value;
+
+    const csrfToken = document.querySelector(
+        '[name=csrfmiddlewaretoken]'
+    ).value;
+    try {
+      const response = await fetch("{% url 'front:user_settings' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken
+        },
+        body: JSON.stringify({
+            "usagemode": selected
+        })
+      });
+      if (!response.ok) {
+        throw new Error("An error occurred.");
+      }
+      showMessage("Preferences saved succesfully.");
+    } catch (error) {
+        showMessage(error, "danger");
+    }
+}
+
+document.getElementById("usagemode-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+    saveSettings();
+});
+
 
 </script>
 
