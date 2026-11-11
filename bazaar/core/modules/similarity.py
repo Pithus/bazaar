@@ -5,10 +5,11 @@ from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 import dexofuzzy
 import ssdeep
+import tlsh
 
 from django.conf import settings
 from django.core.files.storage import default_storage
-from bazaar.core.utils import insert_fuzzy_hash
+from bazaar.core.utils import insert_fuzzy_hash, insert_tlsh_hash, tlsh_hash_from_file
 
 from elasticsearch import Elasticsearch
 
@@ -28,13 +29,20 @@ def analysis(sha256):
 
         ssdeep_apk = ''
         dexofuzzy_apk = ''
+        tlsh_apk = ''
+        try:
+            tlsh_apk = tlsh_hash_from_file(f.name)
+            insert_fuzzy_hash(tlsh_apk, sha256, settings.ELASTICSEARCH_TLSH_APK_INDEX)
+        except Exception as e:
+            logging.exception(f'tlsh analysis: {e}')
+
         try:
             ssdeep_apk = ssdeep.hash_from_file(f.name)
             insert_fuzzy_hash(ssdeep_apk, sha256, settings.ELASTICSEARCH_SSDEEP_APK_INDEX)
             dexofuzzy_apk = dexofuzzy.hash_from_file(f.name)
             insert_fuzzy_hash(dexofuzzy_apk, sha256, settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX)
         except Exception as e:
-            logging.error(f'ssdeep analysis: {e}')
+            logging.exception(f'ssdeep analysis: {e}')
 
         doc = {
             'ssdeep': {
@@ -45,7 +53,11 @@ def analysis(sha256):
             },
             'dexofuzzy': {
                 'apk': dexofuzzy_apk,
-                'dex': []
+                'dex': [],
+            },
+            'tlsh': {
+                'apk': tlsh_apk,
+                'dex': [],
             }
         }
 
@@ -66,16 +78,16 @@ def analysis(sha256):
 
             try:
                 apk.extract('AndroidManifest.xml', tmp_dir)
-                apk.extract('resources.arsc', tmp_dir)
+                doc['ssdeep']['manifest'] = ssdeep.hash_from_file(f'{tmp_dir}/AndroidManifest.xml')
             except Exception as e:
                 logging.error(
-                    'Can not extract "AndroidManifest.xml" or "resources.arsc" due to an error %s', e)
-
+                    'Can not extract "AndroidManifest.xml" due to an error %s', e)
             try:
-                doc['ssdeep']['manifest'] = ssdeep.hash_from_file(f'{tmp_dir}/AndroidManifest.xml')
+                apk.extract('resources.arsc', tmp_dir)
                 doc['ssdeep']['resources'] = ssdeep.hash_from_file(f'{tmp_dir}/resources.arsc')
-            except Exception:
-                pass
+            except Exception as e:
+                logging.error(
+                    'Can not extract "resources.arsc" due to an error %s', e)
 
             for file in dex_files:
                 try:
@@ -90,6 +102,14 @@ def analysis(sha256):
                     doc['dexofuzzy']['dex'].append({
                         'file': file.replace(f'{tmp_dir}/', ''),
                         'hash': dexofuzzy.hash_from_file(f'{tmp_dir}/{file}')
+                    })
+                except Exception as e:
+                    logging.error('Got an error %s', e)
+
+                try:
+                    doc['tlsh']['dex'].append({
+                        'file': file.replace(f'{tmp_dir}/', ''),
+                        'hash': tlsh_hash_from_file(f'{tmp_dir}/{file}')
                     })
                 except Exception as e:
                     logging.error('Got an error %s', e)

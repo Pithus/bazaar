@@ -5,6 +5,7 @@ from elasticsearch import Elasticsearch
 from bazaar.core.utils import get_matching_items_by_dexofuzzy, \
     get_matching_items_by_ssdeep, \
     get_matching_items_by_ssdeep_func, \
+    get_matching_items_by_tlsh, \
     transform_hl_results
 
 
@@ -88,6 +89,10 @@ def similarity_search(search_hash, algorithm, ignore_sha=''):
             case 'func_hash':
                 results = get_matching_items_by_ssdeep_func(
                     search_hash, 25, settings.ELASTICSEARCH_APK_INDEX
+                )
+            case 'tlsh':
+                results = get_matching_items_by_tlsh(
+                    search_hash, 100, settings.ELASTICSEARCH_APK_INDEX, ignore_sha
                 )
     except Exception as e:
         logging.error(e)
