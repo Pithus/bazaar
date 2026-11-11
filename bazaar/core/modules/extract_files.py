@@ -48,7 +48,6 @@ def analysis(sha256):
                         for fname in os.listdir(e['output_directory']):
                             fpath = os.path.join(e['output_directory'], fname)
                             if os.path.isfile(fpath):
-                                print(f"\n\n\n\n\n\n\n{PurePosixPath(e["output_directory"]).name}\n\n\n\n\n\n\n")
                                 with open(fpath, "rb") as f:
                                     default_storage.save(
                                         os.path.join(

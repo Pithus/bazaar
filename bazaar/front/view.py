@@ -926,7 +926,6 @@ def compare_analysis_view(request, *args, **kwargs):
             else:
                 return render(request, 'front/compare_analysis.html')
 
-        print(res)
         return render(
             request,
             'front/compare_analysis.html',

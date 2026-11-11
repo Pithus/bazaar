@@ -213,16 +213,17 @@ function autocomplete(inp, arr) {
 
     if (x) x = x.getElementsByTagName("div");
 
-    if (e.keyCode == 40) { // down
+    if (e.key === "ArrowDown") {
         currentFocus++;
         addActive(x);
-      } else if (e.keyCode == 38) { // up
+      } else if (e.key === "ArrowUp") {
         currentFocus--;
         addActive(x);
-      } else if (e.keyCode == 13) { // enter
-        e.preventDefault();
-        if (currentFocus > -1) {
-          if (x) x[currentFocus].click();
+      } else if (e.key === "Enter") {
+        if (currentFocus > -1 && x && x[currentFocus]) {
+          e.preventDefault();
+          x[currentFocus].click();
+          currentFocus = -1;
         }
       }
   });
