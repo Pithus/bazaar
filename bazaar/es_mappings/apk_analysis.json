@@ -26,6 +26,10 @@
           }
         }
       },
+      "activities_intents": {
+        "type": "object",
+        "enabled": false
+      },
       "analysis_date": {
         "type": "date"
       },
@@ -413,6 +417,10 @@
           }
         }
       },
+      "receiver_intents": {
+        "type": "object",
+        "enabled": false
+      },
       "secrets": {
         "type": "text",
         "fields": {
@@ -433,6 +441,10 @@
             "ignore_above": 256
           }
         }
+      },
+      "services_intents": {
+        "type": "object",
+        "enabled": false
       },
       "sha1": {
         "type": "text",

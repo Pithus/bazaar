@@ -81,10 +81,28 @@ def extract_attributes(sha256):
         sign = ApplicationSignature.compute_from_apk(f.name)
         package = sign.handle
         sign = sign.to_dict()
+
         a = APK(f.name)
+
+        activities_detail = {}
+        activities = a.get_activities()
+        for activity in activities:
+            activities_detail[activity] = a.get_intent_filters("activity", activity).get("action", [])
+
+        receivers_detail = {}
+        receivers = a.get_receivers()
+        for receiver in receivers:
+            receivers_detail[receiver] = a.get_intent_filters("receiver", receiver).get("action", [])
+
+        services_detail = {}
+        services = a.get_services()
+        for service in services:
+            services_detail[service] = a.get_intent_filters("service", service).get("action", [])
+
         sign['uploaded_at'] = datetime.now()
         sign['sha256'] = sha256
         sign['activities'] = a.get_activities()
+        sign['activities_intents'] = activities_detail
         sign['features'] = a.get_features()
         sign['libraries'] = a.get_libraries()
         sign['main_activity'] = a.get_main_activity()
@@ -96,7 +114,9 @@ def extract_attributes(sha256):
         sign['third_party_permissions'] = a.get_requested_third_party_permissions()
         sign['providers'] = a.get_providers()
         sign['receivers'] = a.get_receivers()
+        sign['receivers_intents'] = receivers_detail
         sign['services'] = a.get_services()
+        sign['services_intents'] = services_detail
         sign['is_valid'] = a.is_valid_APK()
         sign['is_signed'] = a.is_signed()
         sign['is_signed_v1'] = a.is_signed_v1()

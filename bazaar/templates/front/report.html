@@ -194,7 +194,7 @@
         </div>
         {% if usagemode != "default" and usagemode != "reverse" %}
         <div class="mt-2 mb-1">
-          <a data-toggle="collapse" href="#report-apkid">> Toggle APKiD<br></a>
+          <a data-toggle="collapse" href="#report-apkid"><span class="collapse-arrow">›</span> Toggle APKiD<br></a>
         </div>
         {% endif %}
         <div class="collapse {% if usagemode == "default" or usagemode == "reverse" %}show{% endif %}" id="report-apkid">
@@ -210,7 +210,7 @@
         </div>
         {% if usagemode != "default" and usagemode != "threathunting" %}
         <div class="mt-2 mb-1">
-          <a data-toggle="collapse" href="#fuzzyAnalysis">> Toggle fuzzy search<br></a>
+          <a data-toggle="collapse" href="#fuzzyAnalysis"><span class="collapse-arrow">›</span> Toggle fuzzy search<br></a>
         </div>
         {% endif %}
         <div class="collapse {% if usagemode == "default" or usagemode == "threathunting" %}show{% endif %}" id="fuzzyAnalysis">
@@ -269,7 +269,7 @@
 
         {% if usagemode == "journalism" %}
         <div class="mt-2 mb-1">
-          <a data-toggle="collapse" href="#report-apk">> Toggle detailed APK analysis<br></a>
+          <a data-toggle="collapse" href="#report-apk"><span class="collapse-arrow">›</span>Toggle detailed APK analysis<br></a>
         </div>
         {% endif %}
         <div class="collapse {% if usagemode != "journalism" %}show{% endif %}" id="report-apk">
@@ -316,7 +316,7 @@
       <div class="tab-pane" role="tabpanel" aria-labelledby="threat_intel-tab" id="threat_intel">
         {% if usagemode != "default" and usagemode != "threathunting" %}
         <div class="mt-2 mb-1">
-          <a data-toggle="collapse" href="#report-hunting">> Toggle Pithus huntings<br></a>
+          <a data-toggle="collapse" href="#report-hunting"><span class="collapse-arrow">›</span> Toggle Pithus huntings<br></a>
         </div>
         {% endif %}
         <div class="collapse {% if usagemode == "default" or usagemode == "threathunting" %}show{% endif %}" id="report-hunting">
@@ -338,7 +338,7 @@
 
         {% if usagemode != "default" and usagemode != "threathunting" %}
         <div class="mt-2 mb-1">
-          <a data-toggle="collapse" href="#report-similar">> Toggle similar sample<br></a>
+          <a data-toggle="collapse" href="#report-similar"><span class="collapse-arrow">›</span> Toggle similar sample<br></a>
         </div>
         {% endif %}
         <div class="collapse {% if usagemode == "default" or usagemode == "threathunting" %}show{% endif %}" id="report-similar">
@@ -366,7 +366,7 @@
 
         {% if usagemode != "default" and usagemode != "threathunting" %}
         <div class="mt-2 mb-1">
-          <a data-toggle="collapse" href="#report-vtmb">> Toggle Virustotal & Malware Bazaar analysis<br></a>
+          <a data-toggle="collapse" href="#report-vtmb"><span class="collapse-arrow">›</span> Toggle Virustotal & Malware Bazaar analysis<br></a>
         </div>
         {% endif %}
         <div class="collapse {% if usagemode == "default" or usagemode == "threathunting" %}show{% endif %}" id="report-vtmb">
@@ -394,7 +394,7 @@
       <div class="tab-pane" role="tabpanel" aria-labelledby="code_analysis-tab" id="code_analysis">
         {% if usagemode != "default" and usagemode != "reverse" %}
         <div class="mt-2 mb-1">
-          <a data-toggle="collapse" href="#report-code">> Toggle code analysis<br></a>
+          <a data-toggle="collapse" href="#report-code"><span class="collapse-arrow">›</span> Toggle code analysis<br></a>
         </div>
         {% endif %}
         <div class="collapse {% if usagemode == "default" or usagemode == "reverse" %}show{% endif %}" id="report-code">
@@ -462,7 +462,7 @@
 
         {% if usagemode == "journalism" %}
         <div class="mt-2 mb-1">
-          <a data-toggle="collapse" href="#report-urls">> Toggle URLs analysis<br></a>
+          <a data-toggle="collapse" href="#report-urls"><span class="collapse-arrow">›</span> Toggle URLs analysis<br></a>
         </div>
         {% endif %}
         <div class="collapse {% if usagemode != "journalism" %}show{% endif %}" id="report-urls">
@@ -512,7 +512,7 @@
 
         {% if usagemode != "default" and usagemode != "reverse" %}
         <div class="mt-2 mb-1">
-          <a data-toggle="collapse" href="#report-quark">> Toggle quark analysis<br></a>
+          <a data-toggle="collapse" href="#report-quark"><span class="collapse-arrow">›</span> Toggle quark analysis<br></a>
         </div>
         {% endif %}
         <div class="collapse {% if usagemode == "default" or usagemode == "reverse" %}show{% endif %}" id="report-quark">
@@ -532,7 +532,7 @@
 
         {% if usagemode != "default" and usagemode != "reverse" %}
         <div class="mt-2 mb-1">
-          <a data-toggle="collapse" href="#report-behavior">> Toggle behavior analysis<br></a>
+          <a data-toggle="collapse" href="#report-behavior"><span class="collapse-arrow">›</span> Toggle behavior analysis<br></a>
         </div>
         {% endif %}
         <div class="collapse {% if usagemode == "default" or usagemode == "reverse" %}show{% endif %}" id="report-behavior">
@@ -566,7 +566,7 @@
           <div>
             {% if usagemode != "default" and usagemode != "reverse" %}
             <div class="mt-2 mb-1">
-              <a data-toggle="collapse" href="#report-androcfg">> Toggle AndroCFG analysis<br></a>
+              <a data-toggle="collapse" href="#report-androcfg"><span class="collapse-arrow">›</span> Toggle AndroCFG analysis<br></a>
             </div>
             {% endif %}
             <div class="collapse {% if usagemode == "default" or usagemode == "reverse" %}show{% endif %}" id="report-androcfg">

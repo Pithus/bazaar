@@ -172,3 +172,24 @@ samp {
 .tab-pane {
   margin-bottom: 20px;
 }
+
+.collapse-arrow {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+a[aria-expanded="true"] .collapse-arrow {
+    transform: rotate(90deg);
+}
+
+.intent-link,
+.intent-name {
+    font-family: monospace;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+}
+
+.receiver-link:hover {
+    text-decoration: none;
+}
