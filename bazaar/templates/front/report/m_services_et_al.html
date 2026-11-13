@@ -1,4 +1,6 @@
 {% load get %}
+{% load get_items %}
+
 
 {% if d.main_activity %}
 <h3>Main Activity</h3>
@@ -32,14 +34,20 @@
           <span class="collapse-arrow">›</span>
           {{ s }}
         </a>
+        <div class="collapse" id="activities-{{ forloop.counter }}">
+          <div class="intent-grid">
+          {% for key, values in d.activities_intents|items:s %}
+            {% for value in values %}
+              <div></div>
+              <div>{{ key|capfirst }}</div>
+              <div>{{ value }}</div>
+            {% endfor %}
+          {% endfor %}
+          </div>
+        </div>
         {% else %}
           <span class="intent-name">{{ s }}</span>
         {% endif %}
-        <div class="collapse" id="activities-{{ forloop.counter }}">
-          {% for intent in d.activities_intents|get:s %}
-            &emsp;{{ intent }}<br>
-          {% endfor %}
-        </div>
       </code>
     </td>
     <td>
@@ -61,18 +69,24 @@
     <td>
       <code>
         {% if d.receivers_intents|get:s %}
-        <a class="text-decoration-none intent-link" data-toggle="collapse" href="#receiver-{{ forloop.counter }}" role="button" aria-expanded="false">
+        <a class="text-decoration-none intent-link" data-toggle="collapse" href="#receivers-{{ forloop.counter }}" role="button" aria-expanded="false">
           <span class="collapse-arrow">›</span>
           {{ s }}
         </a>
+        <div class="collapse" id="receivers-{{ forloop.counter }}">
+          <div class="intent-grid">
+            {% for key, values in d.receivers_intents|items:s %}
+            {% for value in values %}
+              <div></div>
+              <div>{{ key|capfirst }}</div>
+              <div>{{ value }}</div>
+            {% endfor %}
+          {% endfor %}
+          </div>
+        </div>
         {% else %}
           <span class="intent-name">{{ s }}</span>
         {% endif %}
-        <div class="collapse" id="receiver-{{ forloop.counter }}">
-          {% for intent in d.receivers_intents|get:s %}
-            &emsp;{{ intent }}<br>
-          {% endfor %}
-        </div>
       </code>
     </td>
     <td>
@@ -98,14 +112,20 @@
           <span class="collapse-arrow">›</span>
           {{ s }}
         </a>
+        <div class="collapse" id="services-{{ forloop.counter }}">
+          <div class="intent-grid">
+          {% for key, values in d.services_intents|items:s %}
+            {% for value in values %}
+              <div></div>
+              <div>{{ key|capfirst }}</div>
+              <div>{{ value }}</div>
+            {% endfor %}
+          {% endfor %}
+          </div>
+        </div>
         {% else %}
           <span class="intent-name">{{ s }}</span>
         {% endif %}
-        <div class="collapse" id="services-{{ forloop.counter }}">
-          {% for intent in d.services_intents|get:s %}
-            &emsp;{{ intent }}<br>
-          {% endfor %}
-        </div>
       </code>
     </td>
     <td>

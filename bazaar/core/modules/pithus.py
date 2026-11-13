@@ -87,17 +87,17 @@ def extract_attributes(sha256):
         activities_detail = {}
         activities = a.get_activities()
         for activity in activities:
-            activities_detail[activity] = a.get_intent_filters("activity", activity).get("action", [])
+            activities_detail[activity] = a.get_intent_filters("activity", activity)
 
         receivers_detail = {}
         receivers = a.get_receivers()
         for receiver in receivers:
-            receivers_detail[receiver] = a.get_intent_filters("receiver", receiver).get("action", [])
+            receivers_detail[receiver] = a.get_intent_filters("receiver", receiver)
 
         services_detail = {}
         services = a.get_services()
         for service in services:
-            services_detail[service] = a.get_intent_filters("service", service).get("action", [])
+            services_detail[service] = a.get_intent_filters("service", service)
 
         sign['uploaded_at'] = datetime.now()
         sign['sha256'] = sha256

@@ -7408,3 +7408,7 @@ a[aria-expanded="true"] .collapse-arrow {
 
 .receiver-link:hover {
   text-decoration: none; }
+
+.intent-grid {
+  display: grid;
+  grid-template-columns: 30px 100px 1fr; }
