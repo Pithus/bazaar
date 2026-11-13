@@ -59,7 +59,8 @@
       }
 
       document.addEventListener("DOMContentLoaded", async function(event) {
-        await refreshStatus();  
+        await refreshStatus();
+        await new Promise(r => setTimeout(r, 10000));
         var interval = setInterval(async () => {
             await refreshStatus();
           }, 10000);

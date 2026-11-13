@@ -1,8 +1,11 @@
+{% load get %}
+{% load get_items %}
+
+
 {% if d.main_activity %}
 <h3>Main Activity</h3>
 <p class="text-muted small">Information computed with <a class="small" target="_blank"
     href="https://github.com/androguard/androguard">AndroGuard</a>.
-
 <table class="table table-condensed table-sm">
   <tr>
     <td>
@@ -21,16 +24,37 @@
 <p class="text-muted small">Information computed with <a class="small" target="_blank"
     href="https://github.com/androguard/androguard">AndroGuard</a>.
 
-<table class="table table-condensed table-sm">
+  <table class="table table-condensed table-sm">
+  {% for s in d.activities %}
   <tr>
     <td>
-      <pre><code>{% for s in d.activities %}{{ s }}<br>{% endfor %}
-<code></pre>
+      <code>
+        {% if d.activities_intents|get:s %}
+        <a class="text-decoration-none intent-link" data-toggle="collapse" href="#activities-{{ forloop.counter }}" role="button" aria-expanded="false">
+          <span class="collapse-arrow">›</span>
+          {{ s }}
+        </a>
+        <div class="collapse" id="activities-{{ forloop.counter }}">
+          <div class="intent-grid">
+          {% for key, values in d.activities_intents|items:s %}
+            {% for value in values %}
+              <div></div>
+              <div>{{ key|capfirst }}</div>
+              <div>{{ value }}</div>
+            {% endfor %}
+          {% endfor %}
+          </div>
+        </div>
+        {% else %}
+          <span class="intent-name">{{ s }}</span>
+        {% endif %}
+      </code>
     </td>
     <td>
-      {% include "front/report/m_copy_to_clipboard.html" with data=d.activities %}
+      {% include "front/report/m_copy_to_clipboard.html" with data=d.activities_intents|get:s %}
     </td>
   </tr>
+  {% endfor %}
 </table>
 {% endif %}
 
@@ -40,14 +64,36 @@
     href="https://github.com/androguard/androguard">AndroGuard</a>.
 
 <table class="table table-condensed table-sm">
+  {% for s in d.receivers %}
   <tr>
     <td>
-      <pre><code>{% for s in d.receivers %}{{ s }}<br>{% endfor %}</code></pre>
+      <code>
+        {% if d.receivers_intents|get:s %}
+        <a class="text-decoration-none intent-link" data-toggle="collapse" href="#receivers-{{ forloop.counter }}" role="button" aria-expanded="false">
+          <span class="collapse-arrow">›</span>
+          {{ s }}
+        </a>
+        <div class="collapse" id="receivers-{{ forloop.counter }}">
+          <div class="intent-grid">
+            {% for key, values in d.receivers_intents|items:s %}
+            {% for value in values %}
+              <div></div>
+              <div>{{ key|capfirst }}</div>
+              <div>{{ value }}</div>
+            {% endfor %}
+          {% endfor %}
+          </div>
+        </div>
+        {% else %}
+          <span class="intent-name">{{ s }}</span>
+        {% endif %}
+      </code>
     </td>
     <td>
-      {% include "front/report/m_copy_to_clipboard.html" with data=d.receivers %}
+      {% include "front/report/m_copy_to_clipboard.html" with data=d.receivers_intents|get:s %}
     </td>
   </tr>
+  {% endfor %}
 </table>
 {% endif %}
 
@@ -57,14 +103,36 @@
     href="https://github.com/androguard/androguard">AndroGuard</a>.
 
 <table class="table table-condensed table-sm">
+  {% for s in d.services %}
   <tr>
     <td>
-      <pre><code>{% for s in d.services %}{{ s }}<br>{% endfor %}</code></pre>
+      <code>
+        {% if d.services_intents|get:s %}
+        <a class="text-decoration-none intent-link" data-toggle="collapse" href="#services-{{ forloop.counter }}" role="button" aria-expanded="false">
+          <span class="collapse-arrow">›</span>
+          {{ s }}
+        </a>
+        <div class="collapse" id="services-{{ forloop.counter }}">
+          <div class="intent-grid">
+          {% for key, values in d.services_intents|items:s %}
+            {% for value in values %}
+              <div></div>
+              <div>{{ key|capfirst }}</div>
+              <div>{{ value }}</div>
+            {% endfor %}
+          {% endfor %}
+          </div>
+        </div>
+        {% else %}
+          <span class="intent-name">{{ s }}</span>
+        {% endif %}
+      </code>
     </td>
     <td>
-      {% include "front/report/m_copy_to_clipboard.html" with data=d.services %}
+      {% include "front/report/m_copy_to_clipboard.html" with data=d.services_intents|get:s %}
     </td>
   </tr>
+  {% endfor %}
 </table>
 
 {% endif %}

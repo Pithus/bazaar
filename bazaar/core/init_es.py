@@ -11,20 +11,46 @@ def init_es():
         basic_auth=(settings.ELASTICSEARCH_USER, settings.ELASTICSEARCH_PASSWORD)
     )
     try:
+        es.options(ignore_status=400)
+
         with open('bazaar/es_mappings/apk_analysis.json') as mapping:
             apk_analysis_settings = json.load(mapping)
-        es.options(ignore_status=400)
-        es.indices.create(index=settings.ELASTICSEARCH_APK_INDEX, body=apk_analysis_settings)
-        es.indices.create(index=settings.ELASTICSEARCH_GP_INDEX)
-        es.indices.create(index=settings.ELASTICSEARCH_TASKS_INDEX)
-    except Exception as e:
-        logging.error(e)
-    try:
+        if not es.indices.exists(index=settings.ELASTICSEARCH_APK_INDEX):
+            es.indices.create(index=settings.ELASTICSEARCH_APK_INDEX, body=apk_analysis_settings)
+        else:
+            es.indices.put_mapping(
+                index=settings.ELASTICSEARCH_APK_INDEX,
+                body=apk_analysis_settings.get("mappings", {})
+            )
+
+        if not es.indices.exists(index=settings.ELASTICSEARCH_GP_INDEX):
+            es.indices.create(index=settings.ELASTICSEARCH_GP_INDEX)
+
+        if not es.indices.exists(index=settings.ELASTICSEARCH_TASKS_INDEX):
+            es.indices.create(index=settings.ELASTICSEARCH_TASKS_INDEX)
+
+        if not es.indices.exists(index=settings.ELASTICSEARCH_VT_INDEX):
+            es.indices.create(index=settings.ELASTICSEARCH_VT_INDEX)
+
+        if not es.indices.exists(index=settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX):
+            es.indices.create(index=settings.ELASTICSEARCH_DEXOFUZZY_APK_INDEX)
+
+        if not es.indices.exists(index=settings.ELASTICSEARCH_SSDEEP_APK_INDEX):
+            es.indices.create(index=settings.ELASTICSEARCH_SSDEEP_APK_INDEX)
+
+        if not es.indices.exists(index=settings.ELASTICSEARCH_SSDEEP_MANIFEST_INDEX):
+            es.indices.create(index=settings.ELASTICSEARCH_SSDEEP_MANIFEST_INDEX)
+
+        if not es.indices.exists(index=settings.ELASTICSEARCH_TLSH_APK_INDEX):
+            es.indices.create(index=settings.ELASTICSEARCH_TLSH_APK_INDEX)
+
         with open('bazaar/es_mappings/vt_mapping.json') as mapping:
             vt_reports_settings = json.load(mapping)
-        es.indices.create(index=settings.ELASTICSEARCH_VT_INDEX, body=vt_reports_settings)
-    except Exception:
-        pass
+        if not es.indices.exists(index=settings.ELASTICSEARCH_VT_INDEX):
+            es.indices.create(index=settings.ELASTICSEARCH_VT_INDEX, body=vt_reports_settings)
+
+    except Exception as e:
+        logging.error(e)
 
 
 def init_fuzzy_match_es():

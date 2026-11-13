@@ -19,5 +19,36 @@
           </a>
         {% endwith %}
     </tr>
+    <tr>
+      <td class="border-0 pt-0"></td>
+      <td colspan="3" class="border-0 pt-0">
+        {% with p|get:"_name" as permission %}
+          {% with d.permission_usage|get:permission as usages %}
+            {% if usages %}
+              <details class="mt-2">
+                <summary class="small text-primary">
+                  {{ usages|length }} API call{{ usages|length|pluralize }}
+                </summary>
+
+                <div class="mt-2 small">
+                  {% for usage in usages %}
+                    <div class="mb-2">
+                      <div>
+                        <strong>{{ usage.class }}</strong>
+                        <span class="text-muted">→</span>
+                        {{ usage.method }}
+                      </div>
+                      <div class="text-muted">
+                        API: <samp>{{ usage.api }}</samp>
+                      </div>
+                    </div>
+                  {% endfor %}
+                </div>
+              </details>
+            {% endif %}
+          {% endwith %}
+        {% endwith %}
+      </td>
+    </tr>
   {% endfor %}
 </table>

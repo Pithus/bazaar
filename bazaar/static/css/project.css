@@ -7391,3 +7391,29 @@ samp {
 
 .tab-pane {
   margin-bottom: 20px; }
+
+.collapse-arrow {
+  display: inline-block;
+  transition: transform 0.2s ease; }
+
+a[aria-expanded="true"] .collapse-arrow {
+  transform: rotate(90deg); }
+
+.intent-link,
+.intent-name {
+  font-family: monospace;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit; }
+
+.receiver-link:hover {
+  text-decoration: none; }
+
+.intent-grid {
+  display: grid;
+  grid-template-columns: 30px 100px 1fr; }
+
+table td:nth-child(3) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal; }
