@@ -18,7 +18,10 @@ def init_es():
         if not es.indices.exists(index=settings.ELASTICSEARCH_APK_INDEX):
             es.indices.create(index=settings.ELASTICSEARCH_APK_INDEX, body=apk_analysis_settings)
         else:
-            es.indices.put_mapping(index=settings.ELASTICSEARCH_APK_INDEX, body=apk_analysis_settings.get("mappings", {}))
+            es.indices.put_mapping(
+                index=settings.ELASTICSEARCH_APK_INDEX,
+                body=apk_analysis_settings.get("mappings", {})
+            )
 
         if not es.indices.exists(index=settings.ELASTICSEARCH_GP_INDEX):
             es.indices.create(index=settings.ELASTICSEARCH_GP_INDEX)

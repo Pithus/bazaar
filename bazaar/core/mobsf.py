@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 DEFAULT_SERVER = 'http://127.0.0.1:8000'
 MAX_TRY = 200
 
+
 class MobSF:
     """Represents a MobSF instance."""
 
