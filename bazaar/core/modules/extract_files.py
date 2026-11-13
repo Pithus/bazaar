@@ -45,18 +45,21 @@ def analysis(sha256):
                     )
                     extractions = bw.extract_file()
                     for e in extractions.values():
-                        for fname in os.listdir(e['output_directory']):
-                            fpath = os.path.join(e['output_directory'], fname)
-                            if os.path.isfile(fpath):
-                                with open(fpath, "rb") as f:
-                                    default_storage.save(
-                                        os.path.join(
-                                            sha256,
-                                            "extracted",
-                                            f"{PurePosixPath(e["output_directory"]).name}_{fname}"
-                                        ),
-                                        f
-                                    )
+                        try:
+                            for fname in os.listdir(e['output_directory']):
+                                fpath = os.path.join(e['output_directory'], fname)
+                                if os.path.isfile(fpath):
+                                    with open(fpath, "rb") as f:
+                                        default_storage.save(
+                                            os.path.join(
+                                                sha256,
+                                                "extracted",
+                                                f"{PurePosixPath(e["output_directory"]).name}_{fname}"
+                                            ),
+                                            f
+                                        )
+                        except FileNotFoundError:
+                            continue
                 es.update(index=settings.ELASTICSEARCH_TASKS_INDEX, id=sha256, body={'doc': {'extract_files': 2}},
                           retry_on_conflict=1)
 

@@ -391,6 +391,10 @@
           }
         }
       },
+      "permission_usage": {
+        "type": "object",
+        "enabled": false
+      },
       "playstore_details": {
         "type": "object",
         "enabled": false

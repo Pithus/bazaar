@@ -5,7 +5,7 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 DEFAULT_SERVER = 'http://127.0.0.1:8000'
-
+MAX_TRY = 200
 
 class MobSF:
     """Represents a MobSF instance."""
@@ -72,10 +72,15 @@ class MobSF:
         logger.debug(f'Requesting JSON report for scan {data["hash"]}')
         headers = {'Authorization': self.__apikey}
         data = {'hash': data['hash']}
+        attempts = 0
         r = requests.post(f'{self.__server}/api/v1/report_json', data=data, headers=headers, timeout=10)
-        while r.status_code == 404:
+        while r.status_code == 404 and attempts < MAX_TRY:
             time.sleep(10)
-            r = requests.post(f'{self.__server}/api/v1/report_json', data=data, headers=headers, timeout=10)
+            try:
+                r = requests.post(f'{self.__server}/api/v1/report_json', data=data, headers=headers, timeout=10)
+            except requests.ReadTimeout:
+                continue
+            attempts += 1
         return r.json()
 
     def delete_scan(self, data):

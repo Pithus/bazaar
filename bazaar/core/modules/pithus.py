@@ -148,15 +148,39 @@ def extract_classes(sha256):
     with NamedTemporaryFile() as f:
         f.write(default_storage.open(sha256).read())
         f.seek(0)
-        s1 = time.time()
-        a, d, dx = AnalyzeAPK(f.name)
-        s2 = time.time()
-        logging.debug(f'AnalyzeAPK took {s2 - s1}')
 
-        # Extract classes
-        s1 = time.time()
-        class_names = []
         try:
+            s1 = time.time()
+            a, d, dx = AnalyzeAPK(f.name)
+            s2 = time.time()
+            logging.debug(f'AnalyzeAPK took {s2 - s1}')
+
+            # Extract classes
+            s1 = time.time()
+            class_names = []
+
+            permission_usage = {}
+
+            for api_method, permissions in dx.get_permissions(
+                a.get_effective_target_sdk_version()
+            ):
+                for permission in permissions:
+
+                    if permission not in permission_usage:
+                        permission_usage[permission] = []
+
+                    for _, caller, offset in api_method.get_xref_from():
+                        permission_usage[permission].append({
+                            "api": api_method.full_name,
+                            "class": caller.class_name,
+                            "method": caller.name,
+                        })
+
+            doc = {
+                'permission_usage': permission_usage
+            }
+            es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': doc}, retry_on_conflict=5)
+
             for class_name in dx.classes:
                 if not class_name.startswith('Lkotlin/') and not class_name.startswith(
                     'Landroid/') and not class_name.startswith('Landroidx/') and not class_name.startswith(
@@ -179,9 +203,13 @@ def extract_classes(sha256):
         }
         es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': doc}, retry_on_conflict=5)
 
-        doc = {
-            'trackers': exodus_analysis(java_classes)
-        }
+        try:
+            doc = {
+                'trackers': exodus_analysis(java_classes)
+            }
+        except requests.ConnectionError:
+            doc = {'trackers': []}
+            logging.error("Failed to connect to exodus-privacy")
         es.update(index=settings.ELASTICSEARCH_APK_INDEX, id=sha256, body={'doc': doc}, retry_on_conflict=5)
 
     del a, d, dx, doc, f, java_classes, class_names
