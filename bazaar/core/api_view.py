@@ -26,7 +26,34 @@ import requests
 import vt
 from http.client import responses as http_responses
 
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 
+from bazaar.core.serializers import (
+    MessageResponseSerializer,
+    ErrorResponseSerializer,
+    InternalServerErrorSerializer,
+    HelloWorldResponseSerializer,
+    ReportListResponseSerializer,
+    ReportResponseSerializer,
+    ReportStatusResponseSerializer,
+    ReportExistsResponseSerializer,
+    ExampleReportResponseSerializer,
+    ApkUploadRequestSerializer,
+    ApkUploadResponseSerializer,
+    SearchRequestSerializer,
+    SearchResponseSerializer,
+    StatusResponseSerializer
+)
+
+
+@extend_schema(
+    summary="Hello World",
+    description="Returns a simple greeting.",
+    responses={
+        200: HelloWorldResponseSerializer,
+    },
+)
 @api_view(['GET', 'POST'])
 def hello_world(request):
     return Response({"message": "Hello!"})
@@ -34,6 +61,15 @@ def hello_world(request):
 
 class ReportView:
 
+    @extend_schema(
+        operation_id="list_reports",
+        summary="List reports",
+        description="Returns a list of available reports.",
+        responses={
+            200: ReportListResponseSerializer,
+            500: InternalServerErrorSerializer,
+        },
+    )
     @api_view(["GET"])
     @staticmethod
     def list_reports(request) -> Response:
@@ -52,6 +88,28 @@ class ReportView:
                 status=rest_framework.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+    @extend_schema(
+        operation_id="retrieve_report",
+        summary="Get report",
+        description=(
+            "Returns the analysis report associated with the given SHA256 hash. "
+            "The response may be cached depending on the analysis status."
+        ),
+        parameters=[
+            OpenApiParameter(
+                name="sha256",
+                type=str,
+                location=OpenApiParameter.PATH,
+                description="SHA256 hash of the APK.",
+                required=True,
+            ),
+        ],
+        responses={
+            200: ReportResponseSerializer,
+            404: ErrorResponseSerializer,
+            500: ErrorResponseSerializer,
+        },
+    )
     @api_view(["GET"])
     @staticmethod
     def get_report(request, *args, **kwargs) -> Response:
@@ -81,15 +139,38 @@ class ReportView:
                 },
                 status=rest_framework.status.HTTP_200_OK,
             )
+        except NotFoundError:
+            return Response(
+                {"message": "Report Not Found"},
+                status=rest_framework.status.HTTP_404_NOT_FOUND,
+            )
         except Exception:
             return Response(
                 {"message": "Internal Server Error"},
                 status=rest_framework.status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+    @extend_schema(
+        summary="Get report status",
+        description="Returns the analysis status and detailed status of a report.",
+        parameters=[
+            OpenApiParameter(
+                name="sha256",
+                type=str,
+                location=OpenApiParameter.PATH,
+                description="SHA256 hash of the APK.",
+                required=True,
+            ),
+        ],
+        responses={
+            200: ReportStatusResponseSerializer,
+            404: ErrorResponseSerializer,
+            500: ErrorResponseSerializer,
+        },
+    )
     @api_view(["GET"])
     @authentication_classes([])
-    @permission_classes([])
+    @permission_classes([AllowAny])
     @staticmethod
     def get_report_status(request, sha256) -> Response:
         try:
@@ -114,6 +195,24 @@ class ReportView:
                 status=rest_framework.status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+    @extend_schema(
+        summary="Check whether a report exists",
+        description="Checks whether a report exists in the configured storage.",
+        parameters=[
+            OpenApiParameter(
+                name="sha256",
+                type=str,
+                location=OpenApiParameter.PATH,
+                description="SHA256 hash of the APK.",
+                required=True,
+            ),
+        ],
+        responses={
+            200: ReportExistsResponseSerializer,
+            404: ReportExistsResponseSerializer,
+            500: InternalServerErrorSerializer,
+        },
+    )
     @api_view(["GET"])
     @authentication_classes([])
     @permission_classes([AllowAny])
@@ -142,6 +241,14 @@ class ReportView:
                 status=rest_framework.status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+    @extend_schema(
+        summary="Get example report",
+        description="Returns an example analysis report.",
+        responses={
+            200: ExampleReportResponseSerializer,
+            500: InternalServerErrorSerializer,
+        },
+    )
     @api_view(["GET"])
     @staticmethod
     def get_example(request) -> Response:
@@ -164,6 +271,27 @@ class ReportView:
 
 class ApkView:
 
+    @extend_schema(
+        methods=["GET"],
+        operation_id="list_apks",
+        summary="List APKs",
+        description="Lists uploaded APKs. Currently not implemented.",
+        responses={
+            501: MessageResponseSerializer,
+        },
+    )
+    @extend_schema(
+        methods=["POST"],
+        operation_id="upload_apk",
+        summary="Upload APK",
+        description="Uploads an Android APK for analysis.",
+        request=ApkUploadRequestSerializer,
+        responses={
+            200: ApkUploadResponseSerializer,
+            400: ErrorResponseSerializer,
+            500: None,
+        },
+    )
     @api_view(["GET", "POST"])
     @staticmethod
     def apk_handler(request):
@@ -204,6 +332,24 @@ class ApkView:
             status=rest_framework.status.HTTP_200_OK,
         )
 
+    @extend_schema(
+        operation_id="download_sample_apk",
+        summary="Download sample APK",
+        description="Downloads an APK sample identified by its SHA256 hash.",
+        parameters=[
+            OpenApiParameter(
+                name="sha256",
+                type=str,
+                location=OpenApiParameter.PATH,
+                description="SHA256 hash of the APK.",
+                required=True,
+            ),
+        ],
+        responses={
+            200: OpenApiTypes.BINARY,
+            404: ErrorResponseSerializer,
+        },
+    )
     @api_view(["GET"])
     @staticmethod
     def download_sample(request, sha256) -> Response:
@@ -223,6 +369,16 @@ class ApkView:
 
 class SearchView:
 
+    @extend_schema(
+        summary="Search",
+        description="Searches for reports using a user-provided query.",
+        request=SearchRequestSerializer,
+        responses={
+            200: SearchResponseSerializer,
+            400: ErrorResponseSerializer,
+            406: ErrorResponseSerializer,
+        },
+    )
     @api_view(['POST'])
     @staticmethod
     def search(request):
@@ -248,6 +404,17 @@ class SearchView:
 
 class StatusView:
 
+    @extend_schema(
+        summary="Get application status",
+        description=(
+            "Returns the health status of the application's dependencies, "
+            "including the database, Elasticsearch, Redis, workers, "
+            "MobSF, MalwareBazaar and VirusTotal."
+        ),
+        responses={
+            200: StatusResponseSerializer,
+        },
+    )
     @api_view(['GET'])
     @authentication_classes([])
     @permission_classes([AllowAny])

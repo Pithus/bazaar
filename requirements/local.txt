@@ -16,6 +16,7 @@ pytest-sugar==1.1.1
 # Documentation
 sphinx-autobuild==2025.8.25
 sphinx-autobuild==2025.8.25
+drf-spectacular
 
 # Code quality
 flake8==7.3.0

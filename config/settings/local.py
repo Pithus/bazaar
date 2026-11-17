@@ -63,3 +63,37 @@ INSTALLED_APPS += ["django_extensions"]  # noqa F405
 # Your stuff...
 # ------------------------------------------------------------------------------
 REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]['user'] = '100/minute'  # noqa F405
+
+
+# drf-spectacular config for documenting API
+# ------------------------------------------------------------------------------
+INSTALLED_APPS += ["drf_spectacular"]  # noqa F405
+REST_FRAMEWORK["DEFAULT_SCHEMA_CLASS"] = "drf_spectacular.openapi.AutoSchema"
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Pithus API",
+    "DESCRIPTION": """
+    Pithus REST API.
+
+    API for Android application analysis, report retrieval,
+    APK uploads, search and application status monitoring.
+    """,
+    "VERSION": "1.0.0-beta",
+
+    # OpenAPI specification
+    "OAS_VERSION": "3.0.3",
+
+    # Schema generation
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+
+    # Documentation behavior
+    "SORT_OPERATIONS": True,
+    "SORT_OPERATION_PARAMETERS": True,
+
+    # Authentication
+    "SECURITY": [],
+
+    # Schema generation options
+    "ENABLE_LIST_MECHANICS_ON_NON_2XX": True,
+}
