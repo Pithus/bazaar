@@ -129,7 +129,7 @@ services:
       rustfs:
         condition: service_healthy
     env_file:
-      - ./.envs/.local/.django
+      - ./.envs/.production/.django
     entrypoint:
       - /bin/sh
       - -c
