@@ -13,7 +13,7 @@
             "descriptor": "(I)Ljava/lang/Integer;"
         }
     ],
-    "score": 0.22,
+    "score": 0.17,
     "label": [
         "wifi",
         "collection"

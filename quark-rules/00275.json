@@ -13,7 +13,7 @@
             "descriptor": "(Landroid/content/ComponentName; I I)V"
         }
     ],
-    "score": 1.06,
+    "score": 1.21,
     "label": [
         "persistence",
         "evasion",

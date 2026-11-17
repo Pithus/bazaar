@@ -13,7 +13,7 @@
             "descriptor": "(I)Landroid/content/ClipData$Item;"
         }
     ],
-    "score": -3.12,
+    "score": -2.85,
     "label": [
         "keylogging"
     ]

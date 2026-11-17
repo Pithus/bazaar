@@ -13,7 +13,7 @@
             "method": "createSocket"
         }
     ],
-    "score": 0.61,
+    "score": 0.67,
     "label": [
         "network",
         "command"

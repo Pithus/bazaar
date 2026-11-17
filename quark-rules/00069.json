@@ -13,7 +13,7 @@
             "descriptor": "()Ljava/io/OutputStream;"
         }
     ],
-    "score": 0.77,
+    "score": 0.71,
     "label": [
         "control"
     ]

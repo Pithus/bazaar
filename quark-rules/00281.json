@@ -1,0 +1,21 @@
+{
+    "crime": "Check network connectivity availability status",
+    "permission": [],
+    "api": [
+        {
+            "class": "Landroid/content/Context;",
+            "method": "getSystemService",
+            "descriptor": "(Ljava/lang/String;)Ljava/lang/Object;"
+        },
+        {
+            "class": "Landroid/net/NetworkInfo;",
+            "method": "isAvailable",
+            "descriptor": "()Z"
+        }
+    ],
+    "score": 2.09,
+    "label": [
+        "network",
+        "collection"
+    ]
+}

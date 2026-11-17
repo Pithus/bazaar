@@ -13,7 +13,7 @@
             "descriptor": "()Ljava/lang/String;"
         }
     ],
-    "score": 0.88,
+    "score": 0.72,
     "label": [
         "collection",
         "telephony"
